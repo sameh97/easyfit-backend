@@ -1,0 +1,22 @@
+{
+  "name": "easyfit-backend",
+  "version": "1.0.0",
+  "description": "Easyfit backend",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sameh97/easyfit-backend.git"
+  },
+  "keywords": [
+    "easyfit"
+  ],
+  "author": "Sameh & Mahmoud",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sameh97/easyfit-backend/issues"
+  },
+  "homepage": "https://github.com/sameh97/easyfit-backend#readme"
+}
