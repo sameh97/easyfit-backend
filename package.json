@@ -4,7 +4,8 @@
   "description": "Easyfit backend",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server.js",
+    "dev": "nodemon index"
   },
   "repository": {
     "type": "git",
@@ -18,5 +19,11 @@
   "bugs": {
     "url": "https://github.com/sameh97/easyfit-backend/issues"
   },
-  "homepage": "https://github.com/sameh97/easyfit-backend#readme"
+  "homepage": "https://github.com/sameh97/easyfit-backend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
 }
