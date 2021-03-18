@@ -1,10 +1,18 @@
+require("dotenv").config();
 const express = require("express");
+const app = express();
+
+const jwt = require("jsonwebtoken");
+const verifyToken = require("./middlewares/jwt-functions");
+const secret = "secretKey";
 
 const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken");
+const path = require("path");
+const db = require("./config/database");
 
-const app = express();
-const secret = "secretKey";
+db.authenticate()
+  .then(() => console.log("Database connected..."))
+  .catch((err) => console.log("Error: " + err));
 
 app.get("/api", (req, res) => {
   res.json({
@@ -34,17 +42,6 @@ app.post("/api/login", (req, res) => {
     });
   });
 });
-
-function verifyToken(req, res, next) {
-  const bearerHeader = req.headers["authorization"];
-  if (typeof bearerHeader !== "undefined") {
-    const bearerToken = bearerHeader.split(" ")[1];
-    req.token = bearerToken;
-    next();
-  } else {
-    res.sendStatus(403);
-  }
-}
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
