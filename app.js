@@ -8,11 +8,15 @@ const secret = "secretKey";
 
 const bodyParser = require("body-parser");
 const path = require("path");
-const db = require("./config/database");
 
-db.authenticate()
-  .then(() => console.log("Database connected..."))
-  .catch((err) => console.log("Error: " + err));
+const AppDBConnection = require('./config/database');
+
+AppDBConnection.connect().then((r) => {
+  console.log('success: ' + JSON.stringify(r));
+})
+.catch((e) => {
+  console.log(e);
+});
 
 app.get("/api", (req, res) => {
   res.json({
