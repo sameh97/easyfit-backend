@@ -2,6 +2,8 @@
 import express = require("express");
 
 import * as jwt from "jsonwebtoken";
+import { User } from "./models/user";
+import { UsersRepository } from "./repositories/users-repository";
 const verifyToken = require("./middlewares/jwt-functions");
 const secret = "secretKey";
 
@@ -10,6 +12,9 @@ const path = require("path");
 
 const app = express();
 const AppDBConnection = require("./config/database");
+const userRepo = new UsersRepository();
+
+app.use(express.json());
 
 AppDBConnection.connect()
   .then((r) => {
@@ -23,6 +28,13 @@ app.get("/api", (req, res) => {
   res.json({
     message: "Hey there! welcome to this API service",
   });
+});
+
+app.post("/api/user", (req, res) => {
+  const user: User = req.body;
+  
+  const createdUser = userRepo.save(user);
+  res.send(createdUser);
 });
 
 app.post("/api/posts", verifyToken, (req, res) => {
@@ -57,6 +69,5 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use(express.json());
 
 module.exports = app;
