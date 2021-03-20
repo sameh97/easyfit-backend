@@ -1,22 +1,23 @@
-require("dotenv").config();
-const express = require("express");
-const app = express();
+// require("dotenv").config();
+import express = require("express");
 
-const jwt = require("jsonwebtoken");
+import * as jwt from "jsonwebtoken";
 const verifyToken = require("./middlewares/jwt-functions");
 const secret = "secretKey";
 
 const bodyParser = require("body-parser");
 const path = require("path");
 
-const AppDBConnection = require('./config/database');
+const app = express();
+const AppDBConnection = require("./config/database");
 
-AppDBConnection.connect().then((r) => {
-  console.log('success: ' + JSON.stringify(r));
-})
-.catch((e) => {
-  console.log(e);
-});
+AppDBConnection.connect()
+  .then((r) => {
+    console.log("success: " + JSON.stringify(r));
+  })
+  .catch((e) => {
+    console.log(e);
+  });
 
 app.get("/api", (req, res) => {
   res.json({
