@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize-typescript";
+import { User } from "../models/user";
 
 export class AppDBConnection {
   private db: Sequelize;
@@ -12,6 +13,8 @@ export class AppDBConnection {
       host: "localhost",
       port: 5432,
     });
+
+    this.db.addModels([User]);
     await this.db.authenticate();
     await this.db.sync();
   }
