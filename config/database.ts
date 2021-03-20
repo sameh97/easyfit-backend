@@ -1,5 +1,4 @@
-import { Sequelize } from "sequelize/types";
-// const Sequelize = require("sequelize");
+import { Sequelize } from "sequelize-typescript";
 
 export class AppDBConnection {
   private db: Sequelize;

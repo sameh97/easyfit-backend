@@ -26,16 +26,18 @@ app.get("/api", (req, res) => {
 });
 
 app.post("/api/posts", verifyToken, (req, res) => {
-  jwt.verify(req.token, secret, (err, authData) => {
-    if (err) {
-      res.sendStatus(403);
-    } else {
-      res.json({
-        message: "Posts created...",
-        authData,
-      });
-    }
-  });
+  res.sendStatus(403);
+  
+  // jwt.verify(req.token, secret, (err, authData) => {
+  //   if (err) {
+  //     res.sendStatus(403);
+  //   } else {
+  //     res.json({
+  //       message: "Posts created...",
+  //       authData,
+  //     });
+  //   }
+  // });
 });
 
 app.post("/api/login", (req, res) => {
