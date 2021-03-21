@@ -4,6 +4,9 @@ import express = require("express");
 import * as jwt from "jsonwebtoken";
 import { User } from "./models/user";
 import { UsersRepository } from "./repositories/users-repository";
+import { UserController } from "./controllers/user-controller";
+import { UserService } from "./services/user-service";
+
 const verifyToken = require("./middlewares/jwt-functions");
 const secret = "secretKey";
 
@@ -13,6 +16,8 @@ const path = require("path");
 const app = express();
 const AppDBConnection = require("./config/database");
 const userRepo = new UsersRepository();
+const usersService = new UserService(userRepo);
+const userController = new UserController(usersService);
 
 app.use(express.json());
 
@@ -30,9 +35,15 @@ app.get("/api", (req, res) => {
   });
 });
 
+app.get("/api/login", (req, res) => {
+  const user: User = req.body;
+
+  userController.get(req, res);
+});
+
 app.post("/api/user", (req, res) => {
   const user: User = req.body;
-  
+
   const createdUser = userRepo.save(user);
   res.send(createdUser);
 });
@@ -68,6 +79,5 @@ app.use(function (req, res, next) {
   );
   next();
 });
-
 
 module.exports = app;
