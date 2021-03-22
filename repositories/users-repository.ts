@@ -21,13 +21,12 @@ export class UsersRepository {
   }
 
   // function that checks user when login occurs:
-  public async get(user: User): Promise<Boolean> {
-    const userInDB = await User.findOne({ where: { email: user.email } });
+  public async getByEmail(email: string): Promise<User> {
+    const userInDB = await User.findOne({ where: { email: email } });
     if (!AppUtils.hasValue(userInDB)) {
-      return false;
-     // throw new UserNotFoundErr(`User with mail ${user.email} does not exist`);
+      throw new UserNotFoundErr(`User with mail ${email} does not exist`);
     }
 
-    return true;
+    return userInDB;
   }
 }

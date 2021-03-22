@@ -1,6 +1,7 @@
+import { injectable } from "inversify";
 import { Sequelize } from "sequelize-typescript";
 import { User } from "../models/user";
-
+@injectable ()
 export class AppDBConnection {
   private db: Sequelize;
 
@@ -20,4 +21,3 @@ export class AppDBConnection {
   }
 }
 
-module.exports = new AppDBConnection();

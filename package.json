@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "build": "tsc -p .",
-    "start": "node dist/server.js",
-    "start-nodemon": "nodemon dist/server.js",
+    "start": "npm run build && node dist/index.js",
+    "start-nodemon": "nodemon dist/index.js",
     "dev": "nodemon index"
   },
   "repository": {
