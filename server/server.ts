@@ -21,6 +21,12 @@ export class EasyFitApp {
   constructor(@inject(AppDBConnection) private dBconnection: AppDBConnection) {
     this.app = express();
     this.app.use(express.json());
+    this.app.use(function (req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "*");
+      res.header("Access-Control-Expose-Headers", "*");
+      next();
+    });
   }
 
   public start(): void {
@@ -59,13 +65,16 @@ export class EasyFitApp {
       });
     });
 
-    this.app.post("/api/login", (req, res) => {
-      const user: User = req.body;
+    this.app.post("/api/login", async (req, res) => {
+      const user = req.body;
 
-      userController.get(req, res);
+      const result = await userController.get(user, res);
+
+      res.setHeader("Authorization", result);
+      res.send({});
     });
 
-    this.app.post("/api/user", (req, res) => {
+    this.app.post("/api/user", verifyToken, (req, res) => {
       const user: User = req.body;
 
       const createdUser = userRepo.save(user);
@@ -83,25 +92,6 @@ export class EasyFitApp {
           });
         }
       });
-    });
-
-    // this.app.post("/api/login", (req, res) => {
-    //   const user = { id: 1, username: "John", email: "john@gmail.com" };
-
-    //   jwt.sign({ user: user }, secret, (err, token) => {
-    //     res.json({
-    //       token,
-    //     });
-    //   });
-    // });
-
-    this.app.use(function (req, res, next) {
-      res.header("Access-Control-Allow-Origin", "*");
-      res.header(
-        "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept"
-      );
-      next();
     });
   }
 }

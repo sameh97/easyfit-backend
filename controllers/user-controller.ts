@@ -5,13 +5,19 @@ import { User } from "../models/user";
 export class UserController {
   constructor(@inject(UserService) private userService: UserService) {}
 
-  public get = async (req: any, res: any) => {
+  public async get(user: any, res: any): Promise<string> {
     try {
-      const userFromBody: User = req.body;
-      const token: string = await this.userService.login(userFromBody.email, userFromBody.password);
-      res.send(token);
-    } catch(e) {
-      res.status(500).send(e.message);
+      const userFromBody: User = user;
+      const token: string = await this.userService.login(
+        userFromBody.email,
+        userFromBody.password
+      );
+      console.log(`the token is: ${token}`);
+      return token;
+      //res.send(token);
+    } catch (e) {
+      //res.status(500).send(e.message);
+      console.log(e.message);
     }
-  };
+  }
 }
