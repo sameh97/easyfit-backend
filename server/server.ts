@@ -1,4 +1,3 @@
-// require("dotenv").config();
 import express = require("express");
 import * as jwt from "jsonwebtoken";
 import { User } from "../models/user";

@@ -12,11 +12,8 @@ export class UserController {
         userFromBody.email,
         userFromBody.password
       );
-      console.log(`the token is: ${token}`);
       return token;
-      //res.send(token);
     } catch (e) {
-      //res.status(500).send(e.message);
       console.log(e.message);
     }
   }
