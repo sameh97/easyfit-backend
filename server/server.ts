@@ -6,14 +6,27 @@ import { UserController } from "../controllers/user-controller";
 import { UserService } from "../services/user-service";
 import { AppDBConnection } from "../config/database";
 import { inject } from "inversify";
+import { PasswordManagerService } from "../services/password-manager-service";
+import { DtoMapper } from "./../common/dto-mapper";
+import { Logger } from "./../common/logger";
+import container from "./../inversify.config";
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
 const path = require("path");
 const userRepo = new UsersRepository();
-const usersService = new UserService(userRepo);
-const userController = new UserController(usersService);
+const usersService = new UserService(
+  userRepo,
+  new PasswordManagerService(),
+  new AppDBConnection()
+);
+const userController = new UserController(
+  usersService,
+  container.get(DtoMapper),
+  container.get(Logger)
+);
 
+// TODO: arrange the imports and make them cleaner
 export class EasyFitApp {
   private app: express.Express;
 
@@ -73,7 +86,7 @@ export class EasyFitApp {
       res.send({});
     });
 
-    this.app.post("/api/user", verifyToken, (req, res) => {
+    this.app.post("/api/user", (req, res) => {
       const user: User = req.body;
 
       const createdUser = userRepo.save(user);

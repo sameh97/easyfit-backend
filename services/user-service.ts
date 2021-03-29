@@ -3,6 +3,9 @@ import { AuthenticationError } from "../exeptions/authentication-error";
 import { User } from "../models/user";
 import { UsersRepository } from "../repositories/users-repository";
 import * as jwt from "jsonwebtoken";
+import { PasswordManagerService } from "./password-manager-service";
+import { Transaction } from "sequelize/types";
+import { AppDBConnection } from "../config/database";
 
 @injectable()
 export class UserService {
@@ -10,7 +13,10 @@ export class UserService {
   // private static readonly TOKEN_EXPIRATION_SECS = 864000;
   private static readonly TOKEN_EXPIRATION_HOURS = 240;
   constructor(
-    @inject(UsersRepository) private usersRepository: UsersRepository
+    @inject(UsersRepository) private usersRepository: UsersRepository,
+    @inject(PasswordManagerService)
+    private passwordManager: PasswordManagerService,
+    @inject(AppDBConnection) private appDBconnection: AppDBConnection
   ) {}
 
   public async login(email: string, password: string): Promise<string> {
@@ -29,5 +35,28 @@ export class UserService {
     );
 
     return token;
+  }
+
+  public async create(user: User): Promise<User> {
+    let transaction: Transaction = null;
+    try {
+      const hashedPassword = await this.passwordManager.hashAndSalt(
+        user.password
+      );
+      user.password = hashedPassword;
+
+      transaction = await this.appDBconnection.createTransaction();
+
+      const createdUser = await this.usersRepository.save(user, transaction);
+
+      await transaction.commit();
+
+      return createdUser;
+    } catch (err) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw err;
+    }
   }
 }

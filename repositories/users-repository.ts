@@ -7,15 +7,18 @@ import { UserNotFoundErr } from "../exeptions/user-not-found-error";
 
 @injectable()
 export class UsersRepository {
-  public async save(user: User): Promise<User> {
-    const userInDB = await User.findOne({ where: { email: user.email } });
+  public async save(user: User, transaction?: Transaction): Promise<User> {
+    const userInDB = await User.findOne({
+      where: { email: user.email },
+      transaction: transaction,
+    });
     if (AppUtils.hasValue(userInDB)) {
       throw new AlreadyExistError(
         `User with mail '${user.email}' already exist`
       );
     }
 
-    const createdUser = await User.create(user);
+    const createdUser = await User.create(user, { transaction: transaction });
 
     return createdUser;
   }
