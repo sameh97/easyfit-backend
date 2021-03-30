@@ -34,7 +34,12 @@ export class UserController {
       res.status(201);
       next(this.dtoMapper.asDto(createdUser));
     } catch (err) {
-      this.logger.error(`Cannot create user: ${JSON.stringify(userToCreate)}`);
+      //   this.logger.error(`Cannot create user: ${JSON.stringify(userToCreate)}`);
+      this.logger.logger.log({
+        level: "error",
+        message: `Cannot create user: ${JSON.stringify(userToCreate)}`,
+      });
+
       next(err);
     }
   };

@@ -30,7 +30,10 @@ const userController = new UserController(
 export class EasyFitApp {
   private app: express.Express;
 
-  constructor(@inject(AppDBConnection) private dBconnection: AppDBConnection) {
+  constructor(
+    @inject(AppDBConnection) private dBconnection: AppDBConnection,
+    @inject(Logger) private logger: Logger
+  ) {
     this.app = express();
     this.app.use(express.json());
     this.app.use(function (req, res, next) {

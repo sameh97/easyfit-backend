@@ -2,8 +2,11 @@ import "reflect-metadata";
 import { EasyFitApp } from "./server/server";
 import { AppDBConnection } from "./config/database";
 import container from "./inversify.config";
-
-const app = new EasyFitApp(container.get(AppDBConnection));
+import { Logger } from "./common/logger";
+const app = new EasyFitApp(
+  container.get(AppDBConnection),
+  container.get(Logger)
+);
 
 app.start();
 

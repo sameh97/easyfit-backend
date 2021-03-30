@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize/types";
 import { AlreadyExistError } from "./../exeptions/already-exist-error";
-import { injectable, inject } from "inversify";
+import { injectable } from "inversify";
 import { User } from "../models/user";
 import { AppUtils } from "../common/app-utils";
 import { UserNotFoundErr } from "../exeptions/user-not-found-error";
