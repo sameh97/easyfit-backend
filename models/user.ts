@@ -52,7 +52,7 @@ export class User extends Model<User> {
   @Column(DataType.STRING)
   public password: string;
 
-  @AllowNull(false)
+  @AllowNull(true)
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;

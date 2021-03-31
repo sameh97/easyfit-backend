@@ -5,6 +5,8 @@ import { UsersRepository } from "./repositories/users-repository";
 import { UserService } from "./services/user-service";
 import { Logger } from "./common/logger";
 import { DtoMapper } from "./common/dto-mapper";
+import { UsersApi } from "./routes/users.api";
+import { PasswordManagerService } from "./services/password-manager-service";
 
 // TODO: improve the container, it should use types
 
@@ -16,5 +18,7 @@ container.bind<UserController>(UserController).toSelf();
 container.bind<UsersRepository>(UsersRepository).toSelf();
 container.bind<Logger>(Logger).toSelf();
 container.bind<DtoMapper>(DtoMapper).toSelf();
+container.bind<UsersApi>(UsersApi).toSelf();
+container.bind<PasswordManagerService>(PasswordManagerService).toSelf();
 
 export default container;

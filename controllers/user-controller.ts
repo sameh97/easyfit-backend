@@ -3,6 +3,7 @@ import { UserService } from "../services/user-service";
 import { User } from "../models/user";
 import { DtoMapper } from "../common/dto-mapper";
 import { Logger } from "./../common/logger";
+import { AppUtils } from "../common/app-utils";
 
 @injectable()
 export class UserController {
@@ -12,16 +13,20 @@ export class UserController {
     @inject(Logger) private logger: Logger
   ) {}
 
-  public async get(user: any, res: any): Promise<string> {
+  public login = async (req: any, res: any, next: any) => {
+    let userFromBody: User = null;
     try {
-      const userFromBody: User = user;
+      userFromBody = req.body;
       const token: string = await this.userService.login(
         userFromBody.email,
         userFromBody.password
       );
-      return token;
+      res.setHeader("Authorization", token);
+      res.send({});
     } catch (e) {
-      console.log(e.message);
+      const email = AppUtils.hasValue(userFromBody) ? userFromBody.email : '';
+      this.logger.error(`Cannot login user: ${email}`, e);
+      next(e);
     }
   }
 
@@ -29,17 +34,13 @@ export class UserController {
     let userToCreate: User = null;
     try {
       userToCreate = this.dtoMapper.asEntity(req.body);
+
       const createdUser: User = await this.userService.create(userToCreate);
 
       res.status(201);
       next(this.dtoMapper.asDto(createdUser));
     } catch (err) {
-      //   this.logger.error(`Cannot create user: ${JSON.stringify(userToCreate)}`);
-      this.logger.logger.log({
-        level: "error",
-        message: `Cannot create user: ${JSON.stringify(userToCreate)}`,
-      });
-
+      this.logger.error(`Cannot create user: ${JSON.stringify(userToCreate)}`, err);
       next(err);
     }
   };

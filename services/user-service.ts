@@ -6,24 +6,26 @@ import * as jwt from "jsonwebtoken";
 import { PasswordManagerService } from "./password-manager-service";
 import { Transaction } from "sequelize/types";
 import { AppDBConnection } from "../config/database";
+import { Console } from "winston/lib/winston/transports";
+import { AppUtils } from "../common/app-utils";
 
 @injectable()
 export class UserService {
   public static TOKEN_SECRET = "asfwsgvwregwegfrgfwg"; // TODO: use env. variable
-  // private static readonly TOKEN_EXPIRATION_SECS = 864000;
+
   private static readonly TOKEN_EXPIRATION_HOURS = 240;
   constructor(
     @inject(UsersRepository) private usersRepository: UsersRepository,
-    @inject(PasswordManagerService)
-    private passwordManager: PasswordManagerService,
+    @inject(PasswordManagerService) private passwordManager: PasswordManagerService,
     @inject(AppDBConnection) private appDBconnection: AppDBConnection
   ) {}
 
   public async login(email: string, password: string): Promise<string> {
     const userInDB = await this.usersRepository.getByEmail(email);
 
-    if (userInDB.password !== password) {
-      throw new AuthenticationError(`User ${email} not authenticated`);
+    const isPasswordOk = await this.passwordManager.isEqual(password, userInDB.password);
+    if (!isPasswordOk) {
+      throw new AuthenticationError(`User with ${email} not authenticated`);
     }
 
     const token = jwt.sign(
@@ -43,10 +45,11 @@ export class UserService {
       const hashedPassword = await this.passwordManager.hashAndSalt(
         user.password
       );
+
       user.password = hashedPassword;
 
       transaction = await this.appDBconnection.createTransaction();
-
+      console.log(`========== passed the transction ==========`);
       const createdUser = await this.usersRepository.save(user, transaction);
 
       await transaction.commit();
@@ -56,6 +59,7 @@ export class UserService {
       if (transaction) {
         await transaction.rollback();
       }
+      console.log(`Error while creating user , error: ${AppUtils.getFullException(err)}`);
       throw err;
     }
   }

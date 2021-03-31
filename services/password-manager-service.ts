@@ -15,4 +15,8 @@ export class PasswordManagerService {
 
     return await bcrypt.hash(password, salt);
   }
+
+  public async isEqual(password, hash): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
+  }
 }
