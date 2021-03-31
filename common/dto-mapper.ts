@@ -15,6 +15,7 @@ export class DtoMapper {
       lastName: user.lastName,
       email: user.email,
       phone: user.phone,
+      password: user.password,
       birthDay: user.birthDay,
       address: user.address,
       gymId: user.gymId,
@@ -28,7 +29,11 @@ export class DtoMapper {
     return {
       id: userDto.id,
       firstName: userDto.firstName,
+      lastName: userDto.lastName,
       email: userDto.email,
+      phone: userDto.phone,
+      birthDay: userDto.birthDay,
+      address: userDto.address,
       password: userDto.password,
     } as User;
   }
