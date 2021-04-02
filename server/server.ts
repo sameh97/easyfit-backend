@@ -28,6 +28,7 @@ export class EasyFitApp {
   }
 
   public start(): void {
+    //TODO: make a user
     this.initRoutes();
     this.initDB();
     this.listenToRequests();

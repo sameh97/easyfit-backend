@@ -7,6 +7,10 @@ import { Logger } from "./common/logger";
 import { DtoMapper } from "./common/dto-mapper";
 import { UsersApi } from "./routes/users.api";
 import { PasswordManagerService } from "./services/password-manager-service";
+import { MembersService } from "./services/members-service";
+import { MemberDtoMapper } from "./common/dto-mapper/member-dto-mapper";
+import { MemebrsController } from "./controllers/members-controller";
+import { MembersRepository } from "./repositories/members-repository";
 
 // TODO: improve the container, it should use types
 
@@ -20,5 +24,8 @@ container.bind<Logger>(Logger).toSelf();
 container.bind<DtoMapper>(DtoMapper).toSelf();
 container.bind<UsersApi>(UsersApi).toSelf();
 container.bind<PasswordManagerService>(PasswordManagerService).toSelf();
-
+container.bind<MembersService>(MembersService).toSelf();
+container.bind<MemebrsController>(MemebrsController).toSelf();
+container.bind<MembersRepository>(MembersRepository).toSelf();
+container.bind<MemberDtoMapper>(MemberDtoMapper).toSelf();
 export default container;

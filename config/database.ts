@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize-typescript";
 import { User } from "../models/user";
 import { Transaction } from "sequelize/types";
 import { Gym } from "../models/gym";
+import { Member } from "../models/member";
 
 @injectable()
 export class AppDBConnection {
@@ -18,7 +19,7 @@ export class AppDBConnection {
       port: 5432,
     });
 
-    this.db.addModels([User, Gym]);
+    this.db.addModels([User, Gym, Member]);
     await this.db.authenticate();
     await this.db.sync({ force: true }); // TODO: remove in production
   }
