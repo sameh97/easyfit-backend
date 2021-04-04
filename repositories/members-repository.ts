@@ -9,8 +9,8 @@ import { Member } from "../models/member";
 export class MembersRepository {
   constructor(@inject(Logger) private logger: Logger) {}
 
-  public async getAll(): Promise<Member[]> {
-    return await Member.findAll();
+  public async getAll(gymId: number): Promise<Member[]> {
+    return await Member.findAll({ where: { gymId: gymId } });
   }
 
   public async save(
@@ -18,11 +18,11 @@ export class MembersRepository {
     transaction?: Transaction
   ): Promise<Member> {
     const memberInDB = await Member.findOne({
-      where: { id: member.id },
+      where: { email: member.email },
       transaction: transaction,
     });
 
-    if (!AppUtils.hasValue(memberInDB)) {
+    if (AppUtils.hasValue(memberInDB)) {
       throw new MemberAllReadyExist(
         `member with email ${memberInDB.email} allready exist`
       );
@@ -30,7 +30,7 @@ export class MembersRepository {
 
     this.logger.info(`Creating member with email '${member.email}'`);
 
-    const createdMember = await Member.create(memberInDB, {
+    const createdMember = await Member.create(member, {
       transaction: transaction,
     });
 

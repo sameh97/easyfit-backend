@@ -14,20 +14,23 @@ export class MemebrsController {
     @inject(Logger) private logger: Logger
   ) {}
 
-  public async getAll(req: any, res: any, next: any) {
+  public getAll = async (req: any, res: any, next: any) => {
     try {
-      const members: Member[] = await this.membersService.getAll();
+      const members: Member[] = await this.membersService.getAll(
+        req.query.gymId
+      );
 
       const memberDto: MemberDto[] = members.map((member) =>
         this.membersDtoMapper.asDto(member)
       );
 
-      next(memberDto);
+      // next(memberDto);
+      res.send(memberDto);
     } catch (err) {
       this.logger.error(`cannot get all members`, err);
       next(err);
     }
-  }
+  };
 
   public createMember = async (req: any, res: any, next: any) => {
     let memberToCreate: Member = null;

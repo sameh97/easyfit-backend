@@ -4,3 +4,4 @@ export class MemberAllReadyExist extends Error {
     this.name = this.constructor.name;
   }
 }
+

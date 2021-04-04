@@ -3,6 +3,8 @@ import { AppDBConnection } from "../config/database";
 import { inject } from "inversify";
 import { Logger } from "./../common/logger";
 import { UsersApi } from "../routes/users.api";
+import { MembersApi } from "../routes/members.api";
+import { GymApi } from "../routes/gym.api";
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
@@ -15,7 +17,9 @@ export class EasyFitApp {
   constructor(
     @inject(UsersApi) private usersApi: UsersApi,
     @inject(AppDBConnection) private dBconnection: AppDBConnection,
-    @inject(Logger) private logger: Logger
+    @inject(Logger) private logger: Logger,
+    @inject(MembersApi) private membersApi: MembersApi,
+    @inject(GymApi) private gymApi: GymApi
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -36,6 +40,8 @@ export class EasyFitApp {
 
   private initRoutes(): void {
     this.app.use(this.usersApi.getRouter());
+    this.app.use(this.membersApi.getRouter());
+    this.app.use(this.gymApi.getRouter());
   }
 
   public async initDB(): Promise<void> {

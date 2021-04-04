@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { injectable, inject } from "inversify";
 import { AppRoute } from "../common/interfaces/app-route";
-import { UserController } from "../controllers/user-controller";
+import { GymController } from "../controllers/gym-controller";
 
 // TODO: use this
 @injectable()
-export class UsersApi implements AppRoute {
+export class GymApi implements AppRoute {
   private router: Router;
 
-  constructor(@inject(UserController) private usersController: UserController) {
+  constructor(@inject(GymController) private gymController: GymController) {
     this.setRoutes();
   }
 
@@ -18,8 +18,6 @@ export class UsersApi implements AppRoute {
 
   private setRoutes(): void {
     this.router = Router();
-
-    this.router.post("/api/login", this.usersController.login);
-    this.router.post("/api/register", this.usersController.createUser);
+    this.router.post("/api/add-gym", this.gymController.createGym);
   }
 }

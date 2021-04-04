@@ -16,6 +16,7 @@ import { Gym } from "./gym";
 @Table({
   tableName: "members",
 })
+
 export class Member extends Model<Member> {
   @PrimaryKey
   @AutoIncrement

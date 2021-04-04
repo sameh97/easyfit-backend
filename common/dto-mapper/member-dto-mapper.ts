@@ -20,7 +20,7 @@ export class MemberDtoMapper {
       isActive: member.isActive,
       joinDate: member.joinDate,
       imageURL: member.imageURL,
-      //gymId: member.gymId
+      gymId: member.gymId
     } as MemberDto;
   }
 

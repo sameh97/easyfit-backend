@@ -42,8 +42,8 @@ export class MembersService {
     }
   }
 
-  public async getAll(): Promise<Member[]> {
-    const members = await this.memberRepository.getAll();
+  public async getAll(gymId: number): Promise<Member[]> {
+    const members = await this.memberRepository.getAll(gymId);
     this.logger.info(`Returning ${members.length} members`);
     return members;
   }
