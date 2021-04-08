@@ -69,7 +69,7 @@ export class Member extends Model<Member> {
   @Column(DataType.STRING)
   public imageURL?: string;
 
-  @AllowNull(true)
+  @AllowNull(false)
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;

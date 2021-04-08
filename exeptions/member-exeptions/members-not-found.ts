@@ -1,4 +1,4 @@
-export class MembersNotFound extends Error {
+export class MemberNotFound extends Error {
   constructor(message) {
     super(message);
     this.name = this.constructor.name;

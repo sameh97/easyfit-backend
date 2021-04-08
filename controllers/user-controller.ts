@@ -24,11 +24,11 @@ export class UserController {
       res.setHeader("Authorization", token);
       res.send({});
     } catch (e) {
-      const email = AppUtils.hasValue(userFromBody) ? userFromBody.email : '';
+      const email = AppUtils.hasValue(userFromBody) ? userFromBody.email : "";
       this.logger.error(`Cannot login user: ${email}`, e);
       next(e);
     }
-  }
+  };
 
   public createUser = async (req: any, res: any, next: any) => {
     let userToCreate: User = null;
@@ -40,7 +40,10 @@ export class UserController {
       res.status(201);
       next(this.dtoMapper.asDto(createdUser));
     } catch (err) {
-      this.logger.error(`Cannot create user: ${JSON.stringify(userToCreate)}`, err);
+      this.logger.error(
+        `Cannot create user: ${JSON.stringify(userToCreate)}`,
+        err
+      );
       next(err);
     }
   };

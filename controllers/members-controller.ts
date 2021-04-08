@@ -46,9 +46,44 @@ export class MemebrsController {
       next(this.membersDtoMapper.asDto(createdMember));
     } catch (err) {
       this.logger.error(
-        `Cannot create member ${JSON.stringify(memberToCreate)}`,
+        `Cannot create member ${JSON.stringify(req.body)}`,
         err
       );
+      next(err);
+    }
+  };
+
+  public update = async (req: any, res: any, next: any) => {
+    let memberToUpdate: Member = null;
+    try {
+      memberToUpdate = this.membersDtoMapper.asEntity(req.body);
+
+      const updatedMember: Member = await this.membersService.update(
+        memberToUpdate
+      );
+
+      res.status(201);
+
+      res.send(this.membersDtoMapper.asDto(updatedMember));
+    } catch (err) {
+      this.logger.error(
+        `Cannot update member ${JSON.stringify(req.body)}`,
+        err
+      );
+      next(err);
+    }
+  };
+
+  public delete = async (req: any, res: any, next: any) => {
+    let memberId: number = null;
+    try {
+      memberId = Number(req.params.id);
+
+      await this.membersService.delete(memberId);
+
+      res.send(`member with id ${memberId} has been deleted succesfuly`);
+    } catch (err) {
+      this.logger.error(`Cannot delete member: ${memberId}`, err);
       next(err);
     }
   };
