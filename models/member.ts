@@ -1,21 +1,23 @@
 import {
-  Table,
-  Column,
-  PrimaryKey,
-  Model,
-  DataType,
-  AutoIncrement,
-  Unique,
   AllowNull,
-  IsEmail,
-  Length,
+  AutoIncrement,
+  Column,
+  DataType,
   ForeignKey,
+  IsEmail,
+  IsDate,
+  Model,
+  PrimaryKey,
+  Table,
+  Unique,
 } from "sequelize-typescript";
 import { Gym } from "./gym";
+
 @Table({
-  tableName: "users",
+  tableName: "members",
 })
-export class User extends Model<User> {
+
+export class Member extends Model<Member> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)
@@ -29,6 +31,15 @@ export class User extends Model<User> {
   @Column(DataType.STRING)
   public lastName: string;
 
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public phone: string;
+
+  @AllowNull(false)
+  @IsDate
+  @Column(DataType.DATE)
+  public birthDay: Date;
+
   @Unique
   @AllowNull(false)
   @IsEmail
@@ -37,20 +48,26 @@ export class User extends Model<User> {
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  public phone: string;
-
-  @AllowNull(false)
-  @Column(DataType.DATE)
-  public birthDay: Date;
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
   public address: string;
 
   @AllowNull(false)
-  @Length({ min: 3, max: 512 })
+  @Column(DataType.BOOLEAN)
+  public isActive: boolean;
+
+  // TODO: check time duration
+  @IsDate
+  @AllowNull(false)
+  @Column(DataType.DATE)
+  public joinDate: Date;
+
+  //   @AllowNull(false)
+  //   @Column(DataType.DATE)
+  //   @IsDate
+  //   public endOfMembershipDate: Date;
+
+  @AllowNull(true)
   @Column(DataType.STRING)
-  public password: string;
+  public imageURL?: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)

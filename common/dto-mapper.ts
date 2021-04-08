@@ -17,6 +17,7 @@ export class DtoMapper {
       phone: user.phone,
       birthDay: user.birthDay,
       address: user.address,
+      //TODO: remove gymId
       gymId: user.gymId,
     } as UserDto;
   }
@@ -34,6 +35,7 @@ export class DtoMapper {
       birthDay: userDto.birthDay,
       address: userDto.address,
       password: userDto.password,
+      gymId: userDto.gymId
     } as User;
   }
 }
