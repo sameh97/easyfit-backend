@@ -4,6 +4,7 @@ import { User } from "../models/user";
 import { Transaction } from "sequelize/types";
 import { Gym } from "../models/gym";
 import { Member } from "../models/member";
+import { Trainer } from "../models/trainer";
 
 @injectable()
 export class AppDBConnection {
@@ -19,7 +20,7 @@ export class AppDBConnection {
       port: 5432,
     });
 
-    this.db.addModels([User, Gym, Member]);
+    this.db.addModels([User, Gym, Member,Trainer]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production
   }

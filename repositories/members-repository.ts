@@ -63,7 +63,7 @@ export class MembersRepository {
     this.logger.info(`Updated member '${JSON.stringify(updatedMember)}'`);
 
     return updatedMember;
-  };
+  }
 
   public delete = async (
     id: number,
@@ -84,5 +84,5 @@ export class MembersRepository {
       where: { id: id },
       transaction: transaction,
     });
-  };
+  }
 }

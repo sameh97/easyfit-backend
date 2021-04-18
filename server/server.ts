@@ -5,6 +5,7 @@ import { Logger } from "./../common/logger";
 import { UsersApi } from "../routes/users.api";
 import { MembersApi } from "../routes/members.api";
 import { GymApi } from "../routes/gym.api";
+import { TrainersApi } from "../routes/trainers.api";
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
@@ -19,7 +20,8 @@ export class EasyFitApp {
     @inject(AppDBConnection) private dBconnection: AppDBConnection,
     @inject(Logger) private logger: Logger,
     @inject(MembersApi) private membersApi: MembersApi,
-    @inject(GymApi) private gymApi: GymApi
+    @inject(GymApi) private gymApi: GymApi,
+    @inject(TrainersApi) private trainersApi: TrainersApi
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -42,6 +44,7 @@ export class EasyFitApp {
     this.app.use(this.usersApi.getRouter());
     this.app.use(this.membersApi.getRouter());
     this.app.use(this.gymApi.getRouter());
+    this.app.use(this.trainersApi.getRouter());
   }
 
   public async initDB(): Promise<void> {

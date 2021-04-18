@@ -17,6 +17,11 @@ import { GymService } from "./services/gym-service";
 import { MembersApi } from "./routes/members.api";
 import { GymApi } from "./routes/gym.api";
 import { GymDtoMapper } from "./common/dto-mapper/gym-dto-mapper";
+import { TrainerRepository } from "./repositories/trainer-repository";
+import { TrainerDtoMapper } from "./common/dto-mapper/trainer-dto-mapper";
+import { TrainerController } from "./controllers/trainer-controller";
+import { TrainerService } from "./services/trainer-service";
+import { TrainersApi } from "./routes/trainers.api";
 
 // TODO: improve the container, it should use types
 
@@ -40,4 +45,9 @@ container.bind<GymController>(GymController).toSelf();
 container.bind<GymService>(GymService).toSelf();
 container.bind<GymApi>(GymApi).toSelf();
 container.bind<GymDtoMapper>(GymDtoMapper).toSelf();
+container.bind<TrainerRepository>(TrainerRepository).toSelf();
+container.bind<TrainerDtoMapper>(TrainerDtoMapper).toSelf();
+container.bind<TrainerController>(TrainerController).toSelf();
+container.bind<TrainerService>(TrainerService).toSelf();
+container.bind<TrainersApi>(TrainersApi).toSelf();
 export default container;
