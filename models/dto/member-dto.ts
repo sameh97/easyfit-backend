@@ -8,8 +8,12 @@ export class MemberDto {
   public address: string;
   public isActive: boolean;
   public joinDate: Date;
-  //TODO: add membership doration
+  public endOfMembershipDate: Date;
   public imageURL: string;
   public gymId: number;
 }
+
+
+
+
 

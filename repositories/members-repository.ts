@@ -2,8 +2,8 @@ import { inject, injectable } from "inversify";
 import { Transaction } from "sequelize/types";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
-import { MemberAllReadyExist } from "../exeptions/member-exeptions/member-allready-exist";
-import { MemberNotFound } from "../exeptions/member-exeptions/members-not-found";
+import { AlreadyExistError } from "../exeptions/already-exist-error";
+import { NotFoundErr } from "../exeptions/not-found-error";
 import { Member } from "../models/member";
 
 @injectable()
@@ -24,7 +24,7 @@ export class MembersRepository {
     });
 
     if (AppUtils.hasValue(memberInDB)) {
-      throw new MemberAllReadyExist(
+      throw new AlreadyExistError(
         `member with email ${memberInDB.email} allready exist`
       );
     }
@@ -50,9 +50,7 @@ export class MembersRepository {
     });
 
     if (!AppUtils.hasValue(memberInDB)) {
-      throw new MemberNotFound(
-        `member with email ${member.email} was not fount`
-      );
+      throw new NotFoundErr(`member with email ${member.email} was not fount`);
     }
 
     this.logger.info(`Updating member with email '${member.email}'`);
@@ -75,7 +73,7 @@ export class MembersRepository {
     });
 
     if (!AppUtils.hasValue(toDelete)) {
-      throw new MemberNotFound(
+      throw new NotFoundErr(
         `Cannot delete member: ${id} because it is not found`
       );
     }

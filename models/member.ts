@@ -16,7 +16,6 @@ import { Gym } from "./gym";
 @Table({
   tableName: "members",
 })
-
 export class Member extends Model<Member> {
   @PrimaryKey
   @AutoIncrement
@@ -60,10 +59,10 @@ export class Member extends Model<Member> {
   @Column(DataType.DATE)
   public joinDate: Date;
 
-  //   @AllowNull(false)
-  //   @Column(DataType.DATE)
-  //   @IsDate
-  //   public endOfMembershipDate: Date;
+  @AllowNull(true)
+  @IsDate
+  @Column(DataType.DATE)
+  public endOfMembershipDate: Date;
 
   @AllowNull(true)
   @Column(DataType.STRING)

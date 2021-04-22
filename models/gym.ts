@@ -5,15 +5,13 @@ import {
   Model,
   DataType,
   AutoIncrement,
-  Unique,
   AllowNull,
-  IsEmail,
-  Length,
   HasOne,
   HasMany,
 } from "sequelize-typescript";
 import { AssociationOptions } from "sequelize/types";
 import { Member } from "./member";
+import { Product } from "./product";
 import { User } from "./user";
 
 @Table({
@@ -50,4 +48,11 @@ export class Gym extends Model<Gym> {
     onDelete: "CASCADE",
   } as AssociationOptions)
   public members: Member[];
+
+  @HasMany(() => Product, {
+    foreignKey: "gymId",
+    as: "productsGym",
+    onDelete: "CASCADE",
+  } as AssociationOptions)
+  public products: Product[];
 }

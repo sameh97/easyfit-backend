@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { Transaction } from "sequelize/types";
+import { now } from "sequelize/types/lib/utils";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { InputError } from "../exeptions/input-error";
@@ -19,6 +20,8 @@ export class MembersService {
     let transaction: Transaction = null;
     try {
       transaction = await this.appDBConnection.createTransaction();
+
+      member.isActive = false;
 
       const createdMember = await this.memberRepository.save(
         member,
