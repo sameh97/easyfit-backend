@@ -4,6 +4,7 @@ import { User } from "../models/user";
 import { DtoMapper } from "../common/dto-mapper";
 import { Logger } from "./../common/logger";
 import { AppUtils } from "../common/app-utils";
+const { logInSchema } = require("./../common/validation");
 
 @injectable()
 export class UserController {
@@ -17,6 +18,9 @@ export class UserController {
     let userFromBody: User = null;
     try {
       userFromBody = req.body;
+
+      // const result = await logInSchema.validateAsync(userFromBody);
+
       const token: string = await this.userService.login(
         userFromBody.email,
         userFromBody.password

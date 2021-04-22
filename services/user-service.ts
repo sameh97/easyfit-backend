@@ -49,7 +49,7 @@ export class UserService {
       user.password = hashedPassword;
 
       transaction = await this.appDBconnection.createTransaction();
-      console.log(`========== passed the transction ==========`);
+
       const createdUser = await this.usersRepository.save(user, transaction);
 
       await transaction.commit();
