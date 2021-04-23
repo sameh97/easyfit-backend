@@ -4,6 +4,7 @@ import { injectable } from "inversify";
 import { User } from "../models/user";
 import { AppUtils } from "../common/app-utils";
 import { UserNotFoundErr } from "../exeptions/user-not-found-error";
+import { NotFoundErr } from "../exeptions/not-found-error";
 
 @injectable()
 export class UsersRepository {
@@ -27,7 +28,7 @@ export class UsersRepository {
   public async getByEmail(email: string): Promise<User> {
     const userInDB = await User.findOne({ where: { email: email } });
     if (!AppUtils.hasValue(userInDB)) {
-      throw new UserNotFoundErr(`User with mail ${email} does not exist`);
+      throw new NotFoundErr(`User with mail ${email} does not exist`);
     }
 
     return userInDB;

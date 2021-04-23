@@ -6,6 +6,8 @@ import { UsersApi } from "../routes/users.api";
 import { MembersApi } from "../routes/members.api";
 import { GymApi } from "../routes/gym.api";
 import { TrainersApi } from "../routes/trainers.api";
+import { ProductsApi } from "../routes/products.api";
+import { appResponseHandler } from "./../middlewares/app-response-handler";
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
@@ -21,12 +23,18 @@ export class EasyFitApp {
     @inject(Logger) private logger: Logger,
     @inject(MembersApi) private membersApi: MembersApi,
     @inject(GymApi) private gymApi: GymApi,
-    @inject(TrainersApi) private trainersApi: TrainersApi
+    @inject(TrainersApi) private trainersApi: TrainersApi,
+    @inject(ProductsApi) private productsApi: ProductsApi
+
   ) {
     this.app = express();
     this.app.use(express.json());
     this.app.use(function (req, res, next) {
       res.header("Access-Control-Allow-Origin", "*");
+      res.header(
+        "Access-Control-Allow-Methods",
+        "DELETE, POST, GET, PUT, PATCH, OPTIONS"
+      );
       res.header("Access-Control-Allow-Headers", "*");
       res.header("Access-Control-Expose-Headers", "*");
       next();
@@ -36,6 +44,7 @@ export class EasyFitApp {
   public start(): void {
     //TODO: make a user
     this.initRoutes();
+    this.handleAllResponses();
     this.initDB();
     this.listenToRequests();
   }
@@ -45,6 +54,8 @@ export class EasyFitApp {
     this.app.use(this.membersApi.getRouter());
     this.app.use(this.gymApi.getRouter());
     this.app.use(this.trainersApi.getRouter());
+    this.app.use(this.productsApi.getRouter());
+
   }
 
   public async initDB(): Promise<void> {
@@ -56,6 +67,10 @@ export class EasyFitApp {
       .catch((e) => {
         console.log(e);
       });
+  }
+
+  private handleAllResponses(): void {
+    this.app.use(appResponseHandler);
   }
 
   private listenToRequests(): void {

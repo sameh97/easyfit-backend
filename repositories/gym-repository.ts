@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { Transaction } from "sequelize/types";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
-import { GymAllReadyExist } from "../exeptions/gym-exeptions/gym-allready-exists";
+import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { Gym } from "../models/gym";
 
 @injectable()
@@ -16,7 +16,7 @@ export class GymRepository {
     });
 
     if (AppUtils.hasValue(gymInDB)) {
-      throw new GymAllReadyExist(
+      throw new AlreadyExistError(
         `gym with name '${gymInDB.name} allready exist`
       );
     }

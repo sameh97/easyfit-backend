@@ -22,6 +22,11 @@ import { TrainerDtoMapper } from "./common/dto-mapper/trainer-dto-mapper";
 import { TrainerController } from "./controllers/trainer-controller";
 import { TrainerService } from "./services/trainer-service";
 import { TrainersApi } from "./routes/trainers.api";
+import { ProductsRepository } from "./repositories/products-repository";
+import { ProductsService } from "./services/products-service";
+import { ProductsController } from "./controllers/products-controller";
+import { ProductsApi } from "./routes/products.api";
+import { ProductDtoMapper } from "./common/dto-mapper/products-dto-mapper";
 
 // TODO: improve the container, it should use types
 
@@ -50,4 +55,10 @@ container.bind<TrainerDtoMapper>(TrainerDtoMapper).toSelf();
 container.bind<TrainerController>(TrainerController).toSelf();
 container.bind<TrainerService>(TrainerService).toSelf();
 container.bind<TrainersApi>(TrainersApi).toSelf();
+container.bind<ProductsRepository>(ProductsRepository).toSelf();
+container.bind<ProductsService>(ProductsService).toSelf();
+container.bind<ProductsController>(ProductsController).toSelf();
+container.bind<ProductsApi>(ProductsApi).toSelf();
+container.bind<ProductDtoMapper>(ProductDtoMapper).toSelf();
+
 export default container;

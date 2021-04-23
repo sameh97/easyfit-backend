@@ -24,8 +24,7 @@ export class MemebrsController {
         this.membersDtoMapper.asDto(member)
       );
 
-      // next(memberDto);
-      res.send(memberDto);
+      next(memberDto);
     } catch (err) {
       this.logger.error(`cannot get all members`, err);
       next(err);
@@ -64,7 +63,7 @@ export class MemebrsController {
 
       res.status(201);
 
-      res.send(this.membersDtoMapper.asDto(updatedMember));
+      next(this.membersDtoMapper.asDto(updatedMember));
     } catch (err) {
       this.logger.error(
         `Cannot update member ${JSON.stringify(req.body)}`,
@@ -75,16 +74,18 @@ export class MemebrsController {
   };
 
   public delete = async (req: any, res: any, next: any) => {
-    let memberId: number = null;
+    let memberId: number;
     try {
-      memberId = Number(req.params.id);
+      memberId = Number(req.query.id);
 
       await this.membersService.delete(memberId);
 
-      res.send(`member with id ${memberId} has been deleted succesfuly`);
+      next(`member with id ${memberId} has been deleted succesfuly`);
     } catch (err) {
       this.logger.error(`Cannot delete member: ${memberId}`, err);
       next(err);
     }
-  }
+
+  };
 }
+

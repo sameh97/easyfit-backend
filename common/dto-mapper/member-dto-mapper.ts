@@ -17,10 +17,12 @@ export class MemberDtoMapper {
       birthDay: member.birthDay,
       email: member.email,
       address: member.address,
+      phone: member.phone,
       isActive: member.isActive,
       joinDate: member.joinDate,
+      endOfMembershipDate: member.endOfMembershipDate,
       imageURL: member.imageURL,
-      gymId: member.gymId
+      gymId: member.gymId,
     } as MemberDto;
   }
 
@@ -38,6 +40,7 @@ export class MemberDtoMapper {
       address: memberDto.address,
       isActive: memberDto.isActive,
       joinDate: memberDto.joinDate,
+      endOfMembershipDate: memberDto.endOfMembershipDate,
       imageURL: memberDto.imageURL,
       phone: memberDto.phone,
       gymId: memberDto.gymId,
