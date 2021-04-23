@@ -6,7 +6,6 @@ import * as jwt from "jsonwebtoken";
 import { PasswordManagerService } from "./password-manager-service";
 import { Transaction } from "sequelize/types";
 import { AppDBConnection } from "../config/database";
-import { Console } from "winston/lib/winston/transports";
 import { AppUtils } from "../common/app-utils";
 
 @injectable()
@@ -16,14 +15,18 @@ export class UserService {
   private static readonly TOKEN_EXPIRATION_HOURS = 240;
   constructor(
     @inject(UsersRepository) private usersRepository: UsersRepository,
-    @inject(PasswordManagerService) private passwordManager: PasswordManagerService,
+    @inject(PasswordManagerService)
+    private passwordManager: PasswordManagerService,
     @inject(AppDBConnection) private appDBconnection: AppDBConnection
   ) {}
 
   public async login(email: string, password: string): Promise<string> {
     const userInDB = await this.usersRepository.getByEmail(email);
 
-    const isPasswordOk = await this.passwordManager.isEqual(password, userInDB.password);
+    const isPasswordOk = await this.passwordManager.isEqual(
+      password,
+      userInDB.password
+    );
     if (!isPasswordOk) {
       throw new AuthenticationError(`User with ${email} not authenticated`);
     }
@@ -59,7 +62,9 @@ export class UserService {
       if (transaction) {
         await transaction.rollback();
       }
-      console.log(`Error while creating user , error: ${AppUtils.getFullException(err)}`);
+      console.log(
+        `Error while creating user , error: ${AppUtils.getFullException(err)}`
+      );
       throw err;
     }
   }

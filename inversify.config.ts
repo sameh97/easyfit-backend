@@ -22,6 +22,11 @@ import { ProductsService } from "./services/products-service";
 import { ProductsController } from "./controllers/products-controller";
 import { ProductsApi } from "./routes/products.api";
 import { ProductDtoMapper } from "./common/dto-mapper/products-dto-mapper";
+import { MachinesRepository } from "./repositories/machine-repository";
+import { MachinesService } from "./services/machines-service";
+import { MachinesController } from "./controllers/machines-controller";
+import { MachinesApi } from "./routes/machines.api";
+import { MachineDtoMapper } from "./common/dto-mapper/machine-dto-mapper";
 
 // TODO: improve the container, it should use types
 
@@ -50,4 +55,10 @@ container.bind<ProductsService>(ProductsService).toSelf();
 container.bind<ProductsController>(ProductsController).toSelf();
 container.bind<ProductsApi>(ProductsApi).toSelf();
 container.bind<ProductDtoMapper>(ProductDtoMapper).toSelf();
+container.bind<MachinesRepository>(MachinesRepository).toSelf();
+container.bind<MachinesService>(MachinesService).toSelf();
+container.bind<MachinesController>(MachinesController).toSelf();
+container.bind<MachinesApi>(MachinesApi).toSelf();
+container.bind<MachineDtoMapper>(MachineDtoMapper).toSelf();
+
 export default container;
