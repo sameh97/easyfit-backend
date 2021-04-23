@@ -11,6 +11,7 @@ import {
 } from "sequelize-typescript";
 import { AssociationOptions } from "sequelize/types";
 import { Member } from "./member";
+import { Trainer } from "./trainer";
 import { Product } from "./product";
 import { User } from "./user";
 
@@ -49,10 +50,19 @@ export class Gym extends Model<Gym> {
   } as AssociationOptions)
   public members: Member[];
 
+
+  @HasMany(() => Trainer, {
+    foreignKey : "gymId",
+    as : " trainersGym",
+    onDelete: "CASCADE"
+  } as AssociationOptions)
+  public trainer: Trainer[];
+
   @HasMany(() => Product, {
     foreignKey: "gymId",
     as: "productsGym",
     onDelete: "CASCADE",
   } as AssociationOptions)
   public products: Product[];
+
 }

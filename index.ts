@@ -6,6 +6,7 @@ import { Logger } from "./common/logger";
 import { UsersApi } from "./routes/users.api";
 import { GymApi } from "./routes/gym.api";
 import { MembersApi } from "./routes/members.api";
+import { TrainersApi } from "./routes/trainers.api";
 import { ProductsApi } from "./routes/products.api";
 
 const app = new EasyFitApp(
@@ -14,7 +15,9 @@ const app = new EasyFitApp(
   container.get(Logger),
   container.get(MembersApi),
   container.get(GymApi),
+  container.get(TrainersApi)
   container.get(ProductsApi)
+
 );
 
 app.start();
