@@ -6,6 +6,7 @@ import { Gym } from "../models/gym";
 import { Member } from "../models/member";
 import { Trainer } from "../models/trainer";
 import { Product } from "../models/product";
+import { Machine } from "../models/machines";
 
 
 @injectable()
@@ -23,8 +24,7 @@ export class AppDBConnection {
     });
 
 
-    this.db.addModels([User, Gym, Member,Trainer ,Product]);
-
+    this.db.addModels([User, Gym, Member,Trainer ,Product , Machine]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production
   }

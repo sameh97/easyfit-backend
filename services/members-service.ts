@@ -74,7 +74,7 @@ export class MembersService {
       this.logger.error(
         `Error occurred while updating member: error: ${AppUtils.getFullException(
           err
-        )}`
+        )}`, err
       );
       throw err;
     }
