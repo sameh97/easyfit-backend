@@ -78,7 +78,7 @@ export class MembersService {
       );
       throw err;
     }
-  };
+  }
 
   public delete = async (id: number): Promise<void> => {
     if (!AppUtils.isInteger(id)) {

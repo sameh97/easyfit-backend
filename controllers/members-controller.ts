@@ -29,7 +29,7 @@ export class MemebrsController {
       this.logger.error(`cannot get all members`, err);
       next(err);
     }
-  };
+  }
 
   public createMember = async (req: any, res: any, next: any) => {
     let memberToCreate: Member = null;
@@ -85,5 +85,7 @@ export class MemebrsController {
       this.logger.error(`Cannot delete member: ${memberId}`, err);
       next(err);
     }
+
   };
 }
+

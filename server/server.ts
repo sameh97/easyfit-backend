@@ -5,6 +5,7 @@ import { Logger } from "./../common/logger";
 import { UsersApi } from "../routes/users.api";
 import { MembersApi } from "../routes/members.api";
 import { GymApi } from "../routes/gym.api";
+import { TrainersApi } from "../routes/trainers.api";
 import { ProductsApi } from "../routes/products.api";
 import { appResponseHandler } from "./../middlewares/app-response-handler";
 import { MachinesApi } from "../routes/machines.api";
@@ -25,6 +26,8 @@ export class EasyFitApp {
     @inject(GymApi) private gymApi: GymApi,
     @inject(ProductsApi) private productsApi: ProductsApi,
     @inject(MachinesApi) private machinesApi: MachinesApi
+    @inject(TrainersApi) private trainersApi: TrainersApi,
+
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -52,6 +55,7 @@ export class EasyFitApp {
     this.app.use(this.usersApi.getRouter());
     this.app.use(this.membersApi.getRouter());
     this.app.use(this.gymApi.getRouter());
+    this.app.use(this.trainersApi.getRouter());
     this.app.use(this.productsApi.getRouter());
     this.app.use(this.machinesApi.getRouter());
   }
