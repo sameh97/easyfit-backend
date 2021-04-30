@@ -9,6 +9,7 @@ import { TrainersApi } from "../routes/trainers.api";
 import { ProductsApi } from "../routes/products.api";
 import { appResponseHandler } from "./../middlewares/app-response-handler";
 import { MachinesApi } from "../routes/machines.api";
+import { MachineSchedulerService } from "../services/scheduler-service";
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
@@ -25,9 +26,10 @@ export class EasyFitApp {
     @inject(MembersApi) private membersApi: MembersApi,
     @inject(GymApi) private gymApi: GymApi,
     @inject(ProductsApi) private productsApi: ProductsApi,
-    @inject(MachinesApi) private machinesApi: MachinesApi
+    @inject(MachinesApi) private machinesApi: MachinesApi,
     @inject(TrainersApi) private trainersApi: TrainersApi,
-
+    @inject(MachineSchedulerService)
+    private machineSchedulerService: MachineSchedulerService
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -49,6 +51,7 @@ export class EasyFitApp {
     this.handleAllResponses();
     this.initDB();
     this.listenToRequests();
+    this.machineSchedulerService.enableAllSchedules();
   }
 
   private initRoutes(): void {

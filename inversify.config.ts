@@ -32,6 +32,11 @@ import { MachinesService } from "./services/machines-service";
 import { MachinesController } from "./controllers/machines-controller";
 import { MachinesApi } from "./routes/machines.api";
 import { MachineDtoMapper } from "./common/dto-mapper/machine-dto-mapper";
+import { MachineSchedulerService } from "./services/scheduler-service";
+import { MachineSchedulerRepository } from "./repositories/scheduler-repository";
+import { MachineSchedulerController } from "./controllers/scheduler-controller";
+import { MachineScheduleDtoMapper } from "./common/dto-mapper/scheduler-dto-mapper";
+import { JobScheduleManager } from "./services/scheduler-manager";
 
 // TODO: improve the container, it should use types
 
@@ -71,4 +76,9 @@ container.bind<MachinesController>(MachinesController).toSelf();
 container.bind<MachinesApi>(MachinesApi).toSelf();
 container.bind<MachineDtoMapper>(MachineDtoMapper).toSelf();
 
+container.bind<MachineSchedulerService>(MachineSchedulerService).toSelf();
+container.bind<MachineSchedulerRepository>(MachineSchedulerRepository).toSelf();
+container.bind<MachineSchedulerController>(MachineSchedulerController).toSelf();
+container.bind<MachineScheduleDtoMapper>(MachineScheduleDtoMapper).toSelf();
+container.bind<JobScheduleManager>(JobScheduleManager).toSelf();
 export default container;

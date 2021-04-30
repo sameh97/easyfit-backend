@@ -4,17 +4,19 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   PrimaryKey,
   Table,
 } from "sequelize-typescript";
+import { AssociationOptions } from "sequelize/types";
 import { Gym } from "./gym";
-import {MachineType} from './machine-type';
+import { MachineScheduledJob } from "./machine-scheduled-job";
+import { MachineType } from "./machine-type";
 
 @Table({
   tableName: "machines",
 })
-
 export class Machine extends Model<Machine> {
   @PrimaryKey
   @AutoIncrement
@@ -56,6 +58,11 @@ export class Machine extends Model<Machine> {
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;
+
+  @HasMany(() => MachineScheduledJob, {
+    foreignKey: "jobID",
+    as: "jobScheduled",
+    onDelete: "CASCADE",
+  } as AssociationOptions)
+  public machineScheduledJobs: MachineScheduledJob[];
 }
-
-

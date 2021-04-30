@@ -9,6 +9,7 @@ import { MembersApi } from "./routes/members.api";
 import { TrainersApi } from "./routes/trainers.api";
 import { ProductsApi } from "./routes/products.api";
 import { MachinesApi } from "./routes/machines.api";
+import { MachineSchedulerService } from "./services/scheduler-service";
 
 const app = new EasyFitApp(
   container.get(UsersApi),
@@ -17,8 +18,9 @@ const app = new EasyFitApp(
   container.get(MembersApi),
   container.get(GymApi),
   container.get(ProductsApi),
-  container.get(MachinesApi)
-  container.get(TrainersApi)
+  container.get(MachinesApi),
+  container.get(TrainersApi),
+  container.get(MachineSchedulerService)
 );
 
 app.start();
