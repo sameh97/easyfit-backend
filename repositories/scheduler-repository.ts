@@ -14,12 +14,16 @@ export class MachineSchedulerRepository {
     return await MachineScheduledJob.findAll({ where: { gymId: gymId } });
   };
 
+  public getAllWithoutGymId = async (): Promise<MachineScheduledJob[]> => {
+    return await MachineScheduledJob.findAll({});
+  };
+
   public save = async (
     scheduleJob: MachineScheduledJob,
     transaction?: Transaction
   ): Promise<MachineScheduledJob> => {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
-      where: { id: scheduleJob.id },
+      where: { machineID: scheduleJob.machineID },
     });
     if (AppUtils.hasValue(scheduleJobInDB)) {
       throw new AlreadyExistError(
@@ -27,7 +31,9 @@ export class MachineSchedulerRepository {
       );
     }
 
-    this.logger.info(`Creating schedule job with id ${scheduleJob.id}`);
+    this.logger.info(
+      `Creating schedule job  ${JSON.stringify(scheduleJob.id)}`
+    );
 
     const createdSchedule = await MachineScheduledJob.create(scheduleJob, {
       transaction: transaction,

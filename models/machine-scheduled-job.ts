@@ -31,14 +31,13 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
   @Column(DataType.BOOLEAN)
   public isActive: Boolean;
 
-  //TODO: check if (targetScheduleRepeat) needs to be a number
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  public targetScheduleRepeat: number;
+  public hoursFrequency: number;
 
   @AllowNull(false)
-  @Column(DataType.INTEGER)
-  public currentRepeatCount: number;
+  @Column(DataType.DATE)
+  public endTime: Date;
 
   @HasOne(() => Job, {
     foreignKey: "jobID",

@@ -42,7 +42,7 @@ export class MachineSchedulerController {
         scheduleToCreate
       );
 
-      res.statusCode(201);
+      res.status(201);
 
       next(this.machineScheduleDtoMapper.asDto(createdSchedule));
     } catch (error) {
@@ -78,7 +78,7 @@ export class MachineSchedulerController {
   public delete = async (req: any, res: any, next: any) => {
     let scheduledJobId: number = null;
     try {
-      scheduledJobId = Number(req.params.id);
+      scheduledJobId = Number(req.query.id);
 
       await this.machineSchedulerService.delete(scheduledJobId);
 

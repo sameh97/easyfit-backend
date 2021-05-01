@@ -1,9 +1,9 @@
 export class MachineScheduledJobDto {
   public id: number;
   public startTime: Date;
+  public endTime: Date;
   public isActive: Boolean;
-  public targetScheduleRepeat: number;
-  public currentRepeatCount: number;
+  public hoursFrequency: number;
   public jobID: number;
   public machineID: number;
   public gymId: number;

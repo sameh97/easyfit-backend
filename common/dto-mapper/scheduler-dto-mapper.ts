@@ -13,9 +13,9 @@ export class MachineScheduleDtoMapper {
     return {
       id: scheduledJob.id,
       startTime: scheduledJob.startTime,
+      endTime: scheduledJob.endTime,
       isActive: scheduledJob.isActive,
-      targetScheduleRepeat: scheduledJob.targetScheduleRepeat,
-      currentRepeatCount: scheduledJob.currentRepeatCount,
+      hoursFrequency: scheduledJob.hoursFrequency,
       jobID: scheduledJob.jobID,
       machineID: scheduledJob.machineID,
       gymId: scheduledJob.gymId,
@@ -32,9 +32,9 @@ export class MachineScheduleDtoMapper {
     return {
       id: machineScheduledJobDto.id,
       startTime: machineScheduledJobDto.startTime,
+      endTime: machineScheduledJobDto.endTime,
       isActive: machineScheduledJobDto.isActive,
-      targetScheduleRepeat: machineScheduledJobDto.targetScheduleRepeat,
-      currentRepeatCount: machineScheduledJobDto.currentRepeatCount,
+      hoursFrequency: machineScheduledJobDto.hoursFrequency,
       jobID: machineScheduledJobDto.jobID,
       machineID: machineScheduledJobDto.machineID,
       gymId: machineScheduledJobDto.gymId,

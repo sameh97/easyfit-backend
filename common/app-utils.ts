@@ -1,3 +1,5 @@
+import { MachineScheduledJob } from "../models/machine-scheduled-job";
+
 export class AppUtils {
   public static hasValue(obj: any): boolean {
     if (typeof obj === "undefined" || obj === null) {
@@ -20,4 +22,17 @@ export class AppUtils {
     }
     return false;
   }
+
+  public static createCronExpression = async (scheduledJob: MachineScheduledJob): Promise<string> => {
+    const hours = AppUtils.hasValue(scheduledJob.hoursFrequency)
+      ? `*/${scheduledJob.hoursFrequency}`
+      : "*";
+
+    let cronExp: string = `0 ${hours} * * *`;
+
+     // if hour is not choosen, specify the job to run every 3 days:
+    cronExp = cronExp === `0 * * * *` ? `0 */72 * * *` : cronExp;
+
+    return cronExp;
+  };
 }
