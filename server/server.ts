@@ -13,6 +13,9 @@ import { MachineSchedulerService } from "../services/scheduler-service";
 import { MachineSchedulerApi } from "../routes/scheduler.api";
 import { Job } from "../models/job";
 import { JobScheduleManager } from "../services/scheduler-manager";
+import { Transaction } from "sequelize/types";
+import * as cors from "cors";
+
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
@@ -35,8 +38,7 @@ export class EasyFitApp {
     private machineSchedulerApi: MachineSchedulerApi,
     @inject(MachineSchedulerService)
     private machineSchedulerService: MachineSchedulerService,
-    @inject(JobScheduleManager)
-    private jobScheduleManager: JobScheduleManager
+    @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -50,28 +52,41 @@ export class EasyFitApp {
       res.header("Access-Control-Expose-Headers", "*");
       next();
     });
+    this.app.use(cors());
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
     //TODO: make a user
     this.initRoutes();
     this.handleAllResponses();
     this.initDB();
     this.listenToRequests();
-    //  this.machineSchedulerService.enableAllSchedules();
-    //   this.addStaticJob();
+    this.addStaticJob();
     this.jobScheduleManager.runAllScheduledJobs();
   }
+
   //TODO: remove:
-  private addStaticJob = async () => {
-    const job1 = {
+  private addStaticJob = async (): Promise<void> => {
+    const job1: Job = {
+      id: null,
       title: "clean",
       description: "clean!!!!!!",
-    };
+      machineScheduledJobs: undefined,
+    } as Job;
 
-    const createdJob = await Job.create(job1);
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.dBconnection.createTransaction();
 
-    console.log(createdJob);
+      const createdJob = await Job.create(job1, { transaction: transaction });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      console.log(error);
+    }
   };
 
   private initRoutes(): void {
@@ -105,6 +120,17 @@ export class EasyFitApp {
     const PORT = process.env.APP_PORT || 3000;
 
     const server = http.createServer(this.app);
+
+    const io = require("socket.io")(server, {
+      cors: {
+        origin: "*",
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      },
+    });
+
+    io.on("connection", (socket) => {
+      console.log("a user connected");
+    });
 
     server.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`);

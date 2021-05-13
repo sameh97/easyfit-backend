@@ -35,7 +35,7 @@ export class AppDBConnection {
       Job,
     ]);
     await this.db.authenticate();
-    await this.db.sync({ force: true }); // TODO: remove in production
+    await this.db.sync(); // TODO: remove in production
   }
   //{ force: true }
 

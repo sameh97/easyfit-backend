@@ -23,6 +23,8 @@ export class MachineSchedulerService {
   ): Promise<MachineScheduledJob> => {
     let transaction: Transaction = null;
     try {
+      await AppUtils.validteScheduledJobEndDate(scheduleJob);
+
       transaction = await this.appDBConnection.createTransaction();
 
       const createdScheduleJob = await this.machineSchedulerRepo.save(
@@ -102,6 +104,10 @@ export class MachineSchedulerService {
       await this.machineSchedulerRepo.delete(id, transaction);
 
       await transaction.commit();
+
+      this.jobScheduleManager.cancelJob(id);
+
+      //TODO: check if we need to remove from the map also
 
       this.logger.info(`Schedule with id ${id} has been deleted.`);
     } catch (err) {
