@@ -12,6 +12,7 @@ import { MachinesApi } from "./routes/machines.api";
 import { MachineSchedulerService } from "./services/scheduler-service";
 import { MachineSchedulerApi } from "./routes/scheduler.api";
 import { JobScheduleManager } from "./services/scheduler-manager";
+import { WebSocketService } from "./services/socket.io-service";
 
 const app = new EasyFitApp(
   container.get(UsersApi),
@@ -24,7 +25,8 @@ const app = new EasyFitApp(
   container.get(TrainersApi),
   container.get(MachineSchedulerApi),
   container.get(MachineSchedulerService),
-  container.get(JobScheduleManager)
+  container.get(JobScheduleManager),
+  container.get(WebSocketService)
 );
 
 app.start();

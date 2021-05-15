@@ -38,6 +38,8 @@ import { MachineSchedulerController } from "./controllers/scheduler-controller";
 import { MachineScheduleDtoMapper } from "./common/dto-mapper/scheduler-dto-mapper";
 import { JobScheduleManager } from "./services/scheduler-manager";
 import { MachineSchedulerApi } from "./routes/scheduler.api";
+import { JobService } from "./services/job-service";
+import { WebSocketService } from "./services/socket.io-service";
 
 // TODO: improve the container, it should use types
 
@@ -83,4 +85,7 @@ container.bind<MachineSchedulerController>(MachineSchedulerController).toSelf();
 container.bind<MachineScheduleDtoMapper>(MachineScheduleDtoMapper).toSelf();
 container.bind<JobScheduleManager>(JobScheduleManager).toSelf();
 container.bind<MachineSchedulerApi>(MachineSchedulerApi).toSelf();
+
+container.bind<JobService>(JobService).toSelf();
+container.bind<WebSocketService>(WebSocketService).toSelf();
 export default container;

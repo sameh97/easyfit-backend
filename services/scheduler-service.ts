@@ -23,7 +23,7 @@ export class MachineSchedulerService {
   ): Promise<MachineScheduledJob> => {
     let transaction: Transaction = null;
     try {
-      await AppUtils.validteScheduledJobEndDate(scheduleJob);
+      // await AppUtils.validteScheduledJobEndDate(scheduleJob);
 
       transaction = await this.appDBConnection.createTransaction();
 
@@ -53,9 +53,8 @@ export class MachineSchedulerService {
   };
 
   public getAll = async (gymId: number): Promise<MachineScheduledJob[]> => {
-    const machineSchedules: MachineScheduledJob[] = await this.machineSchedulerRepo.getAll(
-      gymId
-    );
+    const machineSchedules: MachineScheduledJob[] =
+      await this.machineSchedulerRepo.getAll(gymId);
     this.logger.info(`Returning ${machineSchedules.length} schedules`);
     return machineSchedules;
   };

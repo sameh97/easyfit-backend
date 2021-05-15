@@ -15,6 +15,7 @@ import { Job } from "../models/job";
 import { JobScheduleManager } from "../services/scheduler-manager";
 import { Transaction } from "sequelize/types";
 import * as cors from "cors";
+import { WebSocketService } from "../services/socket.io-service";
 
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
@@ -38,7 +39,8 @@ export class EasyFitApp {
     private machineSchedulerApi: MachineSchedulerApi,
     @inject(MachineSchedulerService)
     private machineSchedulerService: MachineSchedulerService,
-    @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager
+    @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager,
+    @inject(WebSocketService) private webSocketService: WebSocketService
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -74,11 +76,31 @@ export class EasyFitApp {
       machineScheduledJobs: undefined,
     } as Job;
 
+    const job2: Job = {
+      id: null,
+      title: "service",
+      description: "service!!!!!!",
+      machineScheduledJobs: undefined,
+    } as Job;
+
     let transaction: Transaction = null;
     try {
       transaction = await this.dBconnection.createTransaction();
 
       const createdJob = await Job.create(job1, { transaction: transaction });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      console.log(error);
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
+    try {
+      transaction = await this.dBconnection.createTransaction();
+
+      const createdJob = await Job.create(job2, { transaction: transaction });
 
       transaction.commit();
     } catch (error) {
@@ -121,16 +143,7 @@ export class EasyFitApp {
 
     const server = http.createServer(this.app);
 
-    const io = require("socket.io")(server, {
-      cors: {
-        origin: "*",
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      },
-    });
-
-    io.on("connection", (socket) => {
-      console.log("a user connected");
-    });
+    this.webSocketService.connect(server);
 
     server.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`);

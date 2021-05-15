@@ -4,6 +4,7 @@ import { InputError } from "../exeptions/input-error";
 import { NotFound } from "../exeptions/notFound-exeption";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
+import { JobService } from "./job-service";
 
 const schedule = require("node-schedule");
 @injectable()
@@ -11,8 +12,11 @@ export class JobScheduleManager {
   public allJobs = new Map();
   constructor(
     @inject(MachineSchedulerRepository)
-    private machineSchedulerRepository: MachineSchedulerRepository
+    private machineSchedulerRepository: MachineSchedulerRepository,
+    @inject(JobService) private jobService: JobService
   ) {}
+
+  //TODO: cancel job also in case the end time is arrived
 
   public runJob = async (scheduledJob: MachineScheduledJob): Promise<void> => {
     let cronExp = await AppUtils.createCronExpression(scheduledJob);
@@ -26,7 +30,8 @@ export class JobScheduleManager {
         rule: cronExp,
       },
       () => {
-        console.log("Time for tea!");
+        this.jobService.send(scheduledJob);
+        console.log("sent notification");
       }
     );
 
@@ -53,28 +58,14 @@ export class JobScheduleManager {
   };
 
   public runAllScheduledJobs = async (): Promise<void> => {
-    const currentJobs: MachineScheduledJob[] = await this.machineSchedulerRepository.getAllWithoutGymId();
+    const currentJobs: MachineScheduledJob[] =
+      await this.machineSchedulerRepository.getAllWithoutGymId();
 
     if (!AppUtils.hasValue(currentJobs) || currentJobs.length === 0) {
       console.log(`there is no jobs to run!`);
       return;
     }
 
-    currentJobs.forEach(async (job) => {
-      let cronExp = await AppUtils.createCronExpression(job);
-
-      const jobEnabled = schedule.scheduleJob(
-        {
-          start: job.startTime,
-          end: job.endTime,
-          rule: cronExp,
-        },
-        () => {
-          console.log("Time for tea!");
-        }
-      );
-
-      this.allJobs.set(job.id, jobEnabled);
-    });
+    currentJobs.forEach(async (job) => this.runJob(job));
   };
 }
