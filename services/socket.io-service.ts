@@ -21,7 +21,7 @@ export class WebSocketService {
         "event",
         `you have connected successfully to the server`
       );
-      console.log("a user connected " + JSON.stringify(socket.handshake.query));
+      console.log("a user connected " + socket.id);
     });
   };
 }

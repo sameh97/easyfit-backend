@@ -20,7 +20,7 @@ export class JobService {
   public send = async (schedueledJob: MachineScheduledJob): Promise<void> => {
     if (!AppUtils.hasValue(schedueledJob)) {
       throw new NotFound(
-        `cannot assign job because scheduled job object is not found`
+        `cannot send job because scheduled job object is not found`
       );
     }
 
