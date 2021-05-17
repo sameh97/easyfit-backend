@@ -9,6 +9,14 @@ import { TrainersApi } from "../routes/trainers.api";
 import { ProductsApi } from "../routes/products.api";
 import { appResponseHandler } from "./../middlewares/app-response-handler";
 import { MachinesApi } from "../routes/machines.api";
+import { MachineSchedulerService } from "../services/scheduler-service";
+import { MachineSchedulerApi } from "../routes/scheduler.api";
+import { Job } from "../models/job";
+import { JobScheduleManager } from "../services/scheduler-manager";
+import { Transaction } from "sequelize/types";
+import * as cors from "cors";
+import { WebSocketService } from "../services/socket.io-service";
+
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
 const bodyParser = require("body-parser");
@@ -25,9 +33,14 @@ export class EasyFitApp {
     @inject(MembersApi) private membersApi: MembersApi,
     @inject(GymApi) private gymApi: GymApi,
     @inject(ProductsApi) private productsApi: ProductsApi,
-    @inject(MachinesApi) private machinesApi: MachinesApi
+    @inject(MachinesApi) private machinesApi: MachinesApi,
     @inject(TrainersApi) private trainersApi: TrainersApi,
-
+    @inject(MachineSchedulerApi)
+    private machineSchedulerApi: MachineSchedulerApi,
+    @inject(MachineSchedulerService)
+    private machineSchedulerService: MachineSchedulerService,
+    @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager,
+    @inject(WebSocketService) private webSocketService: WebSocketService
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -41,15 +54,62 @@ export class EasyFitApp {
       res.header("Access-Control-Expose-Headers", "*");
       next();
     });
+    this.app.use(cors());
   }
 
-  public start(): void {
+  public async start(): Promise<void> {
     //TODO: make a user
     this.initRoutes();
     this.handleAllResponses();
     this.initDB();
     this.listenToRequests();
+    this.addStaticJob();
+    this.jobScheduleManager.runAllScheduledJobs();
   }
+
+  //TODO: remove:
+  private addStaticJob = async (): Promise<void> => {
+    const job1: Job = {
+      id: null,
+      title: "clean",
+      description: "clean!!!!!!",
+      machineScheduledJobs: undefined,
+    } as Job;
+
+    const job2: Job = {
+      id: null,
+      title: "service",
+      description: "service!!!!!!",
+      machineScheduledJobs: undefined,
+    } as Job;
+
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.dBconnection.createTransaction();
+
+      const createdJob = await Job.create(job1, { transaction: transaction });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      console.log(error);
+    }
+    /////////////////////////////////////////////////////////////////////////////////////
+    try {
+      transaction = await this.dBconnection.createTransaction();
+
+      const createdJob = await Job.create(job2, { transaction: transaction });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      console.log(error);
+    }
+  };
 
   private initRoutes(): void {
     this.app.use(this.usersApi.getRouter());
@@ -58,6 +118,7 @@ export class EasyFitApp {
     this.app.use(this.trainersApi.getRouter());
     this.app.use(this.productsApi.getRouter());
     this.app.use(this.machinesApi.getRouter());
+    this.app.use(this.machineSchedulerApi.getRouter());
   }
 
   public async initDB(): Promise<void> {
@@ -81,6 +142,8 @@ export class EasyFitApp {
     const PORT = process.env.APP_PORT || 3000;
 
     const server = http.createServer(this.app);
+
+    this.webSocketService.connect(server);
 
     server.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`);

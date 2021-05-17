@@ -79,7 +79,7 @@ export class ProductsController {
 
       await this.productsService.delete(productId);
 
-      next(`product with id ${productId} has been deleted succesfuly`);
+      next(`product with id ${productId} has been deleted successfully`);
     } catch (err) {
       this.logger.error(`Cannot delete product: ${productId}`, err);
       next(err);

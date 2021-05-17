@@ -66,7 +66,7 @@ export class ProductsService {
         transaction.rollback();
       }
       this.logger.error(
-        `Error occurred while creating product: error: ${AppUtils.getFullException(
+        `Error occurred while updating product: error: ${AppUtils.getFullException(
           err
         )}`
       );

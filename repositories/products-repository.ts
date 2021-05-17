@@ -48,7 +48,9 @@ export class ProductsRepository {
 
     this.logger.info(`Updating product with id ${productInDB.id}`);
 
-    const updatedProduct = await productInDB.update(product);
+    const updatedProduct = await productInDB.update(product, {
+      transaction: transaction,
+    });
 
     this.logger.info(`updated product ${JSON.stringify(updatedProduct)}`);
 

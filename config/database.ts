@@ -7,7 +7,8 @@ import { Member } from "../models/member";
 import { Trainer } from "../models/trainer";
 import { Product } from "../models/product";
 import { Machine } from "../models/machines";
-
+import { MachineScheduledJob } from "../models/machine-scheduled-job";
+import { Job } from "../models/job";
 
 @injectable()
 export class AppDBConnection {
@@ -23,8 +24,16 @@ export class AppDBConnection {
       port: 5432,
     });
 
-
-    this.db.addModels([User, Gym, Member,Trainer ,Product , Machine]);
+    this.db.addModels([
+      User,
+      Gym,
+      Member,
+      Trainer,
+      Product,
+      Machine,
+      MachineScheduledJob,
+      Job,
+    ]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production
   }
