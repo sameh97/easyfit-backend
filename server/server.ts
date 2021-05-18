@@ -119,6 +119,11 @@ export class EasyFitApp {
     this.app.use(this.productsApi.getRouter());
     this.app.use(this.machinesApi.getRouter());
     this.app.use(this.machineSchedulerApi.getRouter());
+
+    // Catch all other get requests
+    this.app.get('/*', (req, res) => {
+      res.sendFile(path.join(__dirname, '/public/index.html'));
+    });
   }
 
   public async initDB(): Promise<void> {
