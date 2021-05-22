@@ -40,7 +40,7 @@ import { JobScheduleManager } from "./services/scheduler-manager";
 import { MachineSchedulerApi } from "./routes/scheduler.api";
 import { JobService } from "./services/job-service";
 import { WebSocketService } from "./services/socket.io-service";
-
+import { CacheService } from "./services/cache-service";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -88,4 +88,5 @@ container.bind<MachineSchedulerApi>(MachineSchedulerApi).toSelf();
 
 container.bind<JobService>(JobService).toSelf();
 container.bind<WebSocketService>(WebSocketService).toSelf();
+container.bind<CacheService>(CacheService).toSelf();
 export default container;

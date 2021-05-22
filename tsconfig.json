@@ -13,7 +13,8 @@
         "moduleResolution": "Node"
     },
     "include": [
-        "./**/*.ts"
+        "./**/*.ts",
+        "public"
     ],
     "exclude": [
         "node_modules",
