@@ -17,14 +17,13 @@ export class MachineSchedulerController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
-      const machineSchedules: MachineScheduledJob[] = await this.machineSchedulerService.getAll(
-        req.query.gymId
-      );
+      const machineSchedules: MachineScheduledJob[] =
+        await this.machineSchedulerService.getAll(req.query.gymId);
 
-      const machineSchedulesDto: MachineScheduledJobDto[] = machineSchedules.map(
-        (machineSchedule) =>
+      const machineSchedulesDto: MachineScheduledJobDto[] =
+        machineSchedules.map((machineSchedule) =>
           this.machineScheduleDtoMapper.asDto(machineSchedule)
-      );
+        );
 
       next(machineSchedulesDto);
     } catch (err) {
@@ -38,9 +37,8 @@ export class MachineSchedulerController {
     try {
       scheduleToCreate = this.machineScheduleDtoMapper.asEntity(req.body);
 
-      const createdSchedule: MachineScheduledJob = await this.machineSchedulerService.create(
-        scheduleToCreate
-      );
+      const createdSchedule: MachineScheduledJob =
+        await this.machineSchedulerService.create(scheduleToCreate);
 
       res.status(201);
 
@@ -59,9 +57,8 @@ export class MachineSchedulerController {
     try {
       scheduleToUpdate = this.machineScheduleDtoMapper.asEntity(req.body);
 
-      const updatedScheduledJob: MachineScheduledJob = await this.machineSchedulerService.update(
-        scheduleToUpdate
-      );
+      const updatedScheduledJob: MachineScheduledJob =
+        await this.machineSchedulerService.update(scheduleToUpdate);
 
       res.status(201);
 

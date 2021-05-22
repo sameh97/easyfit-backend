@@ -1,7 +1,6 @@
 import { inject, injectable } from "inversify";
 import { AppUtils } from "../common/app-utils";
 import { InputError } from "../exeptions/input-error";
-import { NotFound } from "../exeptions/notFound-exeption";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
 import { JobService } from "./job-service";
@@ -54,7 +53,15 @@ export class JobScheduleManager {
 
     jobToCancel.cancel();
 
-    this.allJobs.delete(jobID);
+    this.deleteJobFromMap(jobID);
+  };
+
+  public updateRunningJob = async (
+    scheduledJob: MachineScheduledJob
+  ): Promise<void> => {
+    this.cancelJob(scheduledJob.id);
+
+    this.runJob(scheduledJob);
   };
 
   public runAllScheduledJobs = async (): Promise<void> => {
@@ -67,5 +74,15 @@ export class JobScheduleManager {
     }
 
     currentJobs.forEach(async (job) => this.runJob(job));
+  };
+
+  public deleteJobFromMap = (id: number): void => {
+    if (!AppUtils.isInteger(id)) {
+      throw new InputError(
+        `cannot delete job because the givin id must be integer`
+      );
+    }
+
+    this.allJobs.delete(id);
   };
 }

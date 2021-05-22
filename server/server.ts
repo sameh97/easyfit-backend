@@ -16,6 +16,10 @@ import { JobScheduleManager } from "../services/scheduler-manager";
 import { Transaction } from "sequelize/types";
 import * as cors from "cors";
 import { WebSocketService } from "../services/socket.io-service";
+import { Consts } from "../common/consts";
+import { MachineScheduledJob } from "../models/machine-scheduled-job";
+import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
+import { AppUtils } from "../common/app-utils";
 
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
@@ -40,7 +44,9 @@ export class EasyFitApp {
     @inject(MachineSchedulerService)
     private machineSchedulerService: MachineSchedulerService,
     @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager,
-    @inject(WebSocketService) private webSocketService: WebSocketService
+    @inject(WebSocketService) private webSocketService: WebSocketService,
+    @inject(MachineSchedulerRepository)
+    private machineSchedulerRepository: MachineSchedulerRepository
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -65,6 +71,7 @@ export class EasyFitApp {
     this.listenToRequests();
     this.addStaticJob();
     this.jobScheduleManager.runAllScheduledJobs();
+    this.setScheduledJobExpirationTracker();
   }
 
   //TODO: remove:
@@ -111,6 +118,36 @@ export class EasyFitApp {
     }
   };
 
+  private setScheduledJobExpirationTracker(): void {
+    // job tracker that looks for expired jobs and delete them, it will run every day.
+    setInterval(async () => {
+      try {
+        const allSchedules: MachineScheduledJob[] =
+          await this.machineSchedulerRepository.getAllWithoutGymId();
+
+        allSchedules.forEach(async (scheduledJob) => {
+          const now: number = new Date().getTime();
+
+          const scheduledJobEndTime: number = new Date(
+            scheduledJob.endTime
+          ).getTime();
+
+          if (scheduledJobEndTime < now) {
+            this.jobScheduleManager.deleteJobFromMap(scheduledJob.id);
+
+            await this.machineSchedulerService.delete(scheduledJob.id);
+          }
+        });
+      } catch (error) {
+        this.logger.error(
+          `error occurred while executing job expiration tracker. \n ${AppUtils.getFullException(
+            error
+          )}`
+        );
+      }
+    }, Consts.ONE_DAY_IN_MILLISECONDS);
+  }
+
   private initRoutes(): void {
     this.app.use(this.usersApi.getRouter());
     this.app.use(this.membersApi.getRouter());
@@ -121,8 +158,8 @@ export class EasyFitApp {
     this.app.use(this.machineSchedulerApi.getRouter());
 
     // Catch all other get requests
-    this.app.get('/*', (req, res) => {
-      res.sendFile(path.join(__dirname, '/public/index.html'));
+    this.app.get("/*", (req, res) => {
+      res.sendFile(path.join(__dirname, "/public/index.html"));
     });
   }
 
