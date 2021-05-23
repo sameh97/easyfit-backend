@@ -34,7 +34,7 @@ export class AppUtils {
       : "*";
 
     //TODO: change to hours:
-    let cronExp: string = `${hours} * * * *`;
+    let cronExp: string = `0 ${hours} * * *`;
 
     // if hour is not choosen, specify the job to run every 3 days:
     cronExp = cronExp === `0 * * * *` ? `0 */72 * * *` : cronExp;

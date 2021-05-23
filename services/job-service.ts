@@ -8,13 +8,16 @@ import { WebSocketService } from "./socket.io-service";
 import { SocketTopics } from "./../common/socket-util";
 import { MachineScheduleDtoMapper } from "../common/dto-mapper/scheduler-dto-mapper";
 import { AppNotificationMessage } from "../models/dto/app-notification-message";
+import { CacheService } from "./cache-service";
 
 @injectable()
 export class JobService {
   constructor(
     @inject(WebSocketService) private webSocketService: WebSocketService,
     @inject(MachineScheduleDtoMapper)
-    private machineScheduleDtoMapper: MachineScheduleDtoMapper
+    private machineScheduleDtoMapper: MachineScheduleDtoMapper,
+    @inject(CacheService)
+    private cacheService: CacheService
   ) {}
 
   public send = async (schedueledJob: MachineScheduledJob): Promise<void> => {
@@ -27,7 +30,12 @@ export class JobService {
     const topic = this.getTopicByJobId(schedueledJob.jobID);
     const notificationToSend = this.createNotification(schedueledJob, topic);
 
-    this.webSocketService.socketIO.emit(topic, notificationToSend);
+    // get the connection of specific client that need to recive the notification:
+    const socketID: string = this.cacheService.get(
+      schedueledJob.gymId.toString()
+    );
+
+    this.webSocketService.socketIO.to(socketID).emit(topic, notificationToSend);
   };
 
   private createNotification(

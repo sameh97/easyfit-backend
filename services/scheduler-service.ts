@@ -23,7 +23,7 @@ export class MachineSchedulerService {
   ): Promise<MachineScheduledJob> => {
     let transaction: Transaction = null;
     try {
-      // await AppUtils.validteScheduledJobEndDate(scheduleJob);
+      await AppUtils.validteScheduledJobEndDate(scheduleJob);
 
       transaction = await this.appDBConnection.createTransaction();
 
@@ -72,6 +72,8 @@ export class MachineSchedulerService {
       );
 
       await transaction.commit();
+
+      this.jobScheduleManager.updateRunningJob(scheduleJob);
 
       this.logger.info(`updated schedule with id ${updatedScheduleJob.id}`);
 
