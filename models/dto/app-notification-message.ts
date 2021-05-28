@@ -1,4 +1,3 @@
-
 export class AppNotificationMessage {
   id: string;
   content: any;

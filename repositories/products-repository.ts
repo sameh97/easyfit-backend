@@ -18,7 +18,10 @@ export class ProductsRepository {
     product: Product,
     transaction?: Transaction
   ): Promise<Product> => {
-    const productInDB = await Product.findOne({ where: { id: product.id } });
+    const productInDB = await Product.findOne({
+      where: { id: product.id },
+      transaction: transaction,
+    });
     if (AppUtils.hasValue(productInDB)) {
       throw new AlreadyExistError(
         `Product with id ${productInDB.id} already exist`

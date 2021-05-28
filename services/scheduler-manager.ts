@@ -3,6 +3,7 @@ import { AppUtils } from "../common/app-utils";
 import { InputError } from "../exeptions/input-error";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
+import { AppNotificationService } from "./app-notification-service";
 import { JobService } from "./job-service";
 
 const schedule = require("node-schedule");
@@ -12,7 +13,8 @@ export class JobScheduleManager {
   constructor(
     @inject(MachineSchedulerRepository)
     private machineSchedulerRepository: MachineSchedulerRepository,
-    @inject(JobService) private jobService: JobService
+    @inject(JobService) private jobService: JobService,
+  
   ) {}
 
   //TODO: cancel job also in case the end time is arrived
@@ -29,6 +31,8 @@ export class JobScheduleManager {
         rule: cronExp,
       },
       () => {
+        
+        
         this.jobService.send(scheduledJob);
         console.log("sent notification");
       }

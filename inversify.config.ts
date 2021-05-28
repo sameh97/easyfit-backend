@@ -41,6 +41,9 @@ import { MachineSchedulerApi } from "./routes/scheduler.api";
 import { JobService } from "./services/job-service";
 import { WebSocketService } from "./services/socket.io-service";
 import { CacheService } from "./services/cache-service";
+import { AppNotification } from "./models/app-notification";
+import { AppNotificationRepository } from "./repositories/app-notification-repository";
+import { AppNotificationService } from "./services/app-notification-service";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -89,4 +92,8 @@ container.bind<MachineSchedulerApi>(MachineSchedulerApi).toSelf();
 container.bind<JobService>(JobService).toSelf();
 container.bind<WebSocketService>(WebSocketService).toSelf();
 container.bind<CacheService>(CacheService).toSelf();
+
+container.bind<AppNotification>(AppNotification).toSelf();
+container.bind<AppNotificationRepository>(AppNotificationRepository).toSelf();
+container.bind<AppNotificationService>(AppNotificationService).toSelf();
 export default container;
