@@ -9,8 +9,6 @@ import { SocketTopics } from "./../common/socket-util";
 import { MachineScheduleDtoMapper } from "../common/dto-mapper/scheduler-dto-mapper";
 import { AppNotificationMessage } from "../models/dto/app-notification-message";
 import { CacheService } from "./cache-service";
-import { AppNotificationService } from "./app-notification-service";
-import { AppNotification } from "../models/app-notification";
 
 @injectable()
 export class JobService {
@@ -20,8 +18,6 @@ export class JobService {
     private machineScheduleDtoMapper: MachineScheduleDtoMapper,
     @inject(CacheService)
     private cacheService: CacheService,
-    @inject(AppNotificationService)
-    private appNotificationService: AppNotificationService
   ) {}
 
   public send = async (schedueledJob: MachineScheduledJob): Promise<void> => {

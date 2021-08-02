@@ -158,8 +158,13 @@ export class EasyFitApp {
     this.app.use(this.machineSchedulerApi.getRouter());
 
     // Catch all other get requests
+    const publicPath = express.static(path.join(__dirname, "./../"), {
+      redirect: false,
+    });
+
+    this.app.use(publicPath);
     this.app.get("/*", (req, res) => {
-      res.sendFile(path.join(__dirname, "/public/index.html"));
+      res.sendFile(path.join(__dirname, "../index.html"));
     });
   }
 

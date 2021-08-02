@@ -1,7 +1,9 @@
 import { Console } from "winston/lib/winston/transports";
 import { InputError } from "../exeptions/input-error";
+import { AppNotification } from "../models/app-notification";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { Consts } from "./consts";
+import { SocketTopics } from "./socket-util";
 
 export class AppUtils {
   public static hasValue(obj: any): boolean {
@@ -38,7 +40,7 @@ export class AppUtils {
 
     // if hour is not choosen, specify the job to run every 3 days:
     cronExp = cronExp === `0 * * * *` ? `0 */72 * * *` : cronExp;
-
+    // cronExp = `* * * * * *`;
     return cronExp;
   };
 
@@ -62,5 +64,26 @@ export class AppUtils {
       throw new InputError(`the scheduled job end time is not valid, because it will finish after less than 1 hour 
       (the schedule will never fire in this case)`);
     }
+  };
+
+  public static createNotificationToStoreInDB = (
+    scheduledJob: MachineScheduledJob
+  ): AppNotification => {
+    const topic: string =
+      scheduledJob.jobID === 1
+        ? SocketTopics.TOPIC_CLEAN_MACHINE
+        : SocketTopics.TOPIC_MACHINE_SERVICE;
+
+    const notificationToCreate: AppNotification = {
+      content: JSON.stringify(scheduledJob),
+      topic: topic,
+      userId: scheduledJob.gymId,
+      username: null,
+      time: new Date(),
+      seen: false,
+      targetUserIds: null,
+    } as unknown as AppNotification;
+
+    return notificationToCreate;
   };
 }

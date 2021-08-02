@@ -19,7 +19,7 @@ export class ProductsRepository {
     transaction?: Transaction
   ): Promise<Product> => {
     const productInDB = await Product.findOne({
-      where: { id: product.id },
+      where: { id: product.id }, // TODO: check by something else than id
       transaction: transaction,
     });
     if (AppUtils.hasValue(productInDB)) {

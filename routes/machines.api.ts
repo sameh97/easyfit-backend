@@ -20,9 +20,11 @@ export class MachinesApi implements AppRoute {
   private setRoutes(): void {
     this.router = Router();
 
-    this.router.post("/api/machines", this.machinesController.getAll);
+    this.router.get("/api/machines", this.machinesController.getAll);
     this.router.post("/api/add-machine", this.machinesController.createMachine);
     this.router.put("/api/update-machine", this.machinesController.update);
     this.router.delete("/api/machine", this.machinesController.delete);
+
+    this.router.get("/api/machine", this.machinesController.getBySerialNumber);
   }
 }

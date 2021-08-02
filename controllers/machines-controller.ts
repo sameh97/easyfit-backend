@@ -30,6 +30,21 @@ export class MachinesController {
     }
   };
 
+  public getBySerialNumber = async (req: any, res: any, next: any) => {
+    try {
+      const machine: Machine = await this.machinesService.getBySerialNumber(
+        req.query.serialNumber
+      );
+      next(this.machineDtoMapper.asDto(machine));
+    } catch (err) {
+      this.logger.error(
+        `cannot get machine with serial number ${req.query.serialNumber}`,
+        err
+      );
+      next(err);
+    }
+  };
+
   public createMachine = async (req: any, res: any, next: any) => {
     let machineToCreate: Machine = null;
     try {

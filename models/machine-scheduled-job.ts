@@ -52,10 +52,15 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
   // onDelete: "CASCADE",} as AssociationOptions);
   // public machineID: number;
 
+  // @AllowNull(false)
+  // @Column(DataType.INTEGER)
+  // @ForeignKey(() => Machine)
+  // public machineID: number;
+
   @AllowNull(false)
-  @Column(DataType.INTEGER)
+  @Column(DataType.STRING)
   @ForeignKey(() => Machine)
-  public machineID: number;
+  public machineSerialNumber: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)

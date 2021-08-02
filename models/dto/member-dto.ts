@@ -7,13 +7,9 @@ export class MemberDto {
   public email: string;
   public address: string;
   public isActive: boolean;
+  public gender: number;
   public joinDate: Date;
   public endOfMembershipDate: Date;
   public imageURL: string;
   public gymId: number;
 }
-
-
-
-
-

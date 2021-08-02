@@ -22,7 +22,7 @@ export class MachineSchedulerApi implements AppRoute {
   private setRoutes(): void {
     this.router = Router();
 
-    this.router.post("/api/schedules", this.machineSchedulerController.getAll);
+    this.router.get("/api/schedules", this.machineSchedulerController.getAll);
     this.router.post("/api/add-schedule", this.machineSchedulerController.create); 
     this.router.put("/api/update-schedule",this.machineSchedulerController.update);
     this.router.delete("/api/delete-schedule",this.machineSchedulerController.delete);

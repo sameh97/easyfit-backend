@@ -65,6 +65,10 @@ export class Member extends Model<Member> {
   public endOfMembershipDate: Date;
 
   @AllowNull(true)
+  @Column(DataType.INTEGER)
+  public gender: number;
+
+  @AllowNull(true)
   @Column(DataType.STRING)
   public imageURL?: string;
 

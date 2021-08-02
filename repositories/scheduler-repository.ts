@@ -23,7 +23,7 @@ export class MachineSchedulerRepository {
     transaction?: Transaction
   ): Promise<MachineScheduledJob> => {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
-      where: { machineID: scheduleJob.machineID },
+      where: { serialNumber: scheduleJob.machineSerialNumber },
     });
     if (AppUtils.hasValue(scheduleJobInDB)) {
       throw new AlreadyExistError(

@@ -22,6 +22,14 @@ export class MachinesService {
     return machines;
   };
 
+  public getBySerialNumber = async (
+    machineSerialNumber: number
+  ): Promise<Machine> => {
+    const machine = await this.machinesRepository.getBySerialNumber(machineSerialNumber);
+    this.logger.info(`Returning machine with serial number ${machineSerialNumber}`);
+    return machine;
+  };
+
   public create = async (machine: Machine): Promise<Machine> => {
     let transaction: Transaction = null;
     try {

@@ -32,6 +32,10 @@ export class Machine extends Model<Machine> {
   public description: string;
 
   @AllowNull(false)
+  @Column(DataType.STRING)
+  public serialNumber: string;
+
+  @AllowNull(false)
   @Column(DataType.INTEGER)
   public productionYear: number;
 

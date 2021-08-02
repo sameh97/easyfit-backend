@@ -9,6 +9,7 @@ import { Product } from "../models/product";
 import { Machine } from "../models/machines";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { Job } from "../models/job";
+import { AppNotification } from "../models/app-notification";
 
 @injectable()
 export class AppDBConnection {
@@ -33,6 +34,7 @@ export class AppDBConnection {
       Machine,
       MachineScheduledJob,
       Job,
+      AppNotification,
     ]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production

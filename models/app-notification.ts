@@ -1,8 +1,7 @@
-import { injectable } from "inversify";
-import { Model } from "sequelize";
 import {
   AllowNull,
   AutoIncrement,
+  Model,
   Column,
   DataType,
   PrimaryKey,
@@ -12,29 +11,29 @@ import {
 @Table({
   tableName: "notifications",
 })
-@injectable()
-export class AppNotification extends Model {
+export class AppNotification extends Model<AppNotification> {
   @PrimaryKey
   @AutoIncrement
   @Column(DataType.INTEGER)
   public id: number;
 
   @AllowNull(false)
-  @Column(DataType.JSON)
-  public content: any;
+  @Column(DataType.STRING)
+  public content: string;
 
   @AllowNull(false)
   @Column(DataType.STRING)
   public topic: string;
 
-  @AllowNull(false)
+  @AllowNull(true)
   @Column(DataType.STRING)
   public userId: string;
 
-  @AllowNull(false)
+  @AllowNull(true)
   @Column(DataType.STRING)
   public username: string;
 
+  //TODO: remove time becuse there is (createdAt) property in DB:
   @AllowNull(false)
   @Column(DataType.DATE)
   public time: Date;

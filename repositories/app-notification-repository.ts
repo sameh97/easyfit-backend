@@ -18,16 +18,16 @@ export class AppNotificationRepository {
     appNotificationMessage: AppNotification,
     transaction?: Transaction
   ): Promise<AppNotification> => {
-    const notificationInDB = await AppNotification.findOne({
-      where: { content: appNotificationMessage.content },
-      transaction: transaction,
-    });
+    // const notificationInDB = await AppNotification.findOne({
+    //   where: { content: appNotificationMessage.content },
+    //   transaction: transaction,
+    // });
 
-    if (AppUtils.hasValue(notificationInDB)) {
-      throw new AlreadyExistError(
-        `notification with id ${notificationInDB.id} already exist`
-      );
-    }
+    // if (AppUtils.hasValue(notificationInDB)) {
+    //   throw new AlreadyExistError(
+    //     `notification with id ${notificationInDB.id} already exist`
+    //   );
+    // }
 
     this.logger.info(
       `Creating notification with id ${appNotificationMessage.id}`

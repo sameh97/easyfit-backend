@@ -14,13 +14,21 @@ export class MachinesRepository {
     return await Machine.findAll({ where: { gymId: gymId } });
   };
 
+  public getBySerialNumber = async (
+    machineSerialNumber: number
+  ): Promise<Machine> => {
+    return await Machine.findOne({
+      where: { serialNumber: machineSerialNumber },
+    });
+  };
+
   public save = async (
     machine: Machine,
     transaction?: Transaction
   ): Promise<Machine> => {
     const machineInDB = await Machine.findOne({
       //TODO: find by primary key not by name:
-      where: { name: machine.name },
+      where: { serialNumber: machine.serialNumber },
       transaction: transaction,
     });
 
