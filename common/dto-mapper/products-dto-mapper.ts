@@ -14,7 +14,9 @@ export class ProductDtoMapper {
       id: product.id,
       name: product.name,
       description: product.description,
+      code: product.code,
       quantity: product.quantity,
+      imgUrl: product.imgUrl,
       categoryID: product.categoryID,
       gymId: product.gymId,
     } as ProductDto;
@@ -29,7 +31,9 @@ export class ProductDtoMapper {
       id: productDto.id,
       name: productDto.name,
       description: productDto.description,
+      code: productDto.code,
       quantity: productDto.quantity,
+      imgUrl: productDto.imgUrl,
       categoryID: productDto.categoryID,
       gymId: productDto.gymId,
     } as Product;

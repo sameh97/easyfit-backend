@@ -17,13 +17,13 @@ export class MachineSchedulerRepository {
   public getAllWithoutGymId = async (): Promise<MachineScheduledJob[]> => {
     return await MachineScheduledJob.findAll({});
   };
-
+  
   public save = async (
     scheduleJob: MachineScheduledJob,
     transaction?: Transaction
   ): Promise<MachineScheduledJob> => {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
-      where: { serialNumber: scheduleJob.machineSerialNumber },
+      where: { machineSerialNumber: scheduleJob.machineSerialNumber },
     });
     if (AppUtils.hasValue(scheduleJobInDB)) {
       throw new AlreadyExistError(

@@ -33,7 +33,7 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  public hoursFrequency: number;
+  public daysFrequency: number;
 
   @AllowNull(false)
   @Column(DataType.DATE)

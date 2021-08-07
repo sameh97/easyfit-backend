@@ -5,6 +5,7 @@ export class MachineDto {
   public productionYear: number;
   public supplierName?: string;
   public serialNumber: string;
+  public imgUrl: string;
   public productionCompany?: string;
   public price: number;
   public type?: string;

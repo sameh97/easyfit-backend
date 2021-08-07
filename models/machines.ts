@@ -48,6 +48,10 @@ export class Machine extends Model<Machine> {
   @Column(DataType.STRING)
   public productionCompany?: string;
 
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  public imgUrl: string;
+
   @AllowNull(false)
   @Column(DataType.INTEGER)
   public price: number;

@@ -31,16 +31,15 @@ export class AppUtils {
   public static createCronExpression = async (
     scheduledJob: MachineScheduledJob
   ): Promise<string> => {
-    const hours = AppUtils.hasValue(scheduledJob.hoursFrequency)
-      ? `*/${scheduledJob.hoursFrequency}`
+    const daysFrequency = AppUtils.hasValue(scheduledJob.daysFrequency)
+      ? `*/${scheduledJob.daysFrequency}`
       : "*";
 
-    //TODO: change to hours:
-    let cronExp: string = `0 ${hours} * * *`;
+    let cronExp: string = `0 0 ${daysFrequency} * *`;
 
     // if hour is not choosen, specify the job to run every 3 days:
-    cronExp = cronExp === `0 * * * *` ? `0 */72 * * *` : cronExp;
-    // cronExp = `* * * * * *`;
+    cronExp = cronExp === `0 0 * * *` ? `0 0 */3 * *` : cronExp;
+
     return cronExp;
   };
 

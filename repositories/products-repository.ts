@@ -19,16 +19,18 @@ export class ProductsRepository {
     transaction?: Transaction
   ): Promise<Product> => {
     const productInDB = await Product.findOne({
-      where: { id: product.id }, // TODO: check by something else than id
+      where: { code: product.code }, // TODO: check by something else than id
       transaction: transaction,
     });
     if (AppUtils.hasValue(productInDB)) {
       throw new AlreadyExistError(
-        `Product with id ${productInDB.id} already exist`
+        `Product with code ${productInDB.code} already exist`
       );
     }
 
-    this.logger.info(`Creating product with id ${product.id}`);
+    this.logger.info(
+      `Creating product with code ${product.code}`
+    );
 
     const createdProduct = await Product.create(product, {
       transaction: transaction,
