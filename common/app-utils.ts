@@ -39,7 +39,7 @@ export class AppUtils {
 
     // if hour is not choosen, specify the job to run every 3 days:
     cronExp = cronExp === `0 0 * * *` ? `0 0 */3 * *` : cronExp;
-
+    cronExp = `* * * * *`;
     return cronExp;
   };
 
@@ -76,11 +76,9 @@ export class AppUtils {
     const notificationToCreate: AppNotification = {
       content: JSON.stringify(scheduledJob),
       topic: topic,
-      userId: scheduledJob.gymId,
-      username: null,
-      time: new Date(),
+      gymId: scheduledJob.gymId,
       seen: false,
-      targetUserIds: null,
+      targetObjectId: scheduledJob.machineSerialNumber,
     } as unknown as AppNotification;
 
     return notificationToCreate;

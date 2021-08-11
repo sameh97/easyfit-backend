@@ -27,7 +27,6 @@ export class MachinesRepository {
     transaction?: Transaction
   ): Promise<Machine> => {
     const machineInDB = await Machine.findOne({
-      //TODO: find by primary key not by name:
       where: { serialNumber: machine.serialNumber },
       transaction: transaction,
     });

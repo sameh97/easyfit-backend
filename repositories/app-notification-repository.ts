@@ -14,6 +14,15 @@ export class AppNotificationRepository {
     return await AppNotification.findAll({ where: { gymId: gymId } });
   }
 
+  public async getByMachineSerialNumber(
+    gymId: number,
+    machineSerialNumber: string
+  ): Promise<AppNotification[]> {
+    return await AppNotification.findAll({
+      where: { gymId: gymId, targetObjectId: machineSerialNumber, seen: false },
+    });
+  }
+
   public save = async (
     appNotificationMessage: AppNotification,
     transaction?: Transaction
@@ -46,7 +55,12 @@ export class AppNotificationRepository {
     transaction?: Transaction
   ): Promise<AppNotification> => {
     let notificationInDB = await AppNotification.findOne({
-      where: { content: appNotificationMessage.content },
+      where: {
+        id: appNotificationMessage.id,
+        // content: appNotificationMessage.content,
+        // targetObjectId: appNotificationMessage.targetObjectId,
+        // gymId: appNotificationMessage.gymId,
+      },
       transaction: transaction,
     });
 

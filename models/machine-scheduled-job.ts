@@ -39,11 +39,16 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
   @Column(DataType.DATE)
   public endTime: Date;
 
-  @HasOne(() => Job, {
-    foreignKey: "jobID",
-    as: "jobScheduled",
-    onDelete: "CASCADE",
-  } as AssociationOptions)
+  // @HasOne(() => Job, {
+  //   foreignKey: "jobID",
+  //   as: "jobScheduled",
+  //   onDelete: "CASCADE",
+  // } as AssociationOptions)
+  // public jobID: number;
+
+  @AllowNull(false)
+  @Column(DataType.INTEGER)
+  @ForeignKey(() => Job)
   public jobID: number;
 
   // @HasOne(() => Machine,

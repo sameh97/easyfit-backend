@@ -44,6 +44,9 @@ import { CacheService } from "./services/cache-service";
 import { AppNotification } from "./models/app-notification";
 import { AppNotificationRepository } from "./repositories/app-notification-repository";
 import { AppNotificationService } from "./services/app-notification-service";
+import { AppNotificationsController } from "./controllers/notifications-controller";
+import { NotificationsApi } from "./routes/notification";
+import { NotificationsDtoMapper } from "./common/dto-mapper/notifications-dto-mapper";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -96,4 +99,7 @@ container.bind<CacheService>(CacheService).toSelf();
 container.bind<AppNotification>(AppNotification).toSelf();
 container.bind<AppNotificationRepository>(AppNotificationRepository).toSelf();
 container.bind<AppNotificationService>(AppNotificationService).toSelf();
+container.bind<AppNotificationsController>(AppNotificationsController).toSelf();
+container.bind<NotificationsDtoMapper>(NotificationsDtoMapper).toSelf();
+container.bind<NotificationsApi>(NotificationsApi).toSelf();
 export default container;

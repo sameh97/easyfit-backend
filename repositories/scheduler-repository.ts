@@ -17,7 +17,7 @@ export class MachineSchedulerRepository {
   public getAllWithoutGymId = async (): Promise<MachineScheduledJob[]> => {
     return await MachineScheduledJob.findAll({});
   };
-  
+
   public save = async (
     scheduleJob: MachineScheduledJob,
     transaction?: Transaction
@@ -25,6 +25,7 @@ export class MachineSchedulerRepository {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
       where: { machineSerialNumber: scheduleJob.machineSerialNumber },
     });
+    // TODO: check by something else than the machine serial number, one machine can have more than schedule
     if (AppUtils.hasValue(scheduleJobInDB)) {
       throw new AlreadyExistError(
         `schedule with id ${scheduleJobInDB.id} already exist`

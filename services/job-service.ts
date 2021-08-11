@@ -7,7 +7,7 @@ import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { WebSocketService } from "./socket.io-service";
 import { SocketTopics } from "./../common/socket-util";
 import { MachineScheduleDtoMapper } from "../common/dto-mapper/scheduler-dto-mapper";
-import { AppNotificationMessage } from "../models/dto/app-notification-message";
+import { AppNotificationMessage } from "../models/app-notification-message";
 import { CacheService } from "./cache-service";
 
 @injectable()
@@ -17,7 +17,7 @@ export class JobService {
     @inject(MachineScheduleDtoMapper)
     private machineScheduleDtoMapper: MachineScheduleDtoMapper,
     @inject(CacheService)
-    private cacheService: CacheService,
+    private cacheService: CacheService
   ) {}
 
   public send = async (schedueledJob: MachineScheduledJob): Promise<void> => {
@@ -45,8 +45,10 @@ export class JobService {
     const notification = new AppNotificationMessage(
       this.machineScheduleDtoMapper.asDto(schedueledJob),
       topic,
-      null /* TODO: here we should send the gym-id*/,
-      null /* TODO: check if this is relevant */
+      schedueledJob.gymId,
+      null,
+      schedueledJob.machineSerialNumber,
+      new Date()
     );
     return notification;
   }

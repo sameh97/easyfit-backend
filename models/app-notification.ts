@@ -26,24 +26,25 @@ export class AppNotification extends Model<AppNotification> {
   public topic: string;
 
   @AllowNull(true)
-  @Column(DataType.STRING)
-  public userId: string;
+  @Column(DataType.INTEGER)
+  public gymId: number;
 
-  @AllowNull(true)
-  @Column(DataType.STRING)
-  public username: string;
+  // @AllowNull(true)
+  // @Column(DataType.STRING)
+  // public username: string;
 
   //TODO: remove time becuse there is (createdAt) property in DB:
-  @AllowNull(false)
-  @Column(DataType.DATE)
-  public time: Date;
+  // @AllowNull(false)
+  // @Column(DataType.DATE)
+  // public time: Date;
 
   @AllowNull(false)
   @Column(DataType.BOOLEAN)
   public seen: boolean;
 
-  // TODO: change allowNull:
   @AllowNull(true)
-  @Column(DataType.ARRAY(DataType.STRING))
-  public targetUserIds: string[]; // TODO: check if this is relevant
+  @Column(DataType.STRING)
+  public targetObjectId: string;
+  
+  // TODO: check if this is relevant
 }

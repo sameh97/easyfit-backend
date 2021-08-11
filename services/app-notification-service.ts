@@ -54,6 +54,19 @@ export class AppNotificationService {
     return notifications;
   }
 
+  public async getByMachineSerialNumber(
+    gymId: number,
+    machineSerialNumber: string
+  ): Promise<AppNotification[]> {
+    const notifications =
+      await this.appNotificationRepository.getByMachineSerialNumber(
+        gymId,
+        machineSerialNumber
+      );
+    this.logger.info(`Returning ${notifications.length} notifications`);
+    return notifications;
+  }
+
   public update = async (
     appNotification: AppNotification
   ): Promise<AppNotification> => {
