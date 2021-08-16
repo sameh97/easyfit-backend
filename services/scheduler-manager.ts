@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify";
 import { AppUtils } from "../common/app-utils";
+import { NotificationsDtoMapper } from "../common/dto-mapper/notifications-dto-mapper";
 import { SocketTopics } from "../common/socket-util";
 import { InputError } from "../exeptions/input-error";
 import { AppNotification } from "../models/app-notification";
@@ -17,7 +18,9 @@ export class JobScheduleManager {
     private machineSchedulerRepository: MachineSchedulerRepository,
     @inject(JobService) private jobService: JobService,
     @inject(AppNotificationService)
-    private appNotificationService: AppNotificationService
+    private appNotificationService: AppNotificationService,
+    @inject(NotificationsDtoMapper)
+    private notificationsDtoMapper: NotificationsDtoMapper
   ) {}
 
   //TODO: cancel job also in case the end time is arrived
@@ -33,13 +36,20 @@ export class JobScheduleManager {
         end: scheduledJob.endTime,
         rule: cronExp,
       },
-      () => {
+      async () => {
         const notificationToCreate: AppNotification =
           AppUtils.createNotificationToStoreInDB(scheduledJob);
 
-        this.appNotificationService.create(notificationToCreate);
+        let createdNotification: AppNotification =
+          await this.appNotificationService.create(notificationToCreate);
 
-        this.jobService.send(scheduledJob);
+        // createdNotification =
+        //   this.notificationsDtoMapper.asDto(createdNotification);
+
+        this.jobService.send(
+          scheduledJob,
+          this.notificationsDtoMapper.asDto(createdNotification)
+        );
         console.log("sent notification");
       }
     );

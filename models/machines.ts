@@ -67,10 +67,10 @@ export class Machine extends Model<Machine> {
   @ForeignKey(() => Gym)
   public gymId: number;
 
-  @HasMany(() => MachineScheduledJob, {
-    foreignKey: "jobID",
-    as: "jobScheduled",
-    onDelete: "CASCADE",
-  } as AssociationOptions)
-  public machineScheduledJobs: MachineScheduledJob[];
+  // @HasMany(() => MachineScheduledJob, {
+  //   foreignKey: "jobID",
+  //   as: "jobScheduled",
+  //   onDelete: "CASCADE",
+  // } as AssociationOptions)
+  // public machineScheduledJobs: MachineScheduledJob[];
 }

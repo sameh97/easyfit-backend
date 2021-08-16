@@ -9,6 +9,9 @@ import { SocketTopics } from "./../common/socket-util";
 import { MachineScheduleDtoMapper } from "../common/dto-mapper/scheduler-dto-mapper";
 import { AppNotificationMessage } from "../models/app-notification-message";
 import { CacheService } from "./cache-service";
+import { AppNotificationService } from "./app-notification-service";
+import { AppNotification } from "../models/app-notification";
+import { AppNotificationDto } from "../models/dto/notifications-dto";
 
 @injectable()
 export class JobService {
@@ -20,7 +23,7 @@ export class JobService {
     private cacheService: CacheService
   ) {}
 
-  public send = async (schedueledJob: MachineScheduledJob): Promise<void> => {
+  public send = async (schedueledJob: MachineScheduledJob , createdNotification: AppNotificationDto ): Promise<void> => {
     if (!AppUtils.hasValue(schedueledJob)) {
       throw new NotFound(
         `cannot send job because scheduled job object is not found`
@@ -35,7 +38,7 @@ export class JobService {
       schedueledJob.gymId.toString()
     );
 
-    this.webSocketService.socketIO.to(socketID).emit(topic, notificationToSend);
+    this.webSocketService.socketIO.to(socketID).emit(topic, createdNotification);
   };
 
   private createNotification(

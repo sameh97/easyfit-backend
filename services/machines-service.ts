@@ -1,19 +1,34 @@
 import { inject, injectable } from "inversify";
 import { Transaction } from "sequelize/types";
-import { Json } from "sequelize/types/lib/utils";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { AppDBConnection } from "../config/database";
 import { InputError } from "../exeptions/input-error";
+import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { Machine } from "../models/machines";
+import { AppNotificationRepository } from "../repositories/app-notification-repository";
 import { MachinesRepository } from "../repositories/machine-repository";
+import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
+import { AppNotificationService } from "./app-notification-service";
+import { JobScheduleManager } from "./scheduler-manager";
+import { MachineSchedulerService } from "./scheduler-service";
 
 @injectable()
 export class MachinesService {
   constructor(
     @inject(AppDBConnection) private appDBConnection: AppDBConnection,
     @inject(Logger) private logger: Logger,
-    @inject(MachinesRepository) private machinesRepository: MachinesRepository
+    @inject(MachinesRepository) private machinesRepository: MachinesRepository,
+    @inject(MachineSchedulerService)
+    private machineSchedulerService: MachineSchedulerService,
+    @inject(AppNotificationService)
+    private appNotificationService: AppNotificationService,
+    // ///////////////////////////////////////////////////////
+    @inject(MachineSchedulerRepository)
+    private machineSchedulerRepository: MachineSchedulerRepository,
+    @inject(AppNotificationRepository)
+    private appNotificationRepository: AppNotificationRepository,
+    @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager
   ) {}
 
   public getAll = async (gymId: number): Promise<Machine[]> => {
@@ -25,8 +40,12 @@ export class MachinesService {
   public getBySerialNumber = async (
     machineSerialNumber: number
   ): Promise<Machine> => {
-    const machine = await this.machinesRepository.getBySerialNumber(machineSerialNumber);
-    this.logger.info(`Returning machine with serial number ${machineSerialNumber}`);
+    const machine = await this.machinesRepository.getBySerialNumber(
+      machineSerialNumber
+    );
+    this.logger.info(
+      `Returning machine with serial number ${machineSerialNumber}`
+    );
     return machine;
   };
 
@@ -90,22 +109,37 @@ export class MachinesService {
     }
   };
 
-  public delete = async (id: number): Promise<void> => {
-    if (!AppUtils.isInteger(id)) {
-      throw new InputError(`Cannot delete machine, the id must be an integer`);
-    }
-
+  public delete = async (
+    serialNumber: string,
+    gymId: number
+  ): Promise<void> => {
     let transaction: Transaction = null;
     try {
-      this.logger.info(`Deleting machine with id: ${id}`);
+      this.logger.info(`Deleting machine with serial Number: ${serialNumber}`);
 
       transaction = await this.appDBConnection.createTransaction();
 
-      await this.machinesRepository.delete(id, transaction);
+      await this.machinesRepository.delete(serialNumber, transaction);
+
+      await this.deleteRelatedJobsAndNotifications(
+        serialNumber,
+        gymId,
+        transaction
+      );
 
       transaction.commit();
 
-      this.logger.info(`Machine with id ${id} has been deleted`);
+      this.logger.info(
+        `Machine with serial Number ${serialNumber} has been deleted`
+      );
+
+      // TODO: delete all scheduels for this machine, and delete all notifications
+      // await this.machineSchedulerService.deleteByMachineSerialNumber(
+      //   serialNumber,
+      //   gymId
+      // );
+
+      // await this.appNotificationService.deleteByTargetObjectId(serialNumber);
     } catch (error) {
       if (transaction) {
         await transaction.rollback();
@@ -117,6 +151,54 @@ export class MachinesService {
         error
       );
       throw error;
+    }
+  };
+
+  public deleteRelatedJobsAndNotifications = async (
+    serialNumber: string,
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const jobsFound: boolean = await this.findJobsByMachineSerialNumberToCancel(
+      serialNumber,
+      gymId,
+      transaction
+    );
+
+    if (jobsFound) {
+      await this.machineSchedulerRepository.deleteByMachineSerialNumber(
+        serialNumber,
+        gymId,
+        transaction
+      );
+    }
+
+    await this.appNotificationRepository.deleteByTargetObjectId(
+      serialNumber,
+      gymId,
+      transaction
+    );
+  };
+
+  public findJobsByMachineSerialNumberToCancel = async (
+    serialNumber: string,
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<boolean> => {
+    const scheduledJobsToCancel: MachineScheduledJob[] =
+      await this.machineSchedulerRepository.getScheduledJobsByMachineSerial(
+        serialNumber,
+        gymId,
+        transaction
+      );
+
+    if (scheduledJobsToCancel.length > 0) {
+      for (let job of scheduledJobsToCancel) {
+        this.jobScheduleManager.cancelJob(job.id);
+      }
+      return true;
+    } else {
+      return false;
     }
   };
 }

@@ -74,23 +74,26 @@ export class MachinesRepository {
   };
 
   public delete = async (
-    id: number,
+    serialNumber: string,
     transaction?: Transaction
   ): Promise<void> => {
     const machineToDelete = await Machine.findOne({
-      where: { id: id },
+      where: { serialNumber: serialNumber },
       transaction: transaction,
     });
 
     if (!AppUtils.hasValue(machineToDelete)) {
       throw new NotFoundErr(
-        `cannot delete machine with ${id}
+        `cannot delete machine with serial number ${serialNumber}
          because its not found`
       );
     }
 
-    this.logger.info(`deleting machine with id ${id}`);
+    this.logger.info(`deleting machine with serial number ${serialNumber}`);
 
-    await Machine.destroy({ where: { id: id }, transaction: transaction });
+    await Machine.destroy({
+      where: { serialNumber: serialNumber },
+      transaction: transaction,
+    });
   };
 }

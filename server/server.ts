@@ -71,10 +71,6 @@ export class EasyFitApp {
     this.initRoutes();
     this.handleAllResponses();
     this.initDB();
-    this.listenToRequests();
-    this.addStaticJob();
-    this.jobScheduleManager.runAllScheduledJobs();
-    this.setScheduledJobExpirationTracker();
   }
 
   //TODO: remove:
@@ -83,14 +79,12 @@ export class EasyFitApp {
       id: null,
       title: "clean",
       description: "clean!!!!!!",
-      machineScheduledJobs: undefined,
     } as Job;
 
     const job2: Job = {
       id: null,
       title: "service",
       description: "service!!!!!!",
-      machineScheduledJobs: undefined,
     } as Job;
 
     let transaction: Transaction = null;
@@ -177,6 +171,10 @@ export class EasyFitApp {
       .connect()
       .then((r) => {
         console.log("success: " + JSON.stringify(r));
+        this.listenToRequests();
+        this.addStaticJob();
+        this.jobScheduleManager.runAllScheduledJobs();
+        this.setScheduledJobExpirationTracker();
       })
       .catch((e) => {
         console.log(e);

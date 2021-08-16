@@ -5,7 +5,7 @@ import { AppUtils } from "../common/app-utils";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { Logger } from "./../common/logger";
 import { NotFoundErr } from "../exeptions/not-found-error";
-
+const { Op } = require("sequelize");
 @injectable()
 export class AppNotificationRepository {
   constructor(@inject(Logger) private logger: Logger) {}
@@ -103,6 +103,29 @@ export class AppNotificationRepository {
 
     await AppNotification.destroy({
       where: { id: id },
+      transaction: transaction,
+    });
+  };
+
+  public deleteByTargetObjectId = async (
+    targetObjectId: string,
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const toDelete: AppNotification = await AppNotification.findOne({
+      where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
+      transaction: transaction,
+    });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      // throw new NotFoundErr(
+      //   `Cannot delete notification: ${targetObjectId} because it is not found`
+      // );
+      return;
+    }
+
+    await AppNotification.destroy({
+      where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
       transaction: transaction,
     });
   };

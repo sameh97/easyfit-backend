@@ -88,15 +88,19 @@ export class MachinesController {
   };
 
   public delete = async (req: any, res: any, next: any) => {
-    let machineId: number;
+    let machineSerialNumber: string;
+    let gymId: number;
     try {
-      machineId = Number(req.query.id);
+      machineSerialNumber = req.query.serialNumber;
+      gymId = req.query.gymId;
 
-      await this.machinesService.delete(machineId);
+      await this.machinesService.delete(machineSerialNumber, gymId);
 
-      next(`machine with id ${machineId} has been deleted succesfuly`);
+      next(
+        `machine with Serial number ${machineSerialNumber} has been deleted succesfuly`
+      );
     } catch (err) {
-      this.logger.error(`Cannot delete machine: ${machineId}`, err);
+      this.logger.error(`Cannot delete machine: ${machineSerialNumber}`, err);
       next(err);
     }
   };

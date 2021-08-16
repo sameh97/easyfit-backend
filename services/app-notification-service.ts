@@ -125,4 +125,35 @@ export class AppNotificationService {
       throw err;
     }
   };
+
+  public deleteByTargetObjectId = async (
+    targetObjectId: string,
+    gymId: number,
+  ): Promise<void> => {
+    let transaction: Transaction = null;
+    try {
+      this.logger.info(
+        `Deleting notification with targetObjectId: ${targetObjectId}`
+      );
+
+      transaction = await this.appDBConnection.createTransaction();
+
+      await this.appNotificationRepository.deleteByTargetObjectId(
+        targetObjectId,
+        gymId,
+        transaction
+      );
+
+      await transaction.commit();
+
+      this.logger.info(
+        `Notification with targetObjectId ${targetObjectId} has been deleted.`
+      );
+    } catch (err) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw err;
+    }
+  };
 }
