@@ -20,6 +20,7 @@ import { Consts } from "../common/consts";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
 import { AppUtils } from "../common/app-utils";
+import { NotificationsApi } from "../routes/notification";
 
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
@@ -46,7 +47,9 @@ export class EasyFitApp {
     @inject(JobScheduleManager) private jobScheduleManager: JobScheduleManager,
     @inject(WebSocketService) private webSocketService: WebSocketService,
     @inject(MachineSchedulerRepository)
-    private machineSchedulerRepository: MachineSchedulerRepository
+    private machineSchedulerRepository: MachineSchedulerRepository,
+    @inject(NotificationsApi)
+    private notificationsApi: NotificationsApi
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -68,10 +71,6 @@ export class EasyFitApp {
     this.initRoutes();
     this.handleAllResponses();
     this.initDB();
-    this.listenToRequests();
-    this.addStaticJob();
-    this.jobScheduleManager.runAllScheduledJobs();
-    this.setScheduledJobExpirationTracker();
   }
 
   //TODO: remove:
@@ -80,14 +79,12 @@ export class EasyFitApp {
       id: null,
       title: "clean",
       description: "clean!!!!!!",
-      machineScheduledJobs: undefined,
     } as Job;
 
     const job2: Job = {
       id: null,
       title: "service",
       description: "service!!!!!!",
-      machineScheduledJobs: undefined,
     } as Job;
 
     let transaction: Transaction = null;
@@ -156,10 +153,16 @@ export class EasyFitApp {
     this.app.use(this.productsApi.getRouter());
     this.app.use(this.machinesApi.getRouter());
     this.app.use(this.machineSchedulerApi.getRouter());
+    this.app.use(this.notificationsApi.getRouter());
 
     // Catch all other get requests
+    const publicPath = express.static(path.join(__dirname, "./../"), {
+      redirect: false,
+    });
+
+    this.app.use(publicPath);
     this.app.get("/*", (req, res) => {
-      res.sendFile(path.join(__dirname, "/public/index.html"));
+      res.sendFile(path.join(__dirname, "../index.html"));
     });
   }
 
@@ -168,6 +171,10 @@ export class EasyFitApp {
       .connect()
       .then((r) => {
         console.log("success: " + JSON.stringify(r));
+        this.listenToRequests();
+        this.addStaticJob();
+        this.jobScheduleManager.runAllScheduledJobs();
+        this.setScheduledJobExpirationTracker();
       })
       .catch((e) => {
         console.log(e);

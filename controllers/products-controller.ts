@@ -75,7 +75,7 @@ export class ProductsController {
   public delete = async (req: any, res: any, next: any) => {
     let productId: number = null;
     try {
-      productId = Number(req.params.id);
+      productId = Number(req.query.id);
 
       await this.productsService.delete(productId);
 

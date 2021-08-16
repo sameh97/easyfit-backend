@@ -1,7 +1,9 @@
 import { Console } from "winston/lib/winston/transports";
 import { InputError } from "../exeptions/input-error";
+import { AppNotification } from "../models/app-notification";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { Consts } from "./consts";
+import { SocketTopics } from "./socket-util";
 
 export class AppUtils {
   public static hasValue(obj: any): boolean {
@@ -29,16 +31,15 @@ export class AppUtils {
   public static createCronExpression = async (
     scheduledJob: MachineScheduledJob
   ): Promise<string> => {
-    const hours = AppUtils.hasValue(scheduledJob.hoursFrequency)
-      ? `*/${scheduledJob.hoursFrequency}`
+    const daysFrequency = AppUtils.hasValue(scheduledJob.daysFrequency)
+      ? `*/${scheduledJob.daysFrequency}`
       : "*";
 
-    //TODO: change to hours:
-    let cronExp: string = `0 ${hours} * * *`;
+    let cronExp: string = `0 0 ${daysFrequency} * *`;
 
     // if hour is not choosen, specify the job to run every 3 days:
-    cronExp = cronExp === `0 * * * *` ? `0 */72 * * *` : cronExp;
-
+    cronExp = cronExp === `0 0 * * *` ? `0 0 */3 * *` : cronExp;
+    cronExp = `* * * * *`;
     return cronExp;
   };
 
@@ -62,5 +63,24 @@ export class AppUtils {
       throw new InputError(`the scheduled job end time is not valid, because it will finish after less than 1 hour 
       (the schedule will never fire in this case)`);
     }
+  };
+
+  public static createNotificationToStoreInDB = (
+    scheduledJob: MachineScheduledJob
+  ): AppNotification => {
+    const topic: string =
+      scheduledJob.jobID === 1
+        ? SocketTopics.TOPIC_CLEAN_MACHINE
+        : SocketTopics.TOPIC_MACHINE_SERVICE;
+
+    const notificationToCreate: AppNotification = {
+      content: JSON.stringify(scheduledJob),
+      topic: topic,
+      gymId: scheduledJob.gymId,
+      seen: false,
+      targetObjectId: scheduledJob.machineSerialNumber,
+    } as unknown as AppNotification;
+
+    return notificationToCreate;
   };
 }

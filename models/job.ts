@@ -32,6 +32,7 @@ export class Job extends Model<Job> {
     foreignKey: "jobID",
     as: "jobScheduled",
     onDelete: "CASCADE",
+    constraints: false,
   } as AssociationOptions)
   public machineScheduledJobs: MachineScheduledJob[];
 }

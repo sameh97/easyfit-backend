@@ -17,7 +17,9 @@ export class MachineDtoMapper {
       productionYear: machine.productionYear,
       supplierName: machine.supplierName,
       productionCompany: machine.productionCompany,
+      serialNumber: machine.serialNumber,
       price: machine.price,
+      imgUrl: machine.imgUrl,
       type: machine.type,
       gymId: machine.gymId,
     } as MachineDto;
@@ -35,6 +37,8 @@ export class MachineDtoMapper {
       productionYear: machineDto.productionYear,
       supplierName: machineDto.supplierName,
       productionCompany: machineDto.productionCompany,
+      serialNumber: machineDto.serialNumber,
+      imgUrl: machineDto.imgUrl,
       price: machineDto.price,
       type: machineDto.type,
       gymId: machineDto.gymId,

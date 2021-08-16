@@ -118,4 +118,54 @@ export class MachineSchedulerService {
       throw err;
     }
   };
+
+  public deleteByMachineSerialNumber = async (
+    machineSerialNumber: string,
+    gymId: number
+  ): Promise<void> => {
+    let transaction: Transaction = null;
+    try {
+      this.logger.info(
+        `Deleting schedule with machine Serial Number: ${machineSerialNumber}`
+      );
+
+      transaction = await this.appDBConnection.createTransaction();
+
+      const scheduledJobsToCancel: MachineScheduledJob[] =
+        await this.machineSchedulerRepo.getScheduledJobsByMachineSerial(
+          machineSerialNumber,
+          gymId,
+          transaction
+        );
+
+      await this.machineSchedulerRepo.deleteByMachineSerialNumber(
+        machineSerialNumber,
+        gymId,
+        transaction
+      );
+
+      if (scheduledJobsToCancel.length > 0) {
+        for (let job of scheduledJobsToCancel) {
+          this.jobScheduleManager.cancelJob(job.id);
+        }
+      }
+
+      await transaction.commit();
+
+      // this.jobScheduleManager.cancelJob(id);
+
+      //TODO: check if we need to remove from the map also
+
+      this.logger.info(
+        `Schedule with machine Serial Number ${machineSerialNumber} has been deleted.`
+      );
+    } catch (err) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw err;
+    }
+  };
+
+ 
 }

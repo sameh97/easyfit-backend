@@ -4,7 +4,7 @@
   "description": "Easyfit backend",
   "main": "server.js",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc -p . && ncp public dist",
     "start": "npm run build && node dist/index.js",
     "start-nodemon": "nodemon dist/index.js",
     "dev": "nodemon index"
@@ -34,6 +34,7 @@
     "joi": "^17.4.0",
     "joi-to-typescript": "^1.11.0",
     "jsonwebtoken": "^8.5.1",
+    "ncp": "^2.0.0",
     "node-schedule": "^2.0.0",
     "path": "^0.12.7",
     "pg": "8.4.2",

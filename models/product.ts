@@ -7,6 +7,7 @@ import {
   Model,
   PrimaryKey,
   Table,
+  Unique,
 } from "sequelize-typescript";
 import { Category } from "./category";
 import { Gym } from "./gym";
@@ -29,9 +30,18 @@ export class Product extends Model<Product> {
   @Column(DataType.STRING)
   public description: string;
 
+  @Unique
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public code: string;
+
   @AllowNull(false)
   @Column(DataType.INTEGER)
   public quantity: number;
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public imgUrl: string;
 
   @AllowNull(false)
   @ForeignKey(() => Category)

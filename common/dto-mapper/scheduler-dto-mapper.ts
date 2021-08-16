@@ -15,9 +15,10 @@ export class MachineScheduleDtoMapper {
       startTime: scheduledJob.startTime,
       endTime: scheduledJob.endTime,
       isActive: scheduledJob.isActive,
-      hoursFrequency: scheduledJob.hoursFrequency,
+      daysFrequency: scheduledJob.daysFrequency,
       jobID: scheduledJob.jobID,
-      machineID: scheduledJob.machineID,
+      // machineID: scheduledJob.machineID,
+      machineSerialNumber: scheduledJob.machineSerialNumber,
       gymId: scheduledJob.gymId,
     } as MachineScheduledJobDto;
   }
@@ -34,9 +35,10 @@ export class MachineScheduleDtoMapper {
       startTime: machineScheduledJobDto.startTime,
       endTime: machineScheduledJobDto.endTime,
       isActive: machineScheduledJobDto.isActive,
-      hoursFrequency: machineScheduledJobDto.hoursFrequency,
+      daysFrequency: machineScheduledJobDto.daysFrequency,
       jobID: machineScheduledJobDto.jobID,
-      machineID: machineScheduledJobDto.machineID,
+      // machineID: machineScheduledJobDto.machineID,
+      machineSerialNumber: machineScheduledJobDto.machineSerialNumber,
       gymId: machineScheduledJobDto.gymId,
     } as MachineScheduledJob;
   }

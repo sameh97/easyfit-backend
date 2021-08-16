@@ -8,6 +8,7 @@ import {
   AllowNull,
   HasOne,
   ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
 import { AssociationOptions } from "sequelize/types";
 import { Gym } from "./gym";
@@ -33,29 +34,28 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
-  public hoursFrequency: number;
+  public daysFrequency: number;
 
   @AllowNull(false)
   @Column(DataType.DATE)
   public endTime: Date;
 
-  @HasOne(() => Job, {
-    foreignKey: "jobID",
-    as: "jobScheduled",
-    onDelete: "CASCADE",
-  } as AssociationOptions)
-  public jobID: number;
-
-  // @HasOne(() => Machine,
-  // {  foreignKey: "jobID",
-  // as: "jobScheduled",
-  // onDelete: "CASCADE",} as AssociationOptions);
-  // public machineID: number;
+  // @HasOne(() => Job, {
+  //   foreignKey: "jobID",
+  //   as: "jobScheduled",
+  //   onDelete: "CASCADE",
+  // } as AssociationOptions)
+  // public jobID: number;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
+  @ForeignKey(() => Job)
+  public jobID: number;
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
   @ForeignKey(() => Machine)
-  public machineID: number;
+  public machineSerialNumber: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)

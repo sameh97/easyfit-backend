@@ -32,6 +32,10 @@ export class Machine extends Model<Machine> {
   public description: string;
 
   @AllowNull(false)
+  @Column(DataType.STRING)
+  public serialNumber: string;
+
+  @AllowNull(false)
   @Column(DataType.INTEGER)
   public productionYear: number;
 
@@ -43,6 +47,10 @@ export class Machine extends Model<Machine> {
   @AllowNull(true)
   @Column(DataType.STRING)
   public productionCompany?: string;
+
+  @AllowNull(true)
+  @Column(DataType.STRING)
+  public imgUrl: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
@@ -59,10 +67,10 @@ export class Machine extends Model<Machine> {
   @ForeignKey(() => Gym)
   public gymId: number;
 
-  @HasMany(() => MachineScheduledJob, {
-    foreignKey: "jobID",
-    as: "jobScheduled",
-    onDelete: "CASCADE",
-  } as AssociationOptions)
-  public machineScheduledJobs: MachineScheduledJob[];
+  // @HasMany(() => MachineScheduledJob, {
+  //   foreignKey: "jobID",
+  //   as: "jobScheduled",
+  //   onDelete: "CASCADE",
+  // } as AssociationOptions)
+  // public machineScheduledJobs: MachineScheduledJob[];
 }

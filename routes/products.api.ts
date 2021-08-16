@@ -21,9 +21,9 @@ export class ProductsApi implements AppRoute {
   private setRoutes(): void {
     this.router = Router();
 
-    this.router.post("/api/products", this.productsController.getAll);
+    this.router.get("/api/products", this.productsController.getAll);
     this.router.post("/api/add-product", this.productsController.createProduct);
-    this.router.post("/api/update-product", this.productsController.update);
-    this.router.post("/api/delete-product/:id", this.productsController.delete);
+    this.router.put("/api/update-product", this.productsController.update);
+    this.router.delete("/api/delete-product", this.productsController.delete);
   }
 }
