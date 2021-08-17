@@ -22,7 +22,7 @@ export class TempUrlApi implements AppRoute {
 
     this.router.get("/api/catalog-urls", this.tempUrlController.getAll);
     this.router.get("/api/catalog-url/:uuid", this.tempUrlController.getByUUID);
-    this.router.post("/api/catalog-url", this.tempUrlController.createMember);
+    this.router.post("/api/catalog-url", this.tempUrlController.create);
     this.router.put("/api/catalog-url", this.tempUrlController.update);
     this.router.delete("/api/catalog-url", this.tempUrlController.delete);
   }
