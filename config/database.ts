@@ -11,6 +11,8 @@ import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { Job } from "../models/job";
 import { AppNotification } from "../models/app-notification";
 import { Category } from "../models/category";
+import { Catalog } from "../models/catalog";
+import { TempUrl } from "../models/temp-url";
 
 @injectable()
 export class AppDBConnection {
@@ -37,6 +39,8 @@ export class AppDBConnection {
       Job,
       AppNotification,
       Category,
+      TempUrl,
+      Catalog,
     ]);
     await this.db.authenticate();
     await this.db.sync({ force: true }); // TODO: remove in production

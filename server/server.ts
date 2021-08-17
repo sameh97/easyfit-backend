@@ -21,6 +21,7 @@ import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
 import { AppUtils } from "../common/app-utils";
 import { NotificationsApi } from "../routes/notification";
+import { TempUrlApi } from "../routes/temp-url-api";
 
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
@@ -49,7 +50,9 @@ export class EasyFitApp {
     @inject(MachineSchedulerRepository)
     private machineSchedulerRepository: MachineSchedulerRepository,
     @inject(NotificationsApi)
-    private notificationsApi: NotificationsApi
+    private notificationsApi: NotificationsApi,
+    @inject(TempUrlApi)
+    private tempUrlApi: TempUrlApi
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -154,7 +157,7 @@ export class EasyFitApp {
     this.app.use(this.machinesApi.getRouter());
     this.app.use(this.machineSchedulerApi.getRouter());
     this.app.use(this.notificationsApi.getRouter());
-
+    this.app.use(this.tempUrlApi.getRouter());
     // Catch all other get requests
     const publicPath = express.static(path.join(__dirname, "./../"), {
       redirect: false,
