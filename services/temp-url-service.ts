@@ -6,13 +6,18 @@ import { TempUrl } from "../models/temp-url";
 import { TempUrlRepository } from "../repositories/temp-url-repository";
 import { AppDBConnection } from "./../config/database";
 import { v4 as uuidv4 } from "uuid";
+import { Catalog } from "../models/catalog";
+import { Product } from "../models/product";
+import { ProductsRepository } from "../repositories/products-repository";
+import { NotFound } from "../exeptions/notFound-exeption";
 
 @injectable()
 export class TempUrlService {
   constructor(
     @inject(TempUrlRepository) private tempUrlRepository: TempUrlRepository,
     @inject(Logger) private logger: Logger,
-    @inject(AppDBConnection) private appDBConnection: AppDBConnection
+    @inject(AppDBConnection) private appDBConnection: AppDBConnection,
+    @inject(ProductsRepository) private productsRepository: ProductsRepository
   ) {}
 
   public async create(tempUrl: TempUrl): Promise<TempUrl> {
@@ -53,11 +58,43 @@ export class TempUrlService {
     return tempUrls;
   }
 
-  public async getByUUID(uuid: string): Promise<TempUrl> {
-    const tempUrl: TempUrl = await this.tempUrlRepository.getByUUID(uuid);
-    this.logger.info(`Returning Temporary URL ${tempUrl.uuid}`);
-    return tempUrl;
+  public async getByUUID(uuid: string): Promise<Product[]> {
+    try {
+      const tempUrl: TempUrl = await this.tempUrlRepository.getByUUID(uuid);
+
+      if (!AppUtils.hasValue(tempUrl)) {
+        throw new NotFound(`Catalog URL is not found`);
+      }
+
+      const catalog: Catalog[] = await Catalog.findAll({
+        where: { tempUrlID: uuid },
+      });
+
+      let productIDS: number[] = [];
+
+      for (let item of catalog) {
+        productIDS.push(item.productID);
+      }
+
+      const products: Product[] = await this.productsRepository.getByIDs(
+        productIDS
+      );
+
+      this.logger.info(`Returning Temporary URL ${tempUrl.uuid}`);
+      return products;
+    } catch (err) {
+      this.logger.error(
+        `Error occurred while getting Temporary URL: error: ${AppUtils.getFullException(
+          err
+        )}`,
+        err
+      );
+      throw err;
+    }
   }
+
+  // if not found throw exception
+  // if out of date
 
   public update = async (tempUrl: TempUrl): Promise<TempUrl> => {
     let transaction: Transaction = null;

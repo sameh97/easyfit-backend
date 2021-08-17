@@ -14,6 +14,10 @@ export class ProductsRepository {
     return await Product.findAll({ where: { gymId: gymId } });
   };
 
+  public getByIDs = async (idsArray: number[]): Promise<Product[]> => {
+    return await Product.findAll({ where: { id: idsArray } });
+  };
+
   public save = async (
     product: Product,
     transaction?: Transaction
@@ -28,9 +32,7 @@ export class ProductsRepository {
       );
     }
 
-    this.logger.info(
-      `Creating product with code ${product.code}`
-    );
+    this.logger.info(`Creating product with code ${product.code}`);
 
     const createdProduct = await Product.create(product, {
       transaction: transaction,

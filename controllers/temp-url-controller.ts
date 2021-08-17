@@ -4,6 +4,7 @@ import { TempUrlDtoMapper } from "../common/dto-mapper/temp-url-dto-mapper";
 import { Logger } from "../common/logger";
 import { TempUrlDto } from "../models/dto/temp-url-dto";
 import { Member } from "../models/member";
+import { Product } from "../models/product";
 import { TempUrl } from "../models/temp-url";
 import { TempUrlService } from "../services/temp-url-service";
 
@@ -32,13 +33,15 @@ export class TempUrlController {
 
   public getByUUID = async (req: any, res: any, next: any) => {
     try {
-      const catalogUrl: TempUrl = await this.tempUrlService.getByUUID(
+      const catalogUrlProducts: Product[] = await this.tempUrlService.getByUUID(
         req.params.uuid
       );
 
-      const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(catalogUrl);
+      res.json(catalogUrlProducts);
 
-      next(tempUrlDto);
+      // const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(catalogUrl);
+
+      // next(tempUrlDto);
     } catch (err) {
       this.logger.error(`cannot get Temporary URL`, err);
       next(err);

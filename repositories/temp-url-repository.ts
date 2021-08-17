@@ -1,9 +1,11 @@
 import { inject, injectable } from "inversify";
+import { any } from "joi";
 import { Transaction } from "sequelize/types";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { NotFoundErr } from "../exeptions/not-found-error";
+import { Catalog } from "../models/catalog";
 import { TempUrl } from "../models/temp-url";
 const { Op } = require("sequelize");
 @injectable()
@@ -40,6 +42,15 @@ export class TempUrlRepository {
     const createdTempUrl = await TempUrl.create(tempUrl, {
       transaction: transaction,
     });
+
+    for (let product of tempUrl.products) {
+      let catlog: Catalog = {
+        productID: product.id,
+        tempUrlID: tempUrl.uuid,
+      } as Catalog;
+
+      await Catalog.create(catlog, { transaction: transaction });
+    }
 
     this.logger.info(`created Temporary URL ${JSON.stringify(createdTempUrl)}`);
 

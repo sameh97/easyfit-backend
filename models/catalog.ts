@@ -12,7 +12,7 @@ export class Catalog extends Model<Catalog> {
 
   @ForeignKey(() => TempUrl)
   @Column
-  public tempUrlID: number;
+  public tempUrlID: string;
 
   // @AllowNull(false)
   // @Column(DataType.INTEGER)
