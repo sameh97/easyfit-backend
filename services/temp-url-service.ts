@@ -54,9 +54,7 @@ export class TempUrlService {
   }
 
   public async getByUUID(uuid: string): Promise<TempUrl> {
-    const tempUrl: TempUrl = await this.tempUrlRepository.getByUUID(
-      uuid
-    );
+    const tempUrl: TempUrl = await this.tempUrlRepository.getByUUID(uuid);
     this.logger.info(`Returning Temporary URL ${tempUrl.uuid}`);
     return tempUrl;
   }

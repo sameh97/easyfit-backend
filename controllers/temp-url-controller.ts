@@ -32,11 +32,11 @@ export class TempUrlController {
 
   public getByUUID = async (req: any, res: any, next: any) => {
     try {
-      const Url: TempUrl = await this.tempUrlService.getByUUID(
-        req.params.uuid,
+      const catalogUrl: TempUrl = await this.tempUrlService.getByUUID(
+        req.params.uuid
       );
 
-      const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(Url);
+      const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(catalogUrl);
 
       next(tempUrlDto);
     } catch (err) {
@@ -45,7 +45,7 @@ export class TempUrlController {
     }
   };
 
-  public createMember = async (req: any, res: any, next: any) => {
+  public create = async (req: any, res: any, next: any) => {
     let tempUrlToCreate: TempUrl = null;
     try {
       tempUrlToCreate = this.tempUrlDtoMapper.asEntity(req.body);
