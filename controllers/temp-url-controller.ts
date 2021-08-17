@@ -34,7 +34,6 @@ export class TempUrlController {
     try {
       const Url: TempUrl = await this.tempUrlService.getByUUID(
         req.params.uuid,
-        req.query.gymId // TODO: chekc if gymId is needed
       );
 
       const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(Url);

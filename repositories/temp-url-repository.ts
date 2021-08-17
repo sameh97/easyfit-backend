@@ -14,9 +14,9 @@ export class TempUrlRepository {
     return await TempUrl.findAll({ where: { gymId: gymId } });
   }
 
-  public async getByUUID(uuid: string, gymId: number): Promise<TempUrl> {
+  public async getByUUID(uuid: string): Promise<TempUrl> {
     return await TempUrl.findOne({
-      where: { [Op.and]: [{ uuid: uuid, gymId: gymId }] },
+      where: { uuid: uuid },
     });
   }
 
