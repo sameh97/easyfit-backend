@@ -78,7 +78,7 @@ export class TempUrlController {
         tempUrlToUpdate
       );
 
-      res.status(201);
+      res.status(200);
 
       next(this.tempUrlDtoMapper.asDto(updatedTempUrl));
     } catch (err) {

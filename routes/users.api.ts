@@ -2,7 +2,7 @@ import { Router } from "express";
 import { injectable, inject } from "inversify";
 import { AppRoute } from "../common/interfaces/app-route";
 import { UserController } from "../controllers/user-controller";
-const { verifyToken } = require("./../middlewares/jwt-functions");
+
 // TODO: use this
 @injectable()
 export class UsersApi implements AppRoute {

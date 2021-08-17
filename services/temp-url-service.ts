@@ -10,6 +10,8 @@ import { Catalog } from "../models/catalog";
 import { Product } from "../models/product";
 import { ProductsRepository } from "../repositories/products-repository";
 import { NotFound } from "../exeptions/notFound-exeption";
+import { number } from "joi";
+import { OutOfDateError } from "../exeptions/out-of-date-error";
 
 @injectable()
 export class TempUrlService {
@@ -64,6 +66,19 @@ export class TempUrlService {
 
       if (!AppUtils.hasValue(tempUrl)) {
         throw new NotFound(`Catalog URL is not found`);
+      }
+
+      // let creationDayOfCatalog: number = tempUrl.createdAt.;
+
+      let dateNow: Date = new Date();
+
+      let endDate: Date = AppUtils.addDays(
+        tempUrl.createdAt,
+        tempUrl.durationDays
+      );
+
+      if (dateNow.getTime() > endDate.getTime()) {
+        throw new OutOfDateError(`Catalog is no longer available`);
       }
 
       const catalog: Catalog[] = await Catalog.findAll({
