@@ -149,7 +149,6 @@ export class EasyFitApp {
   }
 
   private initRoutes(): void {
-    this.app.use(verifyToken);
     this.app.use(this.usersApi.getRouter());
     this.app.use(this.membersApi.getRouter());
     this.app.use(this.gymApi.getRouter());
