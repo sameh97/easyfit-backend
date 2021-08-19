@@ -2,6 +2,8 @@ import { inject, injectable } from "inversify";
 import { MemberDtoMapper } from "../common/dto-mapper/member-dto-mapper";
 import { TempUrlDtoMapper } from "../common/dto-mapper/temp-url-dto-mapper";
 import { Logger } from "../common/logger";
+import { NotFound } from "../exeptions/notFound-exeption";
+import { OutOfDateError } from "../exeptions/out-of-date-error";
 import { TempUrlDto } from "../models/dto/temp-url-dto";
 import { Member } from "../models/member";
 import { Product } from "../models/product";
@@ -37,12 +39,27 @@ export class TempUrlController {
         req.params.uuid
       );
 
-      res.json(catalogUrlProducts);
+      const htmlContent: string = await this.tempUrlService.buildHtml(
+        catalogUrlProducts
+      );
+
+      // res.json(catalogUrlProducts);
 
       // const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(catalogUrl);
-
-      // next(tempUrlDto);
+      res.type(".html");
+      res.send(htmlContent);
     } catch (err) {
+      if (err instanceof NotFound) {
+        const htmlContent: string =
+          await this.tempUrlService.buildCatalogNotFoundHtml();
+        res.type(".html");
+        res.send(htmlContent);
+      } else if (err instanceof OutOfDateError) {
+        const htmlContent: string =
+          await this.tempUrlService.buildCatalogOutOfDateHtml();
+        res.type(".html");
+        res.send(htmlContent);
+      }
       this.logger.error(`cannot get Temporary URL`, err);
       next(err);
     }

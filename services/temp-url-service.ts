@@ -10,8 +10,11 @@ import { Catalog } from "../models/catalog";
 import { Product } from "../models/product";
 import { ProductsRepository } from "../repositories/products-repository";
 import { NotFound } from "../exeptions/notFound-exeption";
-import { number } from "joi";
 import { OutOfDateError } from "../exeptions/out-of-date-error";
+import { parse } from "node-html-parser";
+import { catalogTemplate } from "./easyfit-catalog-template";
+import { catalogNotFoundTemplate } from "../templates/catalog-not-found-template";
+import { catalogOutOfDateTemplate } from "../templates/catalog-out-of-date";
 
 @injectable()
 export class TempUrlService {
@@ -56,6 +59,14 @@ export class TempUrlService {
 
   public async getAll(gymId: number): Promise<TempUrl[]> {
     const tempUrls: TempUrl[] = await this.tempUrlRepository.getAll(gymId);
+    for (let url of tempUrls) {
+      const productsFromDB: Product[] = await this.getCatalogProductsByUUID(
+        url.uuid
+      );
+
+      url.products = productsFromDB;
+    }
+
     this.logger.info(`Returning ${tempUrls.length} Temporary URL's`);
     return tempUrls;
   }
@@ -68,8 +79,6 @@ export class TempUrlService {
         throw new NotFound(`Catalog URL is not found`);
       }
 
-      // let creationDayOfCatalog: number = tempUrl.createdAt.;
-
       let dateNow: Date = new Date();
 
       let endDate: Date = AppUtils.addDays(
@@ -81,19 +90,17 @@ export class TempUrlService {
         throw new OutOfDateError(`Catalog is no longer available`);
       }
 
-      const catalog: Catalog[] = await Catalog.findAll({
-        where: { tempUrlID: uuid },
-      });
+      // const catalog: Catalog[] = await Catalog.findAll({
+      //   where: { tempUrlID: uuid },
+      // });
 
-      let productIDS: number[] = [];
+      // let productIDS: number[] = [];
 
-      for (let item of catalog) {
-        productIDS.push(item.productID);
-      }
+      // for (let item of catalog) {
+      //   productIDS.push(item.productID);
+      // }
 
-      const products: Product[] = await this.productsRepository.getByIDs(
-        productIDS
-      );
+      const products: Product[] = await this.getCatalogProductsByUUID(uuid);
 
       this.logger.info(`Returning Temporary URL ${tempUrl.uuid}`);
       return products;
@@ -108,8 +115,48 @@ export class TempUrlService {
     }
   }
 
-  // if not found throw exception
-  // if out of date
+  private getCatalogProductsByUUID = async (
+    uuid: string
+  ): Promise<Product[]> => {
+    const catalog: Catalog[] = await Catalog.findAll({
+      where: { tempUrlID: uuid },
+    });
+
+    let productIDS: number[] = [];
+
+    for (let item of catalog) {
+      productIDS.push(item.productID);
+    }
+
+    const products: Product[] = await this.productsRepository.getByIDs(
+      productIDS
+    );
+
+    return products;
+  };
+
+  public buildCatalogOutOfDateHtml = async (): Promise<string> => {
+    const root = parse(catalogOutOfDateTemplate);
+
+    return root.toString();
+  };
+
+  public buildCatalogNotFoundHtml = async (): Promise<string> => {
+    const root = parse(catalogNotFoundTemplate);
+
+    return root.toString();
+  };
+
+  public buildHtml = async (products: Product[]): Promise<string> => {
+    const root = parse(catalogTemplate);
+
+    for (let product of products) {
+      const name = product.name;
+      const pro = parse(`<li>name:${name} <br> code: ${product.code}</li>`);
+      root.querySelector("#easyfit-catalog-container").appendChild(pro);
+    }
+    return root.toString();
+  };
 
   public update = async (tempUrl: TempUrl): Promise<TempUrl> => {
     let transaction: Transaction = null;

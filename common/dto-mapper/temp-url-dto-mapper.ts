@@ -16,6 +16,7 @@ export class TempUrlDtoMapper {
       isActive: tempUrl.isActive,
       gymId: tempUrl.gymId,
       products: tempUrl.products,
+      createdAt: tempUrl.createdAt,
     } as TempUrlDto;
   }
 
