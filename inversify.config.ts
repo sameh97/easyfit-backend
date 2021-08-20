@@ -47,6 +47,11 @@ import { AppNotificationService } from "./services/app-notification-service";
 import { AppNotificationsController } from "./controllers/notifications-controller";
 import { NotificationsApi } from "./routes/notification";
 import { NotificationsDtoMapper } from "./common/dto-mapper/notifications-dto-mapper";
+import { TempUrlRepository } from "./repositories/temp-url-repository";
+import { TempUrlService } from "./services/temp-url-service";
+import { TempUrlDtoMapper } from "./common/dto-mapper/temp-url-dto-mapper";
+import { TempUrlController } from "./controllers/temp-url-controller";
+import { TempUrlApi } from "./routes/temp-url-api";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -102,4 +107,11 @@ container.bind<AppNotificationService>(AppNotificationService).toSelf();
 container.bind<AppNotificationsController>(AppNotificationsController).toSelf();
 container.bind<NotificationsDtoMapper>(NotificationsDtoMapper).toSelf();
 container.bind<NotificationsApi>(NotificationsApi).toSelf();
+
+container.bind<TempUrlRepository>(TempUrlRepository).toSelf();
+container.bind<TempUrlService>(TempUrlService).toSelf();
+container.bind<TempUrlController>(TempUrlController).toSelf();
+container.bind<TempUrlDtoMapper>(TempUrlDtoMapper).toSelf();
+container.bind<TempUrlApi>(TempUrlApi).toSelf();
+
 export default container;

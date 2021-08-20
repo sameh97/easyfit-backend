@@ -1,6 +1,7 @@
 import {
   AllowNull,
   AutoIncrement,
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -9,8 +10,10 @@ import {
   Table,
   Unique,
 } from "sequelize-typescript";
+import { Catalog } from "./catalog";
 import { Category } from "./category";
 import { Gym } from "./gym";
+import { TempUrl } from "./temp-url";
 
 @Table({
   tableName: "products",
@@ -52,4 +55,7 @@ export class Product extends Model<Product> {
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;
+
+  @BelongsToMany(() => TempUrl, () => Catalog)
+  TempUrls: TempUrl[];
 }

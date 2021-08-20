@@ -29,7 +29,7 @@ export class MemebrsController {
       this.logger.error(`cannot get all members`, err);
       next(err);
     }
-  }
+  };
 
   public createMember = async (req: any, res: any, next: any) => {
     let memberToCreate: Member = null;
@@ -73,6 +73,19 @@ export class MemebrsController {
     }
   };
 
+  public getAllPhones = async (req: any, res: any, next: any) => {
+    try {
+      const phones: string[] = await this.membersService.getAllPhones(
+        req.query.gymId
+      );
+
+      next(phones);
+    } catch (error) {
+      this.logger.error(`cannot get all members phones`, error);
+      next(error);
+    }
+  };
+
   public delete = async (req: any, res: any, next: any) => {
     let memberId: number;
     try {
@@ -85,7 +98,5 @@ export class MemebrsController {
       this.logger.error(`Cannot delete member: ${memberId}`, err);
       next(err);
     }
-
   };
 }
-

@@ -43,6 +43,12 @@ export class AppUtils {
     return cronExp;
   };
 
+  public static addDays = (date: Date, days: number): Date => {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  };
+
   public static validteScheduledJobEndDate = async (
     scheduleJob: MachineScheduledJob
   ): Promise<void> => {

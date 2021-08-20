@@ -3,15 +3,12 @@ import { Transaction } from "sequelize/types";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { AppDBConnection } from "../config/database";
-import { InputError } from "../exeptions/input-error";
 import { MachineScheduledJob } from "../models/machine-scheduled-job";
 import { Machine } from "../models/machines";
 import { AppNotificationRepository } from "../repositories/app-notification-repository";
 import { MachinesRepository } from "../repositories/machine-repository";
 import { MachineSchedulerRepository } from "../repositories/scheduler-repository";
-import { AppNotificationService } from "./app-notification-service";
 import { JobScheduleManager } from "./scheduler-manager";
-import { MachineSchedulerService } from "./scheduler-service";
 
 @injectable()
 export class MachinesService {
@@ -19,11 +16,6 @@ export class MachinesService {
     @inject(AppDBConnection) private appDBConnection: AppDBConnection,
     @inject(Logger) private logger: Logger,
     @inject(MachinesRepository) private machinesRepository: MachinesRepository,
-    @inject(MachineSchedulerService)
-    private machineSchedulerService: MachineSchedulerService,
-    @inject(AppNotificationService)
-    private appNotificationService: AppNotificationService,
-    // ///////////////////////////////////////////////////////
     @inject(MachineSchedulerRepository)
     private machineSchedulerRepository: MachineSchedulerRepository,
     @inject(AppNotificationRepository)
@@ -132,14 +124,6 @@ export class MachinesService {
       this.logger.info(
         `Machine with serial Number ${serialNumber} has been deleted`
       );
-
-      // TODO: delete all scheduels for this machine, and delete all notifications
-      // await this.machineSchedulerService.deleteByMachineSerialNumber(
-      //   serialNumber,
-      //   gymId
-      // );
-
-      // await this.appNotificationService.deleteByTargetObjectId(serialNumber);
     } catch (error) {
       if (transaction) {
         await transaction.rollback();

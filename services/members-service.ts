@@ -74,11 +74,39 @@ export class MembersService {
       this.logger.error(
         `Error occurred while updating member: error: ${AppUtils.getFullException(
           err
-        )}`, err
+        )}`,
+        err
       );
       throw err;
     }
-  }
+  };
+
+  public getAllPhones = async (gymId: number): Promise<string[]> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const allPhones: any = await this.memberRepository.getAllPhones(
+        gymId,
+        transaction
+      );
+
+      await transaction.commit();
+
+      let allPhonesAsStrings: string[] = [];
+
+      for (let phoneNumber of allPhones) {
+        allPhonesAsStrings.push(phoneNumber.phone);
+      }
+
+      return allPhonesAsStrings;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw error;
+    }
+  };
 
   public delete = async (id: number): Promise<void> => {
     if (!AppUtils.isInteger(id)) {
