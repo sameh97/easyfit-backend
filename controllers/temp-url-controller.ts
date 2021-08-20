@@ -1,11 +1,9 @@
 import { inject, injectable } from "inversify";
-import { MemberDtoMapper } from "../common/dto-mapper/member-dto-mapper";
 import { TempUrlDtoMapper } from "../common/dto-mapper/temp-url-dto-mapper";
 import { Logger } from "../common/logger";
 import { NotFound } from "../exeptions/notFound-exeption";
 import { OutOfDateError } from "../exeptions/out-of-date-error";
 import { TempUrlDto } from "../models/dto/temp-url-dto";
-import { Member } from "../models/member";
 import { Product } from "../models/product";
 import { TempUrl } from "../models/temp-url";
 import { TempUrlService } from "../services/temp-url-service";
@@ -43,9 +41,6 @@ export class TempUrlController {
         catalogUrlProducts
       );
 
-      // res.json(catalogUrlProducts);
-
-      // const tempUrlDto: TempUrlDto = this.tempUrlDtoMapper.asDto(catalogUrl);
       res.type(".html");
       res.send(htmlContent);
     } catch (err) {
@@ -64,6 +59,8 @@ export class TempUrlController {
       next(err);
     }
   };
+
+
 
   public create = async (req: any, res: any, next: any) => {
     let tempUrlToCreate: TempUrl = null;
@@ -118,6 +115,41 @@ export class TempUrlController {
     } catch (err) {
       this.logger.error(`Cannot delete Temporary URL: ${uuid}`, err);
       next(err);
+    }
+  };
+
+  public sendMail = async (req: any, res: any, next: any) => {
+    let mail: any;
+    try {
+      mail = req.body;
+
+      const sentMail = await this.tempUrlService.sendMail(mail);
+
+      next(sentMail);
+
+      res.status(200);
+    } catch (error) {
+      this.logger.error(`Cannot Send Mail: ${JSON.stringify(mail)}`, error);
+      next(error);
+    }
+  };
+
+  public sendWhatsApp = async (req: any, res: any, next: any) => {
+    let whatsAppMessageContent: any = req.body;
+    try {
+      const sentMessage: any = await this.tempUrlService.sendWhatsApp(
+        whatsAppMessageContent
+      );
+
+      next(sentMessage);
+    } catch (error) {
+      this.logger.error(
+        `Cannot Send WhatsApp message: ${JSON.stringify(
+          whatsAppMessageContent
+        )} `,
+        error
+      );
+      next(error);
     }
   };
 }

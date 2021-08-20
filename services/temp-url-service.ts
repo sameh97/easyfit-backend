@@ -15,6 +15,10 @@ import { parse } from "node-html-parser";
 import { catalogTemplate } from "./easyfit-catalog-template";
 import { catalogNotFoundTemplate } from "../templates/catalog-not-found-template";
 import { catalogOutOfDateTemplate } from "../templates/catalog-out-of-date";
+const nodemailer = require("nodemailer");
+const wbm = require("wbm");
+
+require("dotenv").config(); // TODO : remove
 
 @injectable()
 export class TempUrlService {
@@ -170,6 +174,7 @@ export class TempUrlService {
 
       await transaction.commit();
 
+
       this.logger.info(
         `updated Temporary URL with uuid ${updatedTempUrl.uuid}`
       );
@@ -207,5 +212,55 @@ export class TempUrlService {
       }
       throw err;
     }
+  };
+
+  public sendMail = async (mail: any): Promise<any> => {
+    const transporter = nodemailer.createTransport({
+      service: "hotmail",
+      auth: {
+        user: mail.userEmail,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+    // "samehhhh66@outlook.com, khalilmahmod788@gmail.com"
+    const mailOptions = {
+      from: mail.userEmail,
+      to: mail.emails,
+      subject: "Invoices due",
+      text: `Dudes, we really need your money. ${mail.link}`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response);
+        return info.response;
+      }
+    });
+  };
+
+  public sendWhatsApp = async (details: any): Promise<any> => {
+    wbm
+      .start({ showBrowser: true, qrCodeData: true, session: false })
+      .then(async (qrCodeData) => {
+        const phones = details.phones;
+        const message = details.message;
+        // `Check out the Sales on ${details.gymName}: ${details.link}`
+        await wbm.waitQRCode();
+        const send = await wbm.send(phones, message);
+        await wbm.end();
+
+        return send;
+      })
+      .catch((err) => {
+        this.logger.error(
+          `Error occurred while sending whatsApp: error: ${AppUtils.getFullException(
+            err
+          )}`,
+          err
+        );
+        throw err;
+      });
   };
 }

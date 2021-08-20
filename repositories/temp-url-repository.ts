@@ -74,8 +74,21 @@ export class TempUrlRepository {
 
     this.logger.info(`Updating Temporary URL with uuid '${tempUrl.uuid}'`);
 
-    // TODO: check if this is a good practice:
     const updatedTempUrl: TempUrl = await tempUrlInDB.update(tempUrl);
+
+    await Catalog.destroy({
+      where: { tempUrlID: tempUrl.uuid },
+      transaction: transaction,
+    });
+
+    for (let product of tempUrl.products) {
+      let catlog: Catalog = {
+        productID: product.id,
+        tempUrlID: tempUrl.uuid,
+      } as Catalog;
+
+      await Catalog.create(catlog, { transaction: transaction });
+    }
 
     this.logger.info(
       `Updated Temporary URL '${JSON.stringify(updatedTempUrl)}'`
