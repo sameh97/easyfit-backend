@@ -75,11 +75,11 @@ export class ProductsController {
   public delete = async (req: any, res: any, next: any) => {
     let productId: number = null;
     try {
-      productId = Number(req.params.id);
+      productId = Number(req.query.id);
 
       await this.productsService.delete(productId);
 
-      next(`product with id ${productId} has been deleted succesfuly`);
+      next(`product with id ${productId} has been deleted successfully`);
     } catch (err) {
       this.logger.error(`Cannot delete product: ${productId}`, err);
       next(err);

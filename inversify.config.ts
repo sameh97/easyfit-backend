@@ -17,12 +17,41 @@ import { GymService } from "./services/gym-service";
 import { MembersApi } from "./routes/members.api";
 import { GymApi } from "./routes/gym.api";
 import { GymDtoMapper } from "./common/dto-mapper/gym-dto-mapper";
+import { TrainerRepository } from "./repositories/trainer-repository";
+import { TrainerDtoMapper } from "./common/dto-mapper/trainer-dto-mapper";
+import { TrainerController } from "./controllers/trainer-controller";
+import { TrainerService } from "./services/trainer-service";
+import { TrainersApi } from "./routes/trainers.api";
 import { ProductsRepository } from "./repositories/products-repository";
 import { ProductsService } from "./services/products-service";
 import { ProductsController } from "./controllers/products-controller";
 import { ProductsApi } from "./routes/products.api";
 import { ProductDtoMapper } from "./common/dto-mapper/products-dto-mapper";
-
+import { MachinesRepository } from "./repositories/machine-repository";
+import { MachinesService } from "./services/machines-service";
+import { MachinesController } from "./controllers/machines-controller";
+import { MachinesApi } from "./routes/machines.api";
+import { MachineDtoMapper } from "./common/dto-mapper/machine-dto-mapper";
+import { MachineSchedulerService } from "./services/scheduler-service";
+import { MachineSchedulerRepository } from "./repositories/scheduler-repository";
+import { MachineSchedulerController } from "./controllers/scheduler-controller";
+import { MachineScheduleDtoMapper } from "./common/dto-mapper/scheduler-dto-mapper";
+import { JobScheduleManager } from "./services/scheduler-manager";
+import { MachineSchedulerApi } from "./routes/scheduler.api";
+import { JobService } from "./services/job-service";
+import { WebSocketService } from "./services/socket.io-service";
+import { CacheService } from "./services/cache-service";
+import { AppNotification } from "./models/app-notification";
+import { AppNotificationRepository } from "./repositories/app-notification-repository";
+import { AppNotificationService } from "./services/app-notification-service";
+import { AppNotificationsController } from "./controllers/notifications-controller";
+import { NotificationsApi } from "./routes/notification";
+import { NotificationsDtoMapper } from "./common/dto-mapper/notifications-dto-mapper";
+import { TempUrlRepository } from "./repositories/temp-url-repository";
+import { TempUrlService } from "./services/temp-url-service";
+import { TempUrlDtoMapper } from "./common/dto-mapper/temp-url-dto-mapper";
+import { TempUrlController } from "./controllers/temp-url-controller";
+import { TempUrlApi } from "./routes/temp-url-api";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -45,9 +74,44 @@ container.bind<GymController>(GymController).toSelf();
 container.bind<GymService>(GymService).toSelf();
 container.bind<GymApi>(GymApi).toSelf();
 container.bind<GymDtoMapper>(GymDtoMapper).toSelf();
+container.bind<TrainerRepository>(TrainerRepository).toSelf();
+container.bind<TrainerDtoMapper>(TrainerDtoMapper).toSelf();
+container.bind<TrainerController>(TrainerController).toSelf();
+container.bind<TrainerService>(TrainerService).toSelf();
+container.bind<TrainersApi>(TrainersApi).toSelf();
 container.bind<ProductsRepository>(ProductsRepository).toSelf();
 container.bind<ProductsService>(ProductsService).toSelf();
 container.bind<ProductsController>(ProductsController).toSelf();
 container.bind<ProductsApi>(ProductsApi).toSelf();
 container.bind<ProductDtoMapper>(ProductDtoMapper).toSelf();
+container.bind<MachinesRepository>(MachinesRepository).toSelf();
+container.bind<MachinesService>(MachinesService).toSelf();
+container.bind<MachinesController>(MachinesController).toSelf();
+container.bind<MachinesApi>(MachinesApi).toSelf();
+container.bind<MachineDtoMapper>(MachineDtoMapper).toSelf();
+
+container.bind<MachineSchedulerService>(MachineSchedulerService).toSelf();
+container.bind<MachineSchedulerRepository>(MachineSchedulerRepository).toSelf();
+container.bind<MachineSchedulerController>(MachineSchedulerController).toSelf();
+container.bind<MachineScheduleDtoMapper>(MachineScheduleDtoMapper).toSelf();
+container.bind<JobScheduleManager>(JobScheduleManager).toSelf();
+container.bind<MachineSchedulerApi>(MachineSchedulerApi).toSelf();
+
+container.bind<JobService>(JobService).toSelf();
+container.bind<WebSocketService>(WebSocketService).toSelf();
+container.bind<CacheService>(CacheService).toSelf();
+
+container.bind<AppNotification>(AppNotification).toSelf();
+container.bind<AppNotificationRepository>(AppNotificationRepository).toSelf();
+container.bind<AppNotificationService>(AppNotificationService).toSelf();
+container.bind<AppNotificationsController>(AppNotificationsController).toSelf();
+container.bind<NotificationsDtoMapper>(NotificationsDtoMapper).toSelf();
+container.bind<NotificationsApi>(NotificationsApi).toSelf();
+
+container.bind<TempUrlRepository>(TempUrlRepository).toSelf();
+container.bind<TempUrlService>(TempUrlService).toSelf();
+container.bind<TempUrlController>(TempUrlController).toSelf();
+container.bind<TempUrlDtoMapper>(TempUrlDtoMapper).toSelf();
+container.bind<TempUrlApi>(TempUrlApi).toSelf();
+
 export default container;

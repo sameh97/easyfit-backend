@@ -21,7 +21,8 @@ export class MembersApi implements AppRoute {
   private setRoutes(): void {
     this.router = Router();
 
-    this.router.post("/api/members", this.membersController.getAll);
+    this.router.get("/api/members", this.membersController.getAll);
+    this.router.get("/api/members-phones", this.membersController.getAllPhones);
     this.router.post("/api/add-member", this.membersController.createMember);
     this.router.put("/api/update-member", this.membersController.update);
     this.router.delete("/api/member", this.membersController.delete);

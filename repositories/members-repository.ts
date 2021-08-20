@@ -83,4 +83,15 @@ export class MembersRepository {
       transaction: transaction,
     });
   };
+
+  public getAllPhones = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<any[]> => {
+    return await Member.findAll({
+      attributes: ["phone"],
+      where: { gymId: gymId },
+      transaction: transaction,
+    });
+  };
 }

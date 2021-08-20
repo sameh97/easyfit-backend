@@ -4,7 +4,15 @@ import { User } from "../models/user";
 import { Transaction } from "sequelize/types";
 import { Gym } from "../models/gym";
 import { Member } from "../models/member";
+import { Trainer } from "../models/trainer";
 import { Product } from "../models/product";
+import { Machine } from "../models/machines";
+import { MachineScheduledJob } from "../models/machine-scheduled-job";
+import { Job } from "../models/job";
+import { AppNotification } from "../models/app-notification";
+import { Category } from "../models/category";
+import { Catalog } from "../models/catalog";
+import { TempUrl } from "../models/temp-url";
 
 @injectable()
 export class AppDBConnection {
@@ -20,7 +28,20 @@ export class AppDBConnection {
       port: 5432,
     });
 
-    this.db.addModels([User, Gym, Member, Product]);
+    this.db.addModels([
+      User,
+      Gym,
+      Member,
+      Trainer,
+      Product,
+      Machine,
+      MachineScheduledJob,
+      Job,
+      AppNotification,
+      Category,
+      TempUrl,
+      Catalog,
+    ]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production
   }
