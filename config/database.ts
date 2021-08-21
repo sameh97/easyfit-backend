@@ -14,6 +14,7 @@ import { Category } from "../models/category";
 import { Catalog } from "../models/catalog";
 import { TempUrl } from "../models/temp-url";
 import { Bill } from "../models/bill";
+import { Role } from "../models/role";
 
 @injectable()
 export class AppDBConnection {
@@ -43,6 +44,7 @@ export class AppDBConnection {
       TempUrl,
       Catalog,
       Bill,
+      Role,
     ]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production

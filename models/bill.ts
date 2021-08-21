@@ -22,11 +22,15 @@ export class Bill extends Model<Bill> {
   @Column(DataType.INTEGER)
   public id: number;
 
-  @AllowNull(true)
+  @AllowNull(false)
   @Column(DataType.STRING)
   public coustomerID: string;
 
-  @AllowNull(true)
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public coustomerName: string;
+
+  @AllowNull(false)
   @Column(DataType.STRING)
   public coustomerPhone: string;
 
@@ -34,6 +38,10 @@ export class Bill extends Model<Bill> {
   @Column(DataType.INTEGER)
   @ForeignKey(() => Product)
   public productID: number;
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  public productName: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)

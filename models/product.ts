@@ -46,6 +46,10 @@ export class Product extends Model<Product> {
   public quantity: number;
 
   @AllowNull(false)
+  @Column(DataType.INTEGER)
+  public price: number;
+
+  @AllowNull(false)
   @Column(DataType.STRING)
   public imgUrl: string;
 

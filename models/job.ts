@@ -16,7 +16,6 @@ import { MachineScheduledJob } from "./machine-scheduled-job";
 })
 export class Job extends Model<Job> {
   @PrimaryKey
-  @AutoIncrement
   @Column(DataType.INTEGER)
   public id: number;
 
