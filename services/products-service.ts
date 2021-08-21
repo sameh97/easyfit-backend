@@ -4,6 +4,7 @@ import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { AppDBConnection } from "../config/database";
 import { InputError } from "../exeptions/input-error";
+import { Bill } from "../models/bill";
 import { Product } from "../models/product";
 import { ProductsRepository } from "../repositories/products-repository";
 
@@ -44,6 +45,37 @@ export class ProductsService {
     const products: Product[] = await this.productRepo.getAll(gymId);
     this.logger.info(`Returning ${products.length} products`);
     return products;
+  };
+
+  public getAllBills = async (gymId: number): Promise<Bill[]> => {
+    const bills: Bill[] = await this.productRepo.getAllBills(gymId);
+    this.logger.info(`Returning ${bills.length} bills`);
+    return bills;
+  };
+
+  public createBill = async (bill: Bill): Promise<Bill> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const createdBill = await this.productRepo.createBill(bill, transaction);
+
+      await transaction.commit();
+
+      this.logger.info(`created bill with id ${createdBill.id}`);
+
+      return createdBill;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Error occurred while creating bill: error: ${AppUtils.getFullException(
+          error
+        )}`
+      );
+      throw error;
+    }
   };
 
   public update = async (product: Product): Promise<Product> => {
