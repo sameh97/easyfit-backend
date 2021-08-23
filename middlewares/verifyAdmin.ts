@@ -10,7 +10,9 @@ const verifyAdmin = (req, res, next) => {
 
   if (token == null) return res.sendStatus(401);
 
-  const user: User = jwt_decode(token);
+  const decodedToken: any = jwt_decode(token);
+
+  const user: User = { ...decodedToken.sub };
 
   if (user.roleId !== 2) {
     return res.sendStatus(403);
