@@ -23,6 +23,7 @@ import { AppUtils } from "../common/app-utils";
 import { NotificationsApi } from "../routes/notification";
 import { TempUrlApi } from "../routes/temp-url-api";
 import { Role } from "../models/role";
+import { UploadFilesApi } from "../routes/upload-file";
 
 const verifyToken = require("../middlewares/jwt-functions");
 const secret = "secretKey";
@@ -53,7 +54,9 @@ export class EasyFitApp {
     @inject(NotificationsApi)
     private notificationsApi: NotificationsApi,
     @inject(TempUrlApi)
-    private tempUrlApi: TempUrlApi
+    private tempUrlApi: TempUrlApi,
+    @inject(UploadFilesApi)
+    private uploadFilesApi: UploadFilesApi
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -200,6 +203,8 @@ export class EasyFitApp {
     this.app.use(this.machineSchedulerApi.getRouter());
     this.app.use(this.notificationsApi.getRouter());
     this.app.use(this.tempUrlApi.getRouter());
+    this.app.use(this.uploadFilesApi.getRouter());
+
     // Catch all other get requests
     const publicPath = express.static(path.join(__dirname, "./../"), {
       redirect: false,

@@ -22,7 +22,8 @@ export class NotificationsApi implements AppRoute {
     this.router = Router();
 
     this.router.get("/api/notifications", this.appNotificationsController.getAll);
-    this.router.get("/api/machine/notifications", this.appNotificationsController.getByMachineSerialNumber);
+     this.router.get("/api/machine/notifications", this.appNotificationsController.getByMachineSerialNumber);
+    this.router.get("/api/machine/all-notifications", this.appNotificationsController.getAllGrouped);
     // this.router.post("/api/notification", this.appNotificationsController.create);
     this.router.put("/api/notification", this.appNotificationsController.update);
     this.router.delete("/api/notification", this.appNotificationsController.delete);

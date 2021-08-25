@@ -4,7 +4,9 @@ import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { InputError } from "../exeptions/input-error";
 import { AppNotification } from "../models/app-notification";
+import { Machine } from "../models/machines";
 import { AppNotificationRepository } from "../repositories/app-notification-repository";
+import { MachinesRepository } from "../repositories/machine-repository";
 import { AppDBConnection } from "./../config/database";
 
 @injectable()
@@ -13,6 +15,8 @@ export class AppNotificationService {
     @inject(AppNotificationRepository)
     private appNotificationRepository: AppNotificationRepository,
     @inject(Logger) private logger: Logger,
+    @inject(MachinesRepository) private machinesRepository: MachinesRepository,
+
     @inject(AppDBConnection) private appDBConnection: AppDBConnection
   ) {}
 
@@ -52,6 +56,29 @@ export class AppNotificationService {
     const notifications = await this.appNotificationRepository.getAll(gymId);
     this.logger.info(`Returning ${notifications.length} notifications`);
     return notifications;
+  }
+
+  public async getAllGrouped(gymId: number): Promise<any[]> {
+    const grouped: any[] = [];
+    const notifications: any[] =
+      await this.appNotificationRepository.getAllGrouped(gymId);
+
+    for (let i = 0; i < notifications.length; i++) {
+      const currNotification = notifications[i].dataValues;
+
+      const machine: Machine = await this.machinesRepository.getBySerialNumber(
+        currNotification.targetObjectId
+      );
+
+      grouped.push({
+        machineId: machine.id,
+        machineSerialNumber: machine.serialNumber,
+        machineName: machine.name,
+        notificationsCount: Number(currNotification.cnt),
+      });
+    }
+
+    return grouped;
   }
 
   public async getByMachineSerialNumber(
@@ -128,7 +155,7 @@ export class AppNotificationService {
 
   public deleteByTargetObjectId = async (
     targetObjectId: string,
-    gymId: number,
+    gymId: number
   ): Promise<void> => {
     let transaction: Transaction = null;
     try {

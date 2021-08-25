@@ -35,6 +35,18 @@ export class AppNotificationsController {
     }
   };
 
+  public getAllGrouped = async (req: any, res: any, next: any) => {
+    try {
+      const notifications: any[] =
+        await this.appNotificationService.getAllGrouped(req.query.gymId);
+
+      next(notifications);
+    } catch (err) {
+      this.logger.error(`cannot get all notifications grouped `, err);
+      next(err);
+    }
+  };
+
   public getByMachineSerialNumber = async (req: any, res: any, next: any) => {
     try {
       const notifications: AppNotification[] =

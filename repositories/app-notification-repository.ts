@@ -5,6 +5,8 @@ import { AppUtils } from "../common/app-utils";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { Logger } from "./../common/logger";
 import { NotFoundErr } from "../exeptions/not-found-error";
+import sequelize = require("sequelize");
+
 const { Op } = require("sequelize");
 @injectable()
 export class AppNotificationRepository {
@@ -127,6 +129,29 @@ export class AppNotificationRepository {
     await AppNotification.destroy({
       where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
       transaction: transaction,
+    });
+  };
+
+  public getAllGrouped = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<any[]> => {
+    // return await AppNotification.findAll({
+    //   attributes: [
+    //     "AppNotification.*",
+    //     [sequelize.fn("count", sequelize.col("AppNotification.*")), "cnt"],
+    //   ],
+    //   group: "targetObjectId",
+    //   where: { gymId: gymId },
+    // });
+    return await AppNotification.findAll({
+      attributes: [
+        "targetObjectId",
+
+        [sequelize.fn("COUNT", sequelize.col("targetObjectId")), "cnt"],
+      ],
+      group: ["targetObjectId"],
+      where: { gymId: gymId },
     });
   };
 }
