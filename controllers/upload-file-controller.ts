@@ -23,9 +23,7 @@ export class UploadFileController {
 
       console.log(uploadedFile);
 
-      const imgPath = `/storage/${uploadedFile.Key}`;
-
-      res.send(imgPath);
+      res.send(uploadedFile.Key);
     } catch (error) {
       this.logger.error(
         `Cannot upload file ${JSON.stringify(req.body)}`,

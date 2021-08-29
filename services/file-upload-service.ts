@@ -1,13 +1,8 @@
 import { inject, injectable } from "inversify";
-import { Transaction } from "sequelize/types";
-import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
-import { GymRepository } from "../repositories/gym-repository";
-import { AppDBConnection } from "./../config/database";
-import { Consts } from "./../common/consts";
-// const S3 = require("aws-sdk/clients/s3");
 import * as AWS from "aws-sdk";
 import * as fs from "fs";
+
 require("dotenv").config();
 
 @injectable()
@@ -33,7 +28,20 @@ export class FileUploadService {
     return this.s3.upload(uploadParams).promise();
   };
 
-  public delete = async (url: string): Promise<void> => {};
+  public deleteFromS3(file: any) {
+    return this.s3
+      .deleteObject({
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: file,
+      })
+      .promise();
+  }
+
+  public delete = async (fileKey: string): Promise<any> => {
+    var params = { Bucket: process.env.AWS_BUCKET_NAME, Key: fileKey };
+
+    return this.s3.deleteObject(params).promise();
+  };
 
   public getFileStream = async (fileKey: any): Promise<any> => {
     const downloadParams = {

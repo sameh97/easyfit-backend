@@ -2,12 +2,17 @@ import { inject, injectable } from "inversify";
 import { Transaction } from "sequelize/types";
 import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
+import { SocketTopics } from "../common/socket-util";
 import { InputError } from "../exeptions/input-error";
+import { NotFound } from "../exeptions/notFound-exeption";
 import { AppNotification } from "../models/app-notification";
+import { AppNotificationMessage } from "../models/app-notification-message";
 import { Machine } from "../models/machines";
 import { AppNotificationRepository } from "../repositories/app-notification-repository";
 import { MachinesRepository } from "../repositories/machine-repository";
 import { AppDBConnection } from "./../config/database";
+import { CacheService } from "./cache-service";
+import { WebSocketService } from "./socket.io-service";
 
 @injectable()
 export class AppNotificationService {
@@ -17,7 +22,10 @@ export class AppNotificationService {
     @inject(Logger) private logger: Logger,
     @inject(MachinesRepository) private machinesRepository: MachinesRepository,
 
-    @inject(AppDBConnection) private appDBConnection: AppDBConnection
+    @inject(AppDBConnection) private appDBConnection: AppDBConnection,
+    @inject(CacheService)
+    private cacheService: CacheService,
+    @inject(WebSocketService) private webSocketService: WebSocketService
   ) {}
 
   public async create(
@@ -56,6 +64,42 @@ export class AppNotificationService {
     const notifications = await this.appNotificationRepository.getAll(gymId);
     this.logger.info(`Returning ${notifications.length} notifications`);
     return notifications;
+  }
+
+  public sendGroupedNotification = async (gymId: number): Promise<any> => {
+    const notificationsGrouped: any = await this.getAllGrouped(gymId);
+
+    if (!AppUtils.hasValue(notificationsGrouped)) {
+      throw new NotFound(
+        `cannot send grouped notification because they don't exist`
+      );
+    }
+
+    const socketID: string = this.cacheService.get(gymId.toString());
+
+    const notificationToSend: AppNotificationMessage = this.createNotification(
+      notificationsGrouped,
+      gymId
+    );
+
+    this.webSocketService.socketIO
+      .to(socketID)
+      .emit(SocketTopics.TOPIC_GROUPED_NOTIFICATION, notificationToSend);
+  };
+
+  private createNotification(
+    notificationsGrouped: any,
+    gymId: number
+  ): AppNotificationMessage {
+    const notification = new AppNotificationMessage(
+      notificationsGrouped,
+      SocketTopics.TOPIC_GROUPED_NOTIFICATION,
+      gymId,
+      null,
+      null,
+      new Date()
+    );
+    return notification;
   }
 
   public async getAllGrouped(gymId: number): Promise<any[]> {

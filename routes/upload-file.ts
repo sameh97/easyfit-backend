@@ -32,8 +32,8 @@ export class UploadFilesApi implements AppRoute {
       upload.single("file"),
       this.uploadFileController.upload
     );
-    this.router.get( "/api/storage/:key",  verifyToken, this.uploadFileController.get);
-    
+    this.router.get("/api/storage/:key", this.uploadFileController.get);
+
     // this.router.put("/api/user" , verifyToken , verifyAdmin , this.usersController.update);
     // this.router.delete("/api/user", verifyToken ,verifyAdmin ,  this.usersController.delete);
   }

@@ -13,7 +13,9 @@ export class AppNotificationRepository {
   constructor(@inject(Logger) private logger: Logger) {}
 
   public async getAll(gymId: number): Promise<AppNotification[]> {
-    return await AppNotification.findAll({ where: { gymId: gymId } });
+    return await AppNotification.findAll({
+      where: { [Op.and]: [{ seen: false, gymId: gymId }] },
+    });
   }
 
   public async getByMachineSerialNumber(
@@ -136,14 +138,6 @@ export class AppNotificationRepository {
     gymId: number,
     transaction?: Transaction
   ): Promise<any[]> => {
-    // return await AppNotification.findAll({
-    //   attributes: [
-    //     "AppNotification.*",
-    //     [sequelize.fn("count", sequelize.col("AppNotification.*")), "cnt"],
-    //   ],
-    //   group: "targetObjectId",
-    //   where: { gymId: gymId },
-    // });
     return await AppNotification.findAll({
       attributes: [
         "targetObjectId",
@@ -151,7 +145,7 @@ export class AppNotificationRepository {
         [sequelize.fn("COUNT", sequelize.col("targetObjectId")), "cnt"],
       ],
       group: ["targetObjectId"],
-      where: { gymId: gymId },
+      where: { [Op.and]: [{ seen: false, gymId: gymId }] },
     });
   };
 }

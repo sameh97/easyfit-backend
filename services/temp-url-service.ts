@@ -155,8 +155,19 @@ export class TempUrlService {
     const root = parse(catalogTemplate);
 
     for (let product of products) {
-      const name = product.name;
-      const pro = parse(`<li>name:${name} <br> code: ${product.code}</li>`);
+      const pro = parse(`<div class="card">
+      <div class="item-flex-container">
+      <div><img style="width:100px;hight:100px" src="${product.imgUrl}"></div>
+      <div>
+      <h3>${product.name}</h3>
+      <p>price: ${product.price}</p>
+      <p> ${product.description}</p>
+     
+      </div>
+      </div>
+      </div>
+        `);
+
       root.querySelector("#easyfit-catalog-container").appendChild(pro);
     }
     return root.toString();
@@ -173,7 +184,6 @@ export class TempUrlService {
       );
 
       await transaction.commit();
-
 
       this.logger.info(
         `updated Temporary URL with uuid ${updatedTempUrl.uuid}`

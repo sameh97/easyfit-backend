@@ -30,7 +30,7 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
 
   @AllowNull(false)
   @Column(DataType.BOOLEAN)
-  public isActive: Boolean;
+  public isActive: Boolean; // TODO: remove
 
   @AllowNull(false)
   @Column(DataType.INTEGER)

@@ -17,7 +17,6 @@ export class MachineScheduleDtoMapper {
       isActive: scheduledJob.isActive,
       daysFrequency: scheduledJob.daysFrequency,
       jobID: scheduledJob.jobID,
-      // machineID: scheduledJob.machineID,
       machineSerialNumber: scheduledJob.machineSerialNumber,
       gymId: scheduledJob.gymId,
     } as MachineScheduledJobDto;
@@ -37,7 +36,6 @@ export class MachineScheduleDtoMapper {
       isActive: machineScheduledJobDto.isActive,
       daysFrequency: machineScheduledJobDto.daysFrequency,
       jobID: machineScheduledJobDto.jobID,
-      // machineID: machineScheduledJobDto.machineID,
       machineSerialNumber: machineScheduledJobDto.machineSerialNumber,
       gymId: machineScheduledJobDto.gymId,
     } as MachineScheduledJob;

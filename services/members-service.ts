@@ -21,7 +21,7 @@ export class MembersService {
     try {
       transaction = await this.appDBConnection.createTransaction();
 
-      member.isActive = false;
+      member.isActive = true;
 
       const createdMember = await this.memberRepository.save(
         member,
