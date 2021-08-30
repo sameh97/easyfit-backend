@@ -44,7 +44,7 @@ export class TrainerService {
 
   public async getAll(gymId: number): Promise<Trainer[]> {
     const trainers = await this.trainerRepository.getAll(gymId);
-    this.logger.info(`Returning ${trainers.length} trainers`);
+    this.logger.info(`Returning ${trainers.length} trainers.`);
     return trainers;
   }
 
