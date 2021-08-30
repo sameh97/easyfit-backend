@@ -43,13 +43,14 @@ export class JobScheduleManager {
         let createdNotification: AppNotification =
           await this.appNotificationService.create(notificationToCreate);
 
-        // createdNotification =
-        //   this.notificationsDtoMapper.asDto(createdNotification);
-
+        // send job notification for specific machine
         this.jobService.send(
           scheduledJob,
           this.notificationsDtoMapper.asDto(createdNotification)
         );
+
+        // send regular notification
+        this.appNotificationService.sendGroupedNotification(scheduledJob.gymId);
         console.log("sent notification");
       }
     );

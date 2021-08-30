@@ -13,9 +13,4 @@ export class Catalog extends Model<Catalog> {
   @ForeignKey(() => TempUrl)
   @Column
   public tempUrlID: string;
-
-  // @AllowNull(false)
-  // @Column(DataType.INTEGER)
-  // @ForeignKey(() => Gym)
-  // public gymId: number;
 }

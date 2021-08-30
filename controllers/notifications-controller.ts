@@ -35,6 +35,18 @@ export class AppNotificationsController {
     }
   };
 
+  public getAllGrouped = async (req: any, res: any, next: any) => {
+    try {
+      const notifications: any[] =
+        await this.appNotificationService.getAllGrouped(req.query.gymId);
+
+      next(notifications);
+    } catch (err) {
+      this.logger.error(`cannot get all notifications grouped `, err);
+      next(err);
+    }
+  };
+
   public getByMachineSerialNumber = async (req: any, res: any, next: any) => {
     try {
       const notifications: AppNotification[] =
@@ -53,27 +65,6 @@ export class AppNotificationsController {
       next(err);
     }
   };
-
-  // public create = async (req: any, res: any, next: any) => {
-  //   let memberToCreate: Member = null;
-  //   try {
-  //     memberToCreate = this.membersDtoMapper.asEntity(req.body);
-
-  //     const createdMember: Member = await this.membersService.create(
-  //       memberToCreate
-  //     );
-
-  //     res.status(201);
-
-  //     next(this.membersDtoMapper.asDto(createdMember));
-  //   } catch (err) {
-  //     this.logger.error(
-  //       `Cannot create member ${JSON.stringify(req.body)}`,
-  //       err
-  //     );
-  //     next(err);
-  //   }
-  // };
 
   public update = async (req: any, res: any, next: any) => {
     let notificationToUpdate: AppNotification = null;
@@ -107,6 +98,46 @@ export class AppNotificationsController {
       );
     } catch (err) {
       this.logger.error(`Cannot delete notification: ${notificationId}`, err);
+      next(err);
+    }
+  };
+
+  public deleteByGymId = async (req: any, res: any, next: any) => {
+    let notificationGymId: number;
+    try {
+      notificationGymId = Number(req.query.gymId);
+
+      await this.appNotificationService.deleteByGymId(notificationGymId);
+
+      next(
+        `notifications with gym id ${notificationGymId} has been deleted succesfuly`
+      );
+    } catch (err) {
+      this.logger.error(
+        `Cannot delete notifications: ${notificationGymId}`,
+        err
+      );
+      next(err);
+    }
+  };
+
+  public deleteAllByTargetObjectId = async (req: any, res: any, next: any) => {
+    let notificationGymId: number;
+    let targetObjectId: string;
+    try {
+      notificationGymId = Number(req.query.gymId);
+      targetObjectId = req.query.machineSerialNumber;
+
+      await this.appNotificationService.deleteAllByTargetObjectId(
+        targetObjectId,
+        notificationGymId
+      );
+
+      next(
+        `notifications with targetObjectId ${targetObjectId} has been deleted succesfuly`
+      );
+    } catch (err) {
+      this.logger.error(`Cannot delete notifications: ${targetObjectId}`, err);
       next(err);
     }
   };

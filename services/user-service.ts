@@ -7,6 +7,7 @@ import { PasswordManagerService } from "./password-manager-service";
 import { Transaction } from "sequelize/types";
 import { AppDBConnection } from "../config/database";
 import { AppUtils } from "../common/app-utils";
+import { Logger } from "../common/logger";
 
 @injectable()
 export class UserService {
@@ -17,7 +18,8 @@ export class UserService {
     @inject(UsersRepository) private usersRepository: UsersRepository,
     @inject(PasswordManagerService)
     private passwordManager: PasswordManagerService,
-    @inject(AppDBConnection) private appDBconnection: AppDBConnection
+    @inject(AppDBConnection) private appDBconnection: AppDBConnection,
+    @inject(Logger) private logger: Logger
   ) {}
 
   public async login(email: string, password: string): Promise<string> {
@@ -68,4 +70,68 @@ export class UserService {
       throw err;
     }
   }
+
+  public getAll = async (): Promise<User[]> => {
+    const users = await this.usersRepository.getAll();
+    this.logger.info(`Returning ${users.length} users`);
+    return users;
+  };
+
+  public update = async (user: User): Promise<User> => {
+    let transaction: Transaction = null;
+    try {
+      const hashedPassword = await this.passwordManager.hashAndSalt(
+        user.password
+      );
+
+      user.password = hashedPassword;
+
+      
+      transaction = await this.appDBconnection.createTransaction();
+
+      const updatedUser = await this.usersRepository.update(user, transaction);
+
+      await transaction.commit();
+
+      this.logger.info(`updated user with id ${updatedUser.id}`);
+
+      return updatedUser;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+
+      this.logger.error(
+        `cannot update user, error ${AppUtils.getFullException(error)}`,
+        error
+      );
+      throw error;
+    }
+  };
+
+  public delete = async (id: number): Promise<void> => {
+    let transaction: Transaction = null;
+    try {
+      this.logger.info(`Deleting user with id: ${id}`);
+
+      transaction = await this.appDBconnection.createTransaction();
+
+      await this.usersRepository.delete(id, transaction);
+
+      transaction.commit();
+
+      this.logger.info(`User with id ${id} has been deleted`);
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Error occurred while deleting user: error: ${AppUtils.getFullException(
+          error
+        )}`,
+        error
+      );
+      throw error;
+    }
+  };
 }

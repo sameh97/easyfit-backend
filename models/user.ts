@@ -10,8 +10,11 @@ import {
   IsEmail,
   Length,
   ForeignKey,
+  HasOne,
 } from "sequelize-typescript";
+import { AssociationOptions } from "sequelize/types";
 import { Gym } from "./gym";
+import { Role } from "./role";
 @Table({
   tableName: "users",
 })
@@ -48,6 +51,11 @@ export class User extends Model<User> {
   public address: string;
 
   @AllowNull(false)
+  @Column(DataType.INTEGER)
+  @ForeignKey(() => Role)
+  public roleId: number;
+
+  @AllowNull(false)
   @Length({ min: 3, max: 512 })
   @Column(DataType.STRING)
   public password: string;
@@ -56,4 +64,11 @@ export class User extends Model<User> {
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;
+
+  // @HasOne(() => Role, {
+  //   foreignKey: "id",
+  //   as: "roleUser",
+  //   onDelete: "CASCADE",
+  // } as AssociationOptions)
+  // public role: Role;
 }

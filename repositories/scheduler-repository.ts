@@ -36,9 +36,16 @@ export class MachineSchedulerRepository {
     transaction?: Transaction
   ): Promise<MachineScheduledJob> => {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
-      where: { machineSerialNumber: scheduleJob.machineSerialNumber },
+      where: {
+        [Op.and]: [
+          {
+            machineSerialNumber: scheduleJob.machineSerialNumber,
+            jobID: scheduleJob.jobID,
+          },
+        ],
+      },
     });
-    // TODO: check by something else than the machine serial number, one machine can have more than schedule
+
     if (AppUtils.hasValue(scheduleJobInDB)) {
       throw new AlreadyExistError(
         `schedule with id ${scheduleJobInDB.id} already exist`

@@ -104,10 +104,10 @@ export class MachineSchedulerService {
 
       await this.machineSchedulerRepo.delete(id, transaction);
 
-      await transaction.commit();
-
       this.jobScheduleManager.cancelJob(id);
 
+      await transaction.commit();
+    
       //TODO: check if we need to remove from the map also
 
       this.logger.info(`Schedule with id ${id} has been deleted.`);

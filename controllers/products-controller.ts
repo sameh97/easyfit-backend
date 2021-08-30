@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import { ProductDtoMapper } from "../common/dto-mapper/products-dto-mapper";
 import { Logger } from "../common/logger";
+import { Bill } from "../models/bill";
 import { ProductDto } from "../models/dto/product-dto";
 import { Product } from "../models/product";
 import { ProductsService } from "../services/products-service";
@@ -47,6 +48,41 @@ export class ProductsController {
         `Cannot create product ${JSON.stringify(req.body)}`,
         err
       );
+      next(err);
+    }
+  };
+
+  public createBill = async (req: any, res: any, next: any) => {
+    let billToCreate: Bill = null;
+    try {
+      billToCreate = req.body; //TODO: make dto
+
+      const createdBill: Bill = await this.productsService.createBill(
+        billToCreate
+      );
+
+      res.status(201);
+      next(createdBill);
+    } catch (error) {
+      this.logger.error(
+        `Cannot create bill ${JSON.stringify(req.body)}`,
+        error
+      );
+      next(error);
+    }
+  };
+
+  public getAllBills = async (req: any, res: any, next: any) => {
+    try {
+      const bills: Bill[] = await this.productsService.getAllBills(
+        req.query.gymId
+      );
+
+      // TODO: make dto mapper and map all the array elements to dto
+
+      next(bills);
+    } catch (err) {
+      this.logger.error(`cannot get all bills`, err);
       next(err);
     }
   };

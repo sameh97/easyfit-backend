@@ -5,11 +5,14 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
   Unique,
 } from "sequelize-typescript";
+import { AssociationOptions } from "sequelize/types";
+import { Bill } from "./bill";
 import { Catalog } from "./catalog";
 import { Category } from "./category";
 import { Gym } from "./gym";
@@ -43,6 +46,10 @@ export class Product extends Model<Product> {
   public quantity: number;
 
   @AllowNull(false)
+  @Column(DataType.INTEGER)
+  public price: number;
+
+  @AllowNull(false)
   @Column(DataType.STRING)
   public imgUrl: string;
 
@@ -58,4 +65,11 @@ export class Product extends Model<Product> {
 
   @BelongsToMany(() => TempUrl, () => Catalog)
   TempUrls: TempUrl[];
+
+  @HasOne(() => Bill, {
+    foreignKey: "productID",
+    as: "userGym",
+    onDelete: "CASCADE",
+  } as AssociationOptions)
+  public bill: Bill;
 }

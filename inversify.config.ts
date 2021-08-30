@@ -52,6 +52,9 @@ import { TempUrlService } from "./services/temp-url-service";
 import { TempUrlDtoMapper } from "./common/dto-mapper/temp-url-dto-mapper";
 import { TempUrlController } from "./controllers/temp-url-controller";
 import { TempUrlApi } from "./routes/temp-url-api";
+import { UploadFileController } from "./controllers/upload-file-controller";
+import { FileUploadService } from "./services/file-upload-service";
+import { UploadFilesApi } from "./routes/upload-file";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -113,5 +116,8 @@ container.bind<TempUrlService>(TempUrlService).toSelf();
 container.bind<TempUrlController>(TempUrlController).toSelf();
 container.bind<TempUrlDtoMapper>(TempUrlDtoMapper).toSelf();
 container.bind<TempUrlApi>(TempUrlApi).toSelf();
+container.bind<UploadFileController>(UploadFileController).toSelf();
+container.bind<FileUploadService>(FileUploadService).toSelf();
+container.bind<UploadFilesApi>(UploadFilesApi).toSelf();
 
 export default container;

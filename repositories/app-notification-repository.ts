@@ -5,13 +5,17 @@ import { AppUtils } from "../common/app-utils";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { Logger } from "./../common/logger";
 import { NotFoundErr } from "../exeptions/not-found-error";
+import sequelize = require("sequelize");
+
 const { Op } = require("sequelize");
 @injectable()
 export class AppNotificationRepository {
   constructor(@inject(Logger) private logger: Logger) {}
 
   public async getAll(gymId: number): Promise<AppNotification[]> {
-    return await AppNotification.findAll({ where: { gymId: gymId } });
+    return await AppNotification.findAll({
+      where: { [Op.and]: [{ seen: false, gymId: gymId }] },
+    });
   }
 
   public async getByMachineSerialNumber(
@@ -107,6 +111,27 @@ export class AppNotificationRepository {
     });
   };
 
+  public deleteByGymId = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const toDelete: AppNotification[] = await AppNotification.findAll({
+      where: { gymId: gymId },
+      transaction: transaction,
+    });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      throw new NotFoundErr(
+        `Cannot delete notifications where gym id: ${gymId} because it is not found`
+      );
+    }
+
+    await AppNotification.destroy({
+      where: { gymId: gymId },
+      transaction: transaction,
+    });
+  };
+
   public deleteByTargetObjectId = async (
     targetObjectId: string,
     gymId: number,
@@ -127,6 +152,44 @@ export class AppNotificationRepository {
     await AppNotification.destroy({
       where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
       transaction: transaction,
+    });
+  };
+
+  public deleteAllByTargetObjectId = async (
+    targetObjectId: string,
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const toDelete: AppNotification[] = await AppNotification.findAll({
+      where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
+      transaction: transaction,
+    });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      throw new NotFoundErr(
+        `Cannot delete notifications: ${targetObjectId} because it is not found`
+      );
+      return;
+    }
+
+    await AppNotification.destroy({
+      where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
+      transaction: transaction,
+    });
+  };
+
+  public getAllGrouped = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<any[]> => {
+    return await AppNotification.findAll({
+      attributes: [
+        "targetObjectId",
+
+        [sequelize.fn("COUNT", sequelize.col("targetObjectId")), "cnt"],
+      ],
+      group: ["targetObjectId"],
+      where: { [Op.and]: [{ seen: false, gymId: gymId }] },
     });
   };
 }
