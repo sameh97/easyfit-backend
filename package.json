@@ -8,7 +8,7 @@
         "start": "npm run build && node dist/index.js",
         "start-nodemon": "nodemon dist/index.js",
         "dev": "nodemon index",
-        "postinstall": "tsc"
+        "postinstall": "tsc -p . && ncp public dist"
     },
     "repository": {
         "type": "git",
