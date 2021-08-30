@@ -93,17 +93,6 @@ export class TempUrlService {
       if (dateNow.getTime() > endDate.getTime()) {
         throw new OutOfDateError(`Catalog is no longer available`);
       }
-
-      // const catalog: Catalog[] = await Catalog.findAll({
-      //   where: { tempUrlID: uuid },
-      // });
-
-      // let productIDS: number[] = [];
-
-      // for (let item of catalog) {
-      //   productIDS.push(item.productID);
-      // }
-
       const products: Product[] = await this.getCatalogProductsByUUID(uuid);
 
       this.logger.info(`Returning Temporary URL ${tempUrl.uuid}`);

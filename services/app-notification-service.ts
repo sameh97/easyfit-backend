@@ -197,6 +197,32 @@ export class AppNotificationService {
     }
   };
 
+  public deleteByGymId = async (gymId: number): Promise<void> => {
+    if (!AppUtils.isInteger(gymId)) {
+      throw new InputError(
+        `Cannot delete notifications, the gymId must be an integer`
+      );
+    }
+
+    let transaction: Transaction = null;
+    try {
+      this.logger.info(`Deleting notifications with gym id: ${gymId}`);
+
+      transaction = await this.appDBConnection.createTransaction();
+
+      await this.appNotificationRepository.deleteByGymId(gymId, transaction);
+
+      await transaction.commit();
+
+      this.logger.info(`Notifications with id ${gymId} has been deleted.`);
+    } catch (err) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw err;
+    }
+  };
+
   public deleteByTargetObjectId = async (
     targetObjectId: string,
     gymId: number
@@ -219,6 +245,37 @@ export class AppNotificationService {
 
       this.logger.info(
         `Notification with targetObjectId ${targetObjectId} has been deleted.`
+      );
+    } catch (err) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw err;
+    }
+  };
+
+  public deleteAllByTargetObjectId = async (
+    targetObjectId: string,
+    gymId: number
+  ): Promise<void> => {
+    let transaction: Transaction = null;
+    try {
+      this.logger.info(
+        `Deleting notifications with targetObjectId: ${targetObjectId}`
+      );
+
+      transaction = await this.appDBConnection.createTransaction();
+
+      await this.appNotificationRepository.deleteAllByTargetObjectId(
+        targetObjectId,
+        gymId,
+        transaction
+      );
+
+      await transaction.commit();
+
+      this.logger.info(
+        `Notifications with targetObjectId ${targetObjectId} has been deleted.`
       );
     } catch (err) {
       if (transaction) {

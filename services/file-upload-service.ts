@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import { Logger } from "../common/logger";
 import * as AWS from "aws-sdk";
 import * as fs from "fs";
+import { ObjectCannedACL } from "aws-sdk/clients/s3";
 
 require("dotenv").config();
 
@@ -19,10 +20,13 @@ export class FileUploadService {
 
   public upload = async (file: any): Promise<any> => {
     const fileStream = fs.createReadStream(file.path);
+    const acl: ObjectCannedACL = "public-read";
+
     const uploadParams = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Body: fileStream,
       Key: file.filename,
+      ACL: acl
     };
 
     return this.s3.upload(uploadParams).promise();

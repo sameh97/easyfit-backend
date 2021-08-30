@@ -23,7 +23,7 @@ export class UploadFileController {
 
       console.log(uploadedFile);
 
-      res.send(uploadedFile.Key);
+      res.send(uploadedFile.Location);
     } catch (error) {
       this.logger.error(
         `Cannot upload file ${JSON.stringify(req.body)}`,

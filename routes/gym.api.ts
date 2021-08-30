@@ -33,7 +33,17 @@ export class GymApi implements AppRoute {
       verifyAdmin,
       this.gymController.createGym
     );
-    this.router.put("/api/gym", verifyToken, verifyAdmin, this.gymController.update);
-    this.router.delete("/api/gym", verifyToken ,verifyAdmin , this.gymController.delete)
+    this.router.put(
+      "/api/gym",
+      verifyToken,
+      verifyAdmin,
+      this.gymController.update
+    );
+    this.router.delete(
+      "/api/gym",
+      verifyToken,
+      verifyAdmin,
+      this.gymController.delete
+    );
   }
 }

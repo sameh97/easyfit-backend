@@ -80,7 +80,7 @@ body { padding: 1rem; }
       <body>
       <div class="header">EasyFit</div>
       <div class="flex-container">
-
+      <div><h2>gym products sale</h2></div>
       <div> 
       <div class="card-container">
       <div id="easyfit-catalog-container" class="cards">

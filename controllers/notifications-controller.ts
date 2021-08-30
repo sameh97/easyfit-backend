@@ -66,27 +66,6 @@ export class AppNotificationsController {
     }
   };
 
-  // public create = async (req: any, res: any, next: any) => {
-  //   let memberToCreate: Member = null;
-  //   try {
-  //     memberToCreate = this.membersDtoMapper.asEntity(req.body);
-
-  //     const createdMember: Member = await this.membersService.create(
-  //       memberToCreate
-  //     );
-
-  //     res.status(201);
-
-  //     next(this.membersDtoMapper.asDto(createdMember));
-  //   } catch (err) {
-  //     this.logger.error(
-  //       `Cannot create member ${JSON.stringify(req.body)}`,
-  //       err
-  //     );
-  //     next(err);
-  //   }
-  // };
-
   public update = async (req: any, res: any, next: any) => {
     let notificationToUpdate: AppNotification = null;
     try {
@@ -119,6 +98,46 @@ export class AppNotificationsController {
       );
     } catch (err) {
       this.logger.error(`Cannot delete notification: ${notificationId}`, err);
+      next(err);
+    }
+  };
+
+  public deleteByGymId = async (req: any, res: any, next: any) => {
+    let notificationGymId: number;
+    try {
+      notificationGymId = Number(req.query.gymId);
+
+      await this.appNotificationService.deleteByGymId(notificationGymId);
+
+      next(
+        `notifications with gym id ${notificationGymId} has been deleted succesfuly`
+      );
+    } catch (err) {
+      this.logger.error(
+        `Cannot delete notifications: ${notificationGymId}`,
+        err
+      );
+      next(err);
+    }
+  };
+
+  public deleteAllByTargetObjectId = async (req: any, res: any, next: any) => {
+    let notificationGymId: number;
+    let targetObjectId: string;
+    try {
+      notificationGymId = Number(req.query.gymId);
+      targetObjectId = req.query.machineSerialNumber;
+
+      await this.appNotificationService.deleteAllByTargetObjectId(
+        targetObjectId,
+        notificationGymId
+      );
+
+      next(
+        `notifications with targetObjectId ${targetObjectId} has been deleted succesfuly`
+      );
+    } catch (err) {
+      this.logger.error(`Cannot delete notifications: ${targetObjectId}`, err);
       next(err);
     }
   };

@@ -111,6 +111,27 @@ export class AppNotificationRepository {
     });
   };
 
+  public deleteByGymId = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const toDelete: AppNotification[] = await AppNotification.findAll({
+      where: { gymId: gymId },
+      transaction: transaction,
+    });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      throw new NotFoundErr(
+        `Cannot delete notifications where gym id: ${gymId} because it is not found`
+      );
+    }
+
+    await AppNotification.destroy({
+      where: { gymId: gymId },
+      transaction: transaction,
+    });
+  };
+
   public deleteByTargetObjectId = async (
     targetObjectId: string,
     gymId: number,
@@ -125,6 +146,29 @@ export class AppNotificationRepository {
       // throw new NotFoundErr(
       //   `Cannot delete notification: ${targetObjectId} because it is not found`
       // );
+      return;
+    }
+
+    await AppNotification.destroy({
+      where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
+      transaction: transaction,
+    });
+  };
+
+  public deleteAllByTargetObjectId = async (
+    targetObjectId: string,
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const toDelete: AppNotification[] = await AppNotification.findAll({
+      where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
+      transaction: transaction,
+    });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      throw new NotFoundErr(
+        `Cannot delete notifications: ${targetObjectId} because it is not found`
+      );
       return;
     }
 
