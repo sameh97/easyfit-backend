@@ -7,85 +7,74 @@ import { NotFound } from "../exeptions/notFound-exeption";
 import { Trainer } from "../models/trainer";
 
 @injectable()
-export class TrainerRepository{
-    constructor(@inject(Logger)private logger:Logger){}
-    public async getAll(gymId:number):Promise<Trainer[]>{
-        return await Trainer.findAll({where :{gymId : gymId}});
-    }
-    public async save(
-        trainer : Trainer,
-        transaction?:Transaction
-    ):Promise<Trainer>{
-        const trainerInDB = await Trainer.findOne({
-            where : {email : trainer.email},
-            transaction:transaction,
-        });
-        if(AppUtils.hasValue(trainerInDB)){
-            throw new AlreadyExistError(
-                `trainer with email ${trainerInDB.email} allready exist`
-            );
-        }
+export class TrainerRepository {
+  constructor(@inject(Logger) private logger: Logger) {}
+  public async getAll(gymId: number): Promise<Trainer[]> {
+    return await Trainer.findAll({ where: { gymId: gymId } });
+  }
+  public async save(
+    trainer: Trainer,
+    transaction?: Transaction
+  ): Promise<Trainer> {
+    const trainerInDB = await Trainer.findOne({
+      where: { email: trainer.email },
+      transaction: transaction,
+    });
 
-        this.logger.info(`Creating trainer with email '${trainer.email}'`);
-
-        const createdTrainer = await Trainer.create(trainer,{
-            transaction : transaction,
-        });
-        this.logger.info(`created member ${JSON.stringify(createdTrainer)}`);
-        
-        
-        return createdTrainer; 
+    if (AppUtils.hasValue(trainerInDB)) {
+      throw new AlreadyExistError(
+        `trainer with email ${trainerInDB.email} allready exist`
+      );
     }
 
-    public update = async(
-        trainer :Trainer,
-        transaction?:Transaction
-    ):Promise<Trainer> =>{
-        let trainerInDB = await Trainer.findOne({
-            where : {email:trainer.email},
-            transaction:transaction,
-        });
+    this.logger.info(`Creating trainer with email '${trainer.email}'`);
 
+    const createdTrainer = await Trainer.create(trainer, {
+      transaction: transaction,
+    });
+    this.logger.info(`created member ${JSON.stringify(createdTrainer)}`);
 
-        if(!AppUtils.hasValue(trainerInDB)){
-            throw new NotFound(
-                `trainer with email ${trainer.email} was not found`
-            );
-            }
+    return createdTrainer;
+  }
 
-            this.logger.info(`Updating trainer with email '${trainer.email}' `);
+  public update = async (
+    trainer: Trainer,
+    transaction?: Transaction
+  ): Promise<Trainer> => {
+    let trainerInDB = await Trainer.findOne({
+      where: { email: trainer.email },
+      transaction: transaction,
+    });
 
-            const UpdatedTrainer = await trainerInDB.update(trainer);
-
-            this.logger.info(`Updated trainer '${JSON.stringify(UpdatedTrainer)}'`);
-
-            return UpdatedTrainer;
+    if (!AppUtils.hasValue(trainerInDB)) {
+      throw new NotFound(`trainer with email ${trainer.email} was not found`);
     }
-    public delete = async(
-        id:number,
-        transaction?:Transaction
-    ):Promise<void> => {
-        const toDelete : Trainer = await Trainer.findOne({
-            where :{id :id},
-            transaction : transaction,
-        });
-        
-        if(!AppUtils.hasValue(toDelete)){
-            throw new NotFound(
-                `trainer with email ${id} was not found`
-            );
-        }
-        
-        await Trainer.destroy({
-            where:{id : id},
-            transaction : transaction,
-        });
+
+    this.logger.info(`Updating trainer with email '${trainer.email}' `);
+
+    const UpdatedTrainer = await trainerInDB.update(trainer);
+
+    this.logger.info(`Updated trainer '${JSON.stringify(UpdatedTrainer)}'`);
+
+    return UpdatedTrainer;
+  };
+
+  public delete = async (
+    id: number,
+    transaction?: Transaction
+  ): Promise<void> => {
+    const toDelete: Trainer = await Trainer.findOne({
+      where: { id: id },
+      transaction: transaction,
+    });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      throw new NotFound(`trainer with email ${id} was not found`);
     }
+
+    await Trainer.destroy({
+      where: { id: id },
+      transaction: transaction,
+    });
+  };
 }
-   
-
-
-
-
-
-

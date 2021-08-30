@@ -22,6 +22,6 @@ export class TrainersApi implements AppRoute {
         this.router.get("/api/trainers",this.trainerController.getAll);
         this.router.post("/api/add-trainer",this.trainerController.createTrainer);
         this.router.put("/api/update-trainer", this.trainerController.Update);
-        this.router.delete("/api/delete-trainer/:id", this.trainerController.delete);
+        this.router.delete("/api/delete-trainer", this.trainerController.delete);
     }
 }
