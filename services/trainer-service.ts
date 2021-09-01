@@ -18,11 +18,17 @@ export class TrainerService {
     let transaction: Transaction = null;
     try {
       transaction = await this.appDBConnection.createTransaction();
+
+      trainer.isActive = false;
+      
+      
       const createdTrainer = await this.trainerRepository.save(
         trainer,
         transaction
       );
       await transaction.commit();
+
+      
 
       this.logger.info(`created trainer with id ${createdTrainer.id}`);
 

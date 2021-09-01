@@ -16,9 +16,7 @@ export class AppNotificationService {
     @inject(AppDBConnection) private appDBConnection: AppDBConnection
   ) {}
 
-  public async create(
-    appNotification: AppNotification
-  ): Promise<AppNotification> {
+  public async create(appNotification: AppNotification): Promise<AppNotification> {
     let transaction: Transaction = null;
     try {
       transaction = await this.appDBConnection.createTransaction();
@@ -54,10 +52,7 @@ export class AppNotificationService {
     return notifications;
   }
 
-  public async getByMachineSerialNumber(
-    gymId: number,
-    machineSerialNumber: string
-  ): Promise<AppNotification[]> {
+  public async getByMachineSerialNumber(gymId: number,machineSerialNumber: string): Promise<AppNotification[]> {
     const notifications =
       await this.appNotificationRepository.getByMachineSerialNumber(
         gymId,
@@ -67,9 +62,7 @@ export class AppNotificationService {
     return notifications;
   }
 
-  public update = async (
-    appNotification: AppNotification
-  ): Promise<AppNotification> => {
+  public update = async (appNotification: AppNotification): Promise<AppNotification> => {
     let transaction: Transaction = null;
     try {
       transaction = await this.appDBConnection.createTransaction();
@@ -100,6 +93,14 @@ export class AppNotificationService {
     }
   };
 
+  public deleteByGymId = async (gymId: number): Promise<void> => {
+    if (!AppUtils.isInteger(gymId)) {
+      throw new InputError(
+        `Cannot delete notifications, the gymId must be an integer`
+      );
+    }
+  }
+
   public delete = async (id: number): Promise<void> => {
     if (!AppUtils.isInteger(id)) {
       throw new InputError(
@@ -126,10 +127,7 @@ export class AppNotificationService {
     }
   };
 
-  public deleteByTargetObjectId = async (
-    targetObjectId: string,
-    gymId: number,
-  ): Promise<void> => {
+  public deleteByTargetObjectId = async (targetObjectId: string,gymId: number,): Promise<void> => {
     let transaction: Transaction = null;
     try {
       this.logger.info(

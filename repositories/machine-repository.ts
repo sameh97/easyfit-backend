@@ -14,18 +14,13 @@ export class MachinesRepository {
     return await Machine.findAll({ where: { gymId: gymId } });
   };
 
-  public getBySerialNumber = async (
-    machineSerialNumber: number
-  ): Promise<Machine> => {
+  public getBySerialNumber = async (machineSerialNumber: number): Promise<Machine> => {
     return await Machine.findOne({
       where: { serialNumber: machineSerialNumber },
     });
   };
 
-  public save = async (
-    machine: Machine,
-    transaction?: Transaction
-  ): Promise<Machine> => {
+  public save = async (machine: Machine,transaction?: Transaction): Promise<Machine> => {
     const machineInDB = await Machine.findOne({
       where: { serialNumber: machine.serialNumber },
       transaction: transaction,
@@ -48,10 +43,7 @@ export class MachinesRepository {
     return createdMachine;
   };
 
-  public update = async (
-    machine: Machine,
-    transaction: Transaction
-  ): Promise<Machine> => {
+  public update = async (machine: Machine,transaction: Transaction): Promise<Machine> => {
     const machineInDB = await Machine.findOne({
       where: { id: machine.id },
       transaction: transaction,
@@ -73,10 +65,8 @@ export class MachinesRepository {
     return updatedMachine;
   };
 
-  public delete = async (
-    serialNumber: string,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public delete = async (serialNumber: string,transaction?: Transaction): Promise<void> => {
+
     const machineToDelete = await Machine.findOne({
       where: { serialNumber: serialNumber },
       transaction: transaction,

@@ -41,10 +41,7 @@ export class JobService {
     this.webSocketService.socketIO.to(socketID).emit(topic, createdNotification);
   };
 
-  private createNotification(
-    schedueledJob: MachineScheduledJob,
-    topic: string
-  ): AppNotificationMessage {
+  private createNotification(schedueledJob: MachineScheduledJob,topic: string): AppNotificationMessage {
     const notification = new AppNotificationMessage(
       this.machineScheduleDtoMapper.asDto(schedueledJob),
       topic,

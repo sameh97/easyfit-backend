@@ -14,10 +14,7 @@ export class MembersRepository {
     return await Member.findAll({ where: { gymId: gymId } });
   }
 
-  public async save(
-    member: Member,
-    transaction?: Transaction
-  ): Promise<Member> {
+  public async save(member: Member,transaction?: Transaction): Promise<Member> {
     const memberInDB = await Member.findOne({
       where: { email: member.email },
       transaction: transaction,
@@ -40,10 +37,30 @@ export class MembersRepository {
     return createdMember;
   }
 
-  public update = async (
-    member: Member,
-    transaction?: Transaction
-  ): Promise<Member> => {
+  public async getAllMales(gymId : number,transaction?:Transaction):Promise<any> {
+    return await Member.count({
+      where : {gymId : gymId, gender : 1},
+      transaction : transaction
+    });
+  }
+
+
+  public async getAllFemales(gymId : number, transaction?:Transaction):Promise<any> {
+    return await Member.count({
+      where : {gymId : gymId, gender : 2},
+      transaction : transaction
+    });
+  }
+
+  public async getPerMonth(gymId : number,transaction?:Transaction,):Promise<any> {
+    return await Member.findAll({ where: { gymId: gymId } ,
+      transaction : transaction
+    });
+  }
+
+ 
+
+  public update = async (member: Member, transaction?: Transaction): Promise<Member> => {
     let memberInDB = await Member.findOne({
       where: { email: member.email },
       transaction: transaction,
@@ -55,7 +72,6 @@ export class MembersRepository {
 
     this.logger.info(`Updating member with email '${member.email}'`);
 
-    // TODO: check if this is a good practice:
     const updatedMember = await memberInDB.update(member);
 
     this.logger.info(`Updated member '${JSON.stringify(updatedMember)}'`);
@@ -63,10 +79,7 @@ export class MembersRepository {
     return updatedMember;
   };
 
-  public delete = async (
-    id: number,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public delete = async ( id: number, transaction?: Transaction): Promise<void> => {
     const toDelete: Member = await Member.findOne({
       where: { id: id },
       transaction: transaction,
@@ -84,10 +97,7 @@ export class MembersRepository {
     });
   };
 
-  public getAllPhones = async (
-    gymId: number,
-    transaction?: Transaction
-  ): Promise<any[]> => {
+  public getAllPhones = async (gymId: number,transaction?: Transaction): Promise<any[]> => {
     return await Member.findAll({
       attributes: ["phone"],
       where: { gymId: gymId },

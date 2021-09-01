@@ -11,22 +11,20 @@ export class AppNotificationRepository {
   constructor(@inject(Logger) private logger: Logger) {}
 
   public async getAll(gymId: number): Promise<AppNotification[]> {
-    return await AppNotification.findAll({ where: { gymId: gymId } });
+    return await AppNotification.findAll({
+      where: { [Op.and]: [{ seen: false, gymId: gymId }] },
+    });
   }
 
-  public async getByMachineSerialNumber(
-    gymId: number,
-    machineSerialNumber: string
-  ): Promise<AppNotification[]> {
+  public async getByMachineSerialNumber(gymId: number,machineSerialNumber: string): Promise<AppNotification[]> {
     return await AppNotification.findAll({
       where: { gymId: gymId, targetObjectId: machineSerialNumber, seen: false },
     });
   }
 
-  public save = async (
-    appNotificationMessage: AppNotification,
-    transaction?: Transaction
-  ): Promise<AppNotification> => {
+  public save = async (appNotificationMessage: AppNotification,transaction?: Transaction): Promise<AppNotification> => {
+
+
     // const notificationInDB = await AppNotification.findOne({
     //   where: { content: appNotificationMessage.content },
     //   transaction: transaction,
@@ -50,10 +48,7 @@ export class AppNotificationRepository {
     return createdNotification;
   };
 
-  public update = async (
-    appNotificationMessage: AppNotification,
-    transaction?: Transaction
-  ): Promise<AppNotification> => {
+  public update = async (appNotificationMessage: AppNotification,transaction?: Transaction): Promise<AppNotification> => {
     let notificationInDB = await AppNotification.findOne({
       where: {
         id: appNotificationMessage.id,
@@ -86,10 +81,7 @@ export class AppNotificationRepository {
     return updatedNotification;
   };
 
-  public delete = async (
-    id: number,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public delete = async (id: number,transaction?: Transaction): Promise<void> => {
     const toDelete: AppNotification = await AppNotification.findOne({
       where: { id: id },
       transaction: transaction,
@@ -107,11 +99,7 @@ export class AppNotificationRepository {
     });
   };
 
-  public deleteByTargetObjectId = async (
-    targetObjectId: string,
-    gymId: number,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public deleteByTargetObjectId = async (targetObjectId: string,gymId: number,transaction?: Transaction): Promise<void> => {
     const toDelete: AppNotification = await AppNotification.findOne({
       where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
       transaction: transaction,
@@ -129,4 +117,5 @@ export class AppNotificationRepository {
       transaction: transaction,
     });
   };
+  
 }

@@ -31,6 +31,45 @@ export class MemebrsController {
     }
   };
 
+  public getPerMonth = async (req : any, res: any, next: any) =>{
+    try{
+      const membersInMonth : number = await this.membersService.getPerMonth(
+        req.query.gymId
+        );
+
+        next(membersInMonth)
+        res.status(200);
+    }catch(err){
+      this.logger.error(
+        `Cannot return number of members in month}`,
+        err
+      );
+      next(err);
+    }
+  }
+
+
+  public getGenders = async(req : any, res : any , next : any) =>{
+    let genders : number [] = [];
+
+    try{
+      genders = await this.membersService.getGenders(
+        req.query.gymId
+      );
+      
+      res.status(200);
+      next(genders);
+
+    }catch (err){
+      this.logger.error(
+        `Cannot return number of genders}`,
+        err
+      );
+      next(err);
+    }
+  };
+
+
   public createMember = async (req: any, res: any, next: any) => {
     let memberToCreate: Member = null;
     try {

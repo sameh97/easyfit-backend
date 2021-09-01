@@ -29,9 +29,7 @@ export class MachinesService {
     return machines;
   };
 
-  public getBySerialNumber = async (
-    machineSerialNumber: number
-  ): Promise<Machine> => {
+  public getBySerialNumber = async (machineSerialNumber: number): Promise<Machine> => {
     const machine = await this.machinesRepository.getBySerialNumber(
       machineSerialNumber
     );
@@ -101,10 +99,7 @@ export class MachinesService {
     }
   };
 
-  public delete = async (
-    serialNumber: string,
-    gymId: number
-  ): Promise<void> => {
+  public delete = async (serialNumber: string,gymId: number): Promise<void> => {
     let transaction: Transaction = null;
     try {
       this.logger.info(`Deleting machine with serial Number: ${serialNumber}`);
@@ -138,11 +133,7 @@ export class MachinesService {
     }
   };
 
-  public deleteRelatedJobsAndNotifications = async (
-    serialNumber: string,
-    gymId: number,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public deleteRelatedJobsAndNotifications = async (serialNumber: string,gymId: number,transaction?: Transaction): Promise<void> => {
     const jobsFound: boolean = await this.findJobsByMachineSerialNumberToCancel(
       serialNumber,
       gymId,
@@ -164,11 +155,7 @@ export class MachinesService {
     );
   };
 
-  public findJobsByMachineSerialNumberToCancel = async (
-    serialNumber: string,
-    gymId: number,
-    transaction?: Transaction
-  ): Promise<boolean> => {
+  public findJobsByMachineSerialNumberToCancel = async ( serialNumber: string,gymId: number,transaction?: Transaction): Promise<boolean> => {
     const scheduledJobsToCancel: MachineScheduledJob[] =
       await this.machineSchedulerRepository.getScheduledJobsByMachineSerial(
         serialNumber,

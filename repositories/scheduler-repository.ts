@@ -10,11 +10,8 @@ const { Op } = require("sequelize");
 export class MachineSchedulerRepository {
   constructor(@inject(Logger) private logger: Logger) {}
 
-  public getScheduledJobsByMachineSerial = async (
-    machineSerialNumber: string,
-    gymId: number,
-    transaction?: Transaction
-  ): Promise<MachineScheduledJob[]> => {
+  public getScheduledJobsByMachineSerial=async(machineSerialNumber:string, gymId:number,transaction?:Transaction):Promise<MachineScheduledJob[]>  => {
+
     return await MachineScheduledJob.findAll({
       where: {
         [Op.and]: [{ machineSerialNumber: machineSerialNumber, gymId: gymId }],
@@ -31,14 +28,18 @@ export class MachineSchedulerRepository {
     return await MachineScheduledJob.findAll({});
   };
 
-  public save = async (
-    scheduleJob: MachineScheduledJob,
-    transaction?: Transaction
-  ): Promise<MachineScheduledJob> => {
+  public save = async (scheduleJob: MachineScheduledJob, transaction?: Transaction): Promise<MachineScheduledJob> => {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
-      where: { machineSerialNumber: scheduleJob.machineSerialNumber },
+      where: {
+        [Op.and]: [
+          {
+            machineSerialNumber: scheduleJob.machineSerialNumber,
+            jobID: scheduleJob.jobID,
+          },
+        ],
+      },
     });
-    // TODO: check by something else than the machine serial number, one machine can have more than schedule
+
     if (AppUtils.hasValue(scheduleJobInDB)) {
       throw new AlreadyExistError(
         `schedule with id ${scheduleJobInDB.id} already exist`
@@ -54,10 +55,9 @@ export class MachineSchedulerRepository {
     return createdSchedule;
   };
 
-  public update = async (
-    scheduleJob: MachineScheduledJob,
-    transaction?: Transaction
-  ): Promise<MachineScheduledJob> => {
+  
+
+  public update = async (scheduleJob: MachineScheduledJob,transaction?: Transaction): Promise<MachineScheduledJob> => {
     const scheduleJobInDB = await MachineScheduledJob.findOne({
       where: { id: scheduleJob.id },
     });
@@ -81,10 +81,7 @@ export class MachineSchedulerRepository {
     return updatedScheduleJob;
   };
 
-  public delete = async (
-    id: number,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public delete = async (id: number,transaction?: Transaction): Promise<void> => {
     const toDelete = await MachineScheduledJob.findOne({ where: { id: id } });
 
     if (!AppUtils.hasValue(toDelete)) {
@@ -99,11 +96,7 @@ export class MachineSchedulerRepository {
     });
   };
 
-  public deleteByMachineSerialNumber = async (
-    machineSerialNumber: string,
-    gymId: number,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public deleteByMachineSerialNumber = async ( machineSerialNumber: string,gymId: number,transaction?: Transaction): Promise<void> => {
     const toDelete = await MachineScheduledJob.findOne({
       where: {
         [Op.and]: [{ machineSerialNumber: machineSerialNumber, gymId: gymId }],

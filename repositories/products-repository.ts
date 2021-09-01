@@ -4,6 +4,7 @@ import { AppUtils } from "../common/app-utils";
 import { Logger } from "../common/logger";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { NotFoundErr } from "../exeptions/not-found-error";
+import { Bill } from "../models/bill";
 import { Product } from "../models/product";
 
 @injectable()
@@ -18,10 +19,8 @@ export class ProductsRepository {
     return await Product.findAll({ where: { id: idsArray } });
   };
 
-  public save = async (
-    product: Product,
-    transaction?: Transaction
-  ): Promise<Product> => {
+  public save = async ( product: Product,transaction?: Transaction): Promise<Product> => {
+
     const productInDB = await Product.findOne({
       where: { code: product.code }, // TODO: check by something else than id
       transaction: transaction,
@@ -41,10 +40,7 @@ export class ProductsRepository {
     return createdProduct;
   };
 
-  public update = async (
-    product: Product,
-    transaction?: Transaction
-  ): Promise<Product> => {
+  public update = async (product: Product,transaction?: Transaction): Promise<Product> => {
     const productInDB = await Product.findOne({ where: { id: product.id } });
 
     if (!AppUtils.hasValue(productInDB)) {
@@ -75,4 +71,11 @@ export class ProductsRepository {
 
     await Product.destroy({ where: { id: id }, transaction: transaction });
   };
+
+  public getAllBills = async (gymId: number): Promise<Bill[]> => {
+    return await Bill.findAll({ where: { gymId: gymId } });
+  };
+
+
+  
 }

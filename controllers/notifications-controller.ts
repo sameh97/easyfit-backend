@@ -35,6 +35,8 @@ export class AppNotificationsController {
     }
   };
 
+  
+
   public getByMachineSerialNumber = async (req: any, res: any, next: any) => {
     try {
       const notifications: AppNotification[] =

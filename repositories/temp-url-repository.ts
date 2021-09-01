@@ -22,10 +22,7 @@ export class TempUrlRepository {
     });
   }
 
-  public async save(
-    tempUrl: TempUrl,
-    transaction?: Transaction
-  ): Promise<TempUrl> {
+  public async save(tempUrl: TempUrl,transaction?: Transaction): Promise<TempUrl> {
     const tempUrlInDB = await TempUrl.findOne({
       where: { uuid: tempUrl.uuid },
       transaction: transaction,
@@ -57,10 +54,7 @@ export class TempUrlRepository {
     return createdTempUrl;
   }
 
-  public update = async (
-    tempUrl: TempUrl,
-    transaction?: Transaction
-  ): Promise<TempUrl> => {
+  public update = async (tempUrl: TempUrl,transaction?: Transaction): Promise<TempUrl> => {
     let tempUrlInDB = await TempUrl.findOne({
       where: { uuid: tempUrl.uuid },
       transaction: transaction,
@@ -97,10 +91,7 @@ export class TempUrlRepository {
     return updatedTempUrl;
   };
 
-  public delete = async (
-    uuid: string,
-    transaction?: Transaction
-  ): Promise<void> => {
+  public delete = async (uuid: string,transaction?: Transaction): Promise<void> => {
     const toDelete: TempUrl = await TempUrl.findOne({
       where: { uuid: uuid },
       transaction: transaction,

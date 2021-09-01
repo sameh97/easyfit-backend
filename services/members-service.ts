@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { number } from "joi";
 import { Transaction } from "sequelize/types";
 import { now } from "sequelize/types/lib/utils";
 import { AppUtils } from "../common/app-utils";
@@ -46,11 +47,17 @@ export class MembersService {
     }
   }
 
+
+
+
   public async getAll(gymId: number): Promise<Member[]> {
     const members = await this.memberRepository.getAll(gymId);
     this.logger.info(`Returning ${members.length} members`);
     return members;
   }
+
+
+ 
 
   public update = async (member: Member): Promise<Member> => {
     let transaction: Transaction = null;
@@ -80,6 +87,43 @@ export class MembersService {
       throw err;
     }
   };
+  public async getGenders (gymId: number): Promise<any[]> {
+    let genders : number [] = []
+    const males : number = await this.memberRepository.getAllMales(gymId);
+    const Females : number = await this.memberRepository.getAllFemales(gymId);
+    genders = [males , Females];
+    console.log('hello');
+    this.logger.info(`Returning ${genders} genders`);
+    return genders;
+  } 
+
+    // TODO: finish this!!!
+  public getPerMonth = async (gymId : number): Promise<number> => {
+    let allMembers : Member [] = [];
+    let MembersInMonth  : Member [] = [];
+    const m = new Date();
+    let currentMonth = m.getMonth()+1;
+    let currentYear = m.getFullYear();
+    try{
+       allMembers = await this.memberRepository.getPerMonth(
+       gymId,
+      )
+      
+      for(let member of allMembers){
+        if(member.joinDate.getMonth()+1 == currentMonth && member.joinDate.getFullYear() == currentYear){ 
+          MembersInMonth.push(member) ;
+          member.joinDate.getMonth();
+        }
+        console.log(member.joinDate.getMonth())
+      }
+
+    }catch(err){
+      console.log(this.logger.error);
+    }
+    return MembersInMonth.length;
+  }
+
+
 
   public getAllPhones = async (gymId: number): Promise<string[]> => {
     let transaction: Transaction = null;
@@ -107,6 +151,7 @@ export class MembersService {
       throw error;
     }
   };
+
 
   public delete = async (id: number): Promise<void> => {
     if (!AppUtils.isInteger(id)) {

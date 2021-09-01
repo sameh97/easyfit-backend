@@ -20,7 +20,8 @@ export class GymApi implements AppRoute {
 
   private setRoutes(): void {
     this.router = Router();
-    this.router.post("/api/add-gym", verifyToken, this.gymController.createGym);
+    this.router.post("/api/add-gym", verifyToken,this.gymController.createGym);
   }
 }
+
 

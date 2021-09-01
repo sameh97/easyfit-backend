@@ -9,13 +9,14 @@ import { Trainer } from "../models/trainer";
 @injectable()
 export class TrainerRepository{
     constructor(@inject(Logger)private logger:Logger){}
+
+
     public async getAll(gymId:number):Promise<Trainer[]>{
         return await Trainer.findAll({where :{gymId : gymId}});
     }
-    public async save(
-        trainer : Trainer,
-        transaction?:Transaction
-    ):Promise<Trainer>{
+
+
+    public async save(trainer : Trainer,transaction?:Transaction):Promise<Trainer>{
         const trainerInDB = await Trainer.findOne({
             where : {email : trainer.email},
             transaction:transaction,
@@ -37,15 +38,11 @@ export class TrainerRepository{
         return createdTrainer; 
     }
 
-    public update = async(
-        trainer :Trainer,
-        transaction?:Transaction
-    ):Promise<Trainer> =>{
+    public update = async(trainer :Trainer,transaction?:Transaction):Promise<Trainer> =>{
         let trainerInDB = await Trainer.findOne({
             where : {email:trainer.email},
             transaction:transaction,
         });
-
 
         if(!AppUtils.hasValue(trainerInDB)){
             throw new NotFound(
@@ -61,10 +58,9 @@ export class TrainerRepository{
 
             return UpdatedTrainer;
     }
-    public delete = async(
-        id:number,
-        transaction?:Transaction
-    ):Promise<void> => {
+
+    
+    public delete = async(id:number,transaction?:Transaction):Promise<void> => {
         const toDelete : Trainer = await Trainer.findOne({
             where :{id :id},
             transaction : transaction,

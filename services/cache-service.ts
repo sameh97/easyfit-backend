@@ -13,7 +13,7 @@ export class CacheService {
     if (!AppUtils.hasValue(key)) {
       throw new NotFound(`cannot add becase the key is null`);
     } else if (!AppUtils.hasValue(value)) {
-      throw new NotFound(`cannot add becase the value is null`);
+      throw new NotFound(`cannot add becasee the valu is null`);
     } else {
       this.connectionsMap.set(key, value);
     }
