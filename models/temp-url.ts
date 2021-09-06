@@ -40,10 +40,4 @@ export class TempUrl extends Model<TempUrl> {
   @BelongsToMany(() => Product, () => Catalog)
   public products: Product[];
 
-  //   @HasMany(() => Product , {
-  //       foreignKey: "id",
-  //       as: "tempUrlProduct",
-  //       onDelete: "CASCADE",
-  //     } as AssociationOptions)
-  //   productss: Product[];
 }

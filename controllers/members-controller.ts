@@ -73,6 +73,20 @@ export class MemebrsController {
     }
   };
 
+  public getGendersNumber = async (req: any, res: any, next: any) => {
+    let genders: number[] = [];
+
+    try {
+      genders = await this.membersService.getGendersNumber(req.query.gymId);
+
+      res.status(200);
+      next(genders);
+    } catch (err) {
+      this.logger.error(`Cannot return number of genders}`, err);
+      next(err);
+    }
+  };
+
   public getAllPhones = async (req: any, res: any, next: any) => {
     try {
       const phones: string[] = await this.membersService.getAllPhones(
@@ -82,6 +96,18 @@ export class MemebrsController {
       next(phones);
     } catch (error) {
       this.logger.error(`cannot get all members phones`, error);
+      next(error);
+    }
+  };
+
+  public getAddedMembersByMonth = async (req: any, res: any, next: any) => {
+    try {
+      const addedMembersByMonth: number[] =
+        await this.membersService.getAddedMembersByMonth(req.query.gymId);
+
+      next(addedMembersByMonth);
+    } catch (error) {
+      this.logger.error(`cannot get members count by month`, error);
       next(error);
     }
   };

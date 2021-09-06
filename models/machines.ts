@@ -28,7 +28,7 @@ export class Machine extends Model<Machine> {
   public name: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(1000))
   public description: string;
 
   @AllowNull(false)
@@ -39,15 +39,6 @@ export class Machine extends Model<Machine> {
   @Column(DataType.INTEGER)
   public productionYear: number;
 
-  //TODO: check if supplier name & production company is needed
-  @AllowNull(true)
-  @Column(DataType.STRING)
-  public supplierName?: string;
-
-  @AllowNull(true)
-  @Column(DataType.STRING)
-  public productionCompany?: string;
-
   @AllowNull(true)
   @Column(DataType.STRING)
   public imgUrl: string;
@@ -56,11 +47,11 @@ export class Machine extends Model<Machine> {
   @Column(DataType.INTEGER)
   public price: number;
 
-  //TODO: make allow null false:
-  @AllowNull(true)
-  @Column(DataType.STRING)
-  @ForeignKey(() => MachineType)
-  public type?: string;
+  // //TODO: make allow null false:
+  // @AllowNull(true)
+  // @Column(DataType.STRING)
+  // @ForeignKey(() => MachineType)
+  // public type?: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)

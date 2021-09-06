@@ -53,7 +53,7 @@ export class MachineScheduledJob extends Model<MachineScheduledJob> {
   public jobID: number;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(1000))
   @ForeignKey(() => Machine)
   public machineSerialNumber: string;
 

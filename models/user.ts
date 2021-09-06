@@ -15,9 +15,11 @@ import {
 import { AssociationOptions } from "sequelize/types";
 import { Gym } from "./gym";
 import { Role } from "./role";
+
 @Table({
   tableName: "users",
 })
+
 export class User extends Model<User> {
   @PrimaryKey
   @AutoIncrement

@@ -29,8 +29,8 @@ export class GymApi implements AppRoute {
     );
     this.router.post(
       "/api/add-gym",
-      verifyToken,
-      verifyAdmin,
+      // verifyToken,
+      // verifyAdmin,
       this.gymController.createGym
     );
     this.router.put(

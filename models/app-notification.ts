@@ -18,7 +18,7 @@ export class AppNotification extends Model<AppNotification> {
   public id: number;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(2500))
   public content: string;
 
   @AllowNull(false)
@@ -34,6 +34,6 @@ export class AppNotification extends Model<AppNotification> {
   public seen: boolean;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(1000))
   public targetObjectId: string;
 }
