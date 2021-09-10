@@ -16,12 +16,14 @@ export class GymController {
   public createGym = async (req: any, res: any, next: any) => {
     let gymToCreate: Gym = null;
     try {
+      // get gym obj from body 
       gymToCreate = this.gymDtoMapper.asEntity(req.body);
 
       const createdGym: Gym = await this.gymService.create(gymToCreate);
 
       res.status(201);
 
+      // return the created gym to the client as dto
       next(this.gymDtoMapper.asDto(createdGym));
     } catch (err) {
       this.logger.error(
@@ -34,6 +36,7 @@ export class GymController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
+      // get all the gyms in the system from DB
       const gyms: Gym[] = await this.gymService.getAll();
 
       const gymsDto: GymDto[] = gyms.map((gym) => this.gymDtoMapper.asDto(gym));
@@ -48,6 +51,7 @@ export class GymController {
   public update = async (req: any, res: any, next: any) => {
     let gymToUpdate: Gym = null;
     try {
+       // get gym obj from body 
       gymToUpdate = this.gymDtoMapper.asEntity(req.body);
 
       const updatedGym: Gym = await this.gymService.update(gymToUpdate);
@@ -64,6 +68,7 @@ export class GymController {
   public delete = async (req: any, res: any, next: any) => {
     let gymId: number;
     try {
+      // get id form query params
       gymId = Number(req.query.id);
 
       await this.gymService.delete(gymId);

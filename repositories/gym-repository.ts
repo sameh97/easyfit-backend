@@ -12,6 +12,7 @@ export class GymRepository {
 
   public async save(gym: Gym, transaction?: Transaction): Promise<Gym> {
     //TODO: check if phone is a good key for searching for gym in DB
+    //check if the gym exist 
     const gymInDB = await Gym.findOne({
       where: { phone: gym.phone },
     });
@@ -23,7 +24,7 @@ export class GymRepository {
     }
 
     this.logger.info(`Creating gym : '${gym}'`);
-
+    // create new gym in DB
     const createdGym = await Gym.create(gym);
 
     this.logger.info(`created gym ${JSON.stringify(createdGym)}`);
@@ -36,6 +37,7 @@ export class GymRepository {
   }
 
   public update = async (gym: Gym, transaction?: Transaction): Promise<Gym> => {
+     //check if the gym exist 
     let gymInDB = await Gym.findOne({
       where: { id: gym.id },
       transaction: transaction,
@@ -58,6 +60,7 @@ export class GymRepository {
     id: number,
     transaction?: Transaction
   ): Promise<void> => {
+     //check if the gym exist 
     const toDelete: Gym = await Gym.findOne({
       where: { id: id },
       transaction: transaction,

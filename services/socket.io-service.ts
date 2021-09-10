@@ -1,10 +1,11 @@
 import { inject, injectable } from "inversify";
 import * as Server from "socket.io";
+import { AppNotificationMessage } from "../models/app-notification-message";
 import { CacheService } from "./cache-service";
 
 @injectable()
 export class WebSocketService {
-  public socketIO: Server.Socket;
+  private socketIO: Server.Socket;
 
   constructor(@inject(CacheService) private cacheService: CacheService) {}
 
@@ -32,5 +33,13 @@ export class WebSocketService {
         this.cacheService.set(clientData.content, socket.id);
       });
     });
+  };
+
+  public emitNotificationToSpecificClient = async (
+    socketID: string,
+    topic: string,
+    notification: AppNotificationMessage
+  ): Promise<void> => {
+    this.socketIO.to(socketID).emit(topic, notification);
   };
 }

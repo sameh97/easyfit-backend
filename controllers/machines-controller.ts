@@ -15,10 +15,11 @@ export class MachinesController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
+      // get all machines 
       const machines: Machine[] = await this.machinesService.getAll(
         req.query.gymId
       );
-
+      // map all machines to dto
       const machinesDto: MachineDto[] = machines.map((machine) =>
         this.machineDtoMapper.asDto(machine)
       );
@@ -32,6 +33,7 @@ export class MachinesController {
 
   public getBySerialNumber = async (req: any, res: any, next: any) => {
     try {
+      // get by serial number 
       const machine: Machine = await this.machinesService.getBySerialNumber(
         req.query.serialNumber
       );
@@ -48,6 +50,7 @@ export class MachinesController {
   public createMachine = async (req: any, res: any, next: any) => {
     let machineToCreate: Machine = null;
     try {
+      // get machine from db
       machineToCreate = this.machineDtoMapper.asEntity(req.body);
 
       const createdMachine: Machine = await this.machinesService.create(
@@ -56,6 +59,7 @@ export class MachinesController {
 
       res.status(201);
 
+      // return as dto
       next(this.machineDtoMapper.asDto(createdMachine));
     } catch (err) {
       this.logger.error(
@@ -91,6 +95,7 @@ export class MachinesController {
     let machineSerialNumber: string;
     let gymId: number;
     try {
+      // get machine serial number and gym id from query params 
       machineSerialNumber = req.query.serialNumber;
       gymId = req.query.gymId;
 

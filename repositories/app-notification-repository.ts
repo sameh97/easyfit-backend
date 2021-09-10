@@ -22,6 +22,7 @@ export class AppNotificationRepository {
     gymId: number,
     machineSerialNumber: string
   ): Promise<AppNotification[]> {
+    // get all by machineSerialNumber
     return await AppNotification.findAll({
       where: { gymId: gymId, targetObjectId: machineSerialNumber, seen: false },
     });
@@ -31,17 +32,6 @@ export class AppNotificationRepository {
     appNotificationMessage: AppNotification,
     transaction?: Transaction
   ): Promise<AppNotification> => {
-    // const notificationInDB = await AppNotification.findOne({
-    //   where: { content: appNotificationMessage.content },
-    //   transaction: transaction,
-    // });
-
-    // if (AppUtils.hasValue(notificationInDB)) {
-    //   throw new AlreadyExistError(
-    //     `notification with id ${notificationInDB.id} already exist`
-    //   );
-    // }
-
     this.logger.info(
       `Creating notification with id ${appNotificationMessage.id}`
     );
@@ -58,12 +48,10 @@ export class AppNotificationRepository {
     appNotificationMessage: AppNotification,
     transaction?: Transaction
   ): Promise<AppNotification> => {
+    // check if exists 
     let notificationInDB = await AppNotification.findOne({
       where: {
         id: appNotificationMessage.id,
-        // content: appNotificationMessage.content,
-        // targetObjectId: appNotificationMessage.targetObjectId,
-        // gymId: appNotificationMessage.gymId,
       },
       transaction: transaction,
     });
@@ -77,8 +65,7 @@ export class AppNotificationRepository {
     this.logger.info(
       `Updating notification with content '${appNotificationMessage.content}'`
     );
-
-    // TODO: check if this is a good practice:
+    // update notificationInDB
     const updatedNotification = await notificationInDB.update(
       appNotificationMessage
     );
@@ -94,6 +81,7 @@ export class AppNotificationRepository {
     id: number,
     transaction?: Transaction
   ): Promise<void> => {
+    // check if exists 
     const toDelete: AppNotification = await AppNotification.findOne({
       where: { id: id },
       transaction: transaction,
@@ -104,7 +92,7 @@ export class AppNotificationRepository {
         `Cannot delete notification: ${id} because it is not found`
       );
     }
-
+    // delete from db
     await AppNotification.destroy({
       where: { id: id },
       transaction: transaction,
@@ -160,6 +148,7 @@ export class AppNotificationRepository {
     gymId: number,
     transaction?: Transaction
   ): Promise<void> => {
+    // check if exists
     const toDelete: AppNotification[] = await AppNotification.findAll({
       where: { [Op.and]: [{ targetObjectId: targetObjectId, gymId: gymId }] },
       transaction: transaction,
@@ -182,6 +171,9 @@ export class AppNotificationRepository {
     gymId: number,
     transaction?: Transaction
   ): Promise<any[]> => {
+    // get all notifications and group them by targetObjectId
+    // targetObjectId = machineSerialNumber in machine notifications case,
+    // this will retreve notifications count for each machine
     return await AppNotification.findAll({
       attributes: [
         "targetObjectId",

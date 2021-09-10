@@ -19,6 +19,7 @@ export class MembersRepository {
     member: Member,
     transaction?: Transaction
   ): Promise<Member> {
+    // check if exists 
     const memberInDB = await Member.findOne({
       where: { email: member.email },
       transaction: transaction,
@@ -56,7 +57,6 @@ export class MembersRepository {
 
     this.logger.info(`Updating member with email '${member.email}'`);
 
-    // TODO: check if this is a good practice:
     const updatedMember = await memberInDB.update(member);
 
     this.logger.info(`Updated member '${JSON.stringify(updatedMember)}'`);
@@ -89,6 +89,7 @@ export class MembersRepository {
     gymId: number,
     transaction?: Transaction
   ): Promise<any[]> => {
+    // retern only the phone column
     return await Member.findAll({
       attributes: ["phone"],
       where: { gymId: gymId },
@@ -119,7 +120,7 @@ export class MembersRepository {
     const currentTime = new Date();
     let year = currentTime.getFullYear();
     let result: number[] = [];
-
+    // for each month get the count of added members 
     for (let month = 1; month <= 12; month++) {
       let nextMonth: number = month + 1;
       let nextYear: number = year;

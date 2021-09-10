@@ -5,6 +5,8 @@ import { WebSocketService } from "./socket.io-service";
 
 @injectable()
 export class CacheService {
+  // map that stores the connections
+  // the key represents gymId and value represents connection id 
   public connectionsMap = new Map<string, any>();
 
   constructor() {}

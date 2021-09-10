@@ -1,5 +1,4 @@
 import { Table, Column, Model, ForeignKey } from "sequelize-typescript";
-// import { Gym } from "./gym";
 import { Product } from "./product";
 import { TempUrl } from "./temp-url";
 @Table({

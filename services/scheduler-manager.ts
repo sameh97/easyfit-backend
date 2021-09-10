@@ -23,8 +23,7 @@ export class JobScheduleManager {
     private notificationsDtoMapper: NotificationsDtoMapper
   ) {}
 
-  //TODO: cancel job also in case the end time is arrived
-
+ 
   public runJob = async (scheduledJob: MachineScheduledJob): Promise<void> => {
     let cronExp = await AppUtils.createCronExpression(scheduledJob);
 
@@ -37,6 +36,8 @@ export class JobScheduleManager {
         rule: cronExp,
       },
       async () => {
+        // this call back function is going to excute when job runs:
+
         const notificationToCreate: AppNotification =
           AppUtils.createNotificationToStoreInDB(scheduledJob);
 
@@ -49,7 +50,7 @@ export class JobScheduleManager {
           this.notificationsDtoMapper.asDto(createdNotification)
         );
 
-        // send regular notification
+        // send regular notification:
         this.appNotificationService.sendGroupedNotification(scheduledJob.gymId);
         console.log("sent notification");
       }
@@ -64,22 +65,24 @@ export class JobScheduleManager {
         `cannot cancel job because the givin id must be integer`
       );
     }
-    //TODO: add more validations and log info
+    // get the job from all jobs map by id
     const jobToCancel = this.allJobs.get(jobID);
 
     if (!AppUtils.hasValue(jobToCancel)) {
       console.log(`cannot cancel job because its not found`);
       return;
     }
-
+  // cancel running job
     jobToCancel.cancel();
 
+  // delete job from map:
     this.deleteJobFromMap(jobID);
   };
 
   public updateRunningJob = async (
     scheduledJob: MachineScheduledJob
   ): Promise<void> => {
+    // update running job
     this.cancelJob(scheduledJob.id);
 
     this.runJob(scheduledJob);

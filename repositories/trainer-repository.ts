@@ -12,6 +12,7 @@ export class TrainerRepository {
   public async getAll(gymId: number): Promise<Trainer[]> {
     return await Trainer.findAll({ where: { gymId: gymId } });
   }
+  
   public async save(
     trainer: Trainer,
     transaction?: Transaction

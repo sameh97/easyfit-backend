@@ -1,6 +1,7 @@
 import { UserService } from "../services/user-service";
 
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -10,7 +11,7 @@ const verifyToken = (req, res, next) => {
 
   jwt.verify(
     token,
-    UserService.TOKEN_SECRET as string,
+    process.env.TOKEN_SECRET as string,
     (err: any, user: any) => {
       console.log(err);
 

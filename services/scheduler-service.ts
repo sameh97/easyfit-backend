@@ -108,8 +108,6 @@ export class MachineSchedulerService {
 
       await transaction.commit();
     
-      //TODO: check if we need to remove from the map also
-
       this.logger.info(`Schedule with id ${id} has been deleted.`);
     } catch (err) {
       if (transaction) {
@@ -130,20 +128,21 @@ export class MachineSchedulerService {
       );
 
       transaction = await this.appDBConnection.createTransaction();
-
+        // get all jobs for specifc machine before deleting in order to disable them
       const scheduledJobsToCancel: MachineScheduledJob[] =
         await this.machineSchedulerRepo.getScheduledJobsByMachineSerial(
           machineSerialNumber,
           gymId,
           transaction
         );
-
+    // delete jobs by serial number 
       await this.machineSchedulerRepo.deleteByMachineSerialNumber(
         machineSerialNumber,
         gymId,
         transaction
       );
 
+     // disable all the running jobs
       if (scheduledJobsToCancel.length > 0) {
         for (let job of scheduledJobsToCancel) {
           this.jobScheduleManager.cancelJob(job.id);
@@ -151,10 +150,6 @@ export class MachineSchedulerService {
       }
 
       await transaction.commit();
-
-      // this.jobScheduleManager.cancelJob(id);
-
-      //TODO: check if we need to remove from the map also
 
       this.logger.info(
         `Schedule with machine Serial Number ${machineSerialNumber} has been deleted.`

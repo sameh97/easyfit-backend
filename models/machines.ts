@@ -47,21 +47,10 @@ export class Machine extends Model<Machine> {
   @Column(DataType.INTEGER)
   public price: number;
 
-  // //TODO: make allow null false:
-  // @AllowNull(true)
-  // @Column(DataType.STRING)
-  // @ForeignKey(() => MachineType)
-  // public type?: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;
 
-  // @HasMany(() => MachineScheduledJob, {
-  //   foreignKey: "jobID",
-  //   as: "jobScheduled",
-  //   onDelete: "CASCADE",
-  // } as AssociationOptions)
-  // public machineScheduledJobs: MachineScheduledJob[];
 }

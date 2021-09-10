@@ -24,6 +24,7 @@ export class MachinesService {
   ) {}
 
   public getAll = async (gymId: number): Promise<Machine[]> => {
+    // get all machines by gymId
     const machines = await this.machinesRepository.getAll(gymId);
     this.logger.info(`Returning ${machines.length} machines`);
     return machines;
@@ -113,6 +114,7 @@ export class MachinesService {
 
       await this.machinesRepository.delete(serialNumber, transaction);
 
+      // when deleting machine we need to check if there is jobs or notifications for this machine:
       await this.deleteRelatedJobsAndNotifications(
         serialNumber,
         gymId,
@@ -143,6 +145,7 @@ export class MachinesService {
     gymId: number,
     transaction?: Transaction
   ): Promise<void> => {
+    // disable all jobs for this machine by serial number 
     const jobsFound: boolean = await this.findJobsByMachineSerialNumberToCancel(
       serialNumber,
       gymId,
@@ -156,7 +159,7 @@ export class MachinesService {
         transaction
       );
     }
-
+  // delete all notifications for this machine 
     await this.appNotificationRepository.deleteByTargetObjectId(
       serialNumber,
       gymId,
@@ -177,6 +180,7 @@ export class MachinesService {
       );
 
     if (scheduledJobsToCancel.length > 0) {
+      // cancel all running jobs for this machine by serial number 
       for (let job of scheduledJobsToCancel) {
         this.jobScheduleManager.cancelJob(job.id);
       }

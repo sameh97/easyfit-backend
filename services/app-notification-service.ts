@@ -1,12 +1,14 @@
 import { inject, injectable } from "inversify";
 import { Transaction } from "sequelize/types";
 import { AppUtils } from "../common/app-utils";
+import { NotificationsDtoMapper } from "../common/dto-mapper/notifications-dto-mapper";
 import { Logger } from "../common/logger";
 import { SocketTopics } from "../common/socket-util";
 import { InputError } from "../exeptions/input-error";
 import { NotFound } from "../exeptions/notFound-exeption";
 import { AppNotification } from "../models/app-notification";
 import { AppNotificationMessage } from "../models/app-notification-message";
+import { AppNotificationDto } from "../models/dto/notifications-dto";
 import { Machine } from "../models/machines";
 import { AppNotificationRepository } from "../repositories/app-notification-repository";
 import { MachinesRepository } from "../repositories/machine-repository";
@@ -25,7 +27,9 @@ export class AppNotificationService {
     @inject(AppDBConnection) private appDBConnection: AppDBConnection,
     @inject(CacheService)
     private cacheService: CacheService,
-    @inject(WebSocketService) private webSocketService: WebSocketService
+    @inject(WebSocketService) private webSocketService: WebSocketService,
+    @inject(NotificationsDtoMapper)
+    private notificationsDtoMapper: NotificationsDtoMapper
   ) {}
 
   public async create(
@@ -34,7 +38,7 @@ export class AppNotificationService {
     let transaction: Transaction = null;
     try {
       transaction = await this.appDBConnection.createTransaction();
-
+      // save notification to db
       const createdNotification = await this.appNotificationRepository.save(
         appNotification,
         transaction
@@ -75,16 +79,20 @@ export class AppNotificationService {
       );
     }
 
+    // get socket connection from cach service map for specific gym
     const socketID: string = this.cacheService.get(gymId.toString());
-
+    // create new notification to send to client
     const notificationToSend: AppNotificationMessage = this.createNotification(
       notificationsGrouped,
       gymId
     );
-
-    this.webSocketService.socketIO
-      .to(socketID)
-      .emit(SocketTopics.TOPIC_GROUPED_NOTIFICATION, notificationToSend);
+;   
+    // emit notification to specific client by socketID
+    this.webSocketService.emitNotificationToSpecificClient(
+      socketID,
+      SocketTopics.TOPIC_GROUPED_NOTIFICATION,
+      notificationToSend
+    );
   };
 
   private createNotification(
@@ -104,12 +112,13 @@ export class AppNotificationService {
 
   public async getAllGrouped(gymId: number): Promise<any[]> {
     const grouped: any[] = [];
+    // get grouped notifications, see explination in notifications Repository
     const notifications: any[] =
       await this.appNotificationRepository.getAllGrouped(gymId);
 
     for (let i = 0; i < notifications.length; i++) {
       const currNotification = notifications[i].dataValues;
-
+      // for each notification add machine details
       const machine: Machine = await this.machinesRepository.getBySerialNumber(
         currNotification.targetObjectId
       );
@@ -265,7 +274,7 @@ export class AppNotificationService {
       );
 
       transaction = await this.appDBConnection.createTransaction();
-
+      // delete all by target object id and gymId
       await this.appNotificationRepository.deleteAllByTargetObjectId(
         targetObjectId,
         gymId,

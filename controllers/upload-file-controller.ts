@@ -1,8 +1,6 @@
 import { inject, injectable } from "inversify";
-import { User } from "../models/user";
+
 import { Logger } from "./../common/logger";
-import { AppUtils } from "../common/app-utils";
-import { UserDto } from "../models/dto/user-dto";
 import { FileUploadService } from "../services/file-upload-service";
 import { ReadStream } from "fs";
 
