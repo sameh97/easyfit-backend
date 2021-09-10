@@ -16,19 +16,31 @@ export class GroupedTraingingRepository {
     return await GroupTraining.findAll({ where: { gymId: gymId } });
   }
 
+  public async getById(
+    id: number,
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<GroupTraining> {
+    return await GroupTraining.findOne({
+      where: { [Op.and]: [{ gymId: gymId, id: id }] },
+      transaction: transaction,
+    });
+  }
+
   public async save(
     groupTraining: GroupTraining,
     transaction?: Transaction
   ): Promise<GroupTraining> {
+    const startTimeMinusOneHour: Date = new Date(
+      AppUtils.removeHoursFromDate(groupTraining.startTime, 1)
+    );
+
     const groupTrainingInDB = await GroupTraining.findOne({
       where: {
         [Op.and]: [
           {
             startTime: {
-              [Op.gte]: new Date(groupTraining.startTime),
-              [Op.lt]: new Date(
-                AppUtils.addHoursToDate(groupTraining.startTime, 1)
-              ),
+              [Op.between]: [startTimeMinusOneHour, groupTraining.startTime],
             },
             gymId: groupTraining.gymId,
           },
@@ -62,6 +74,8 @@ export class GroupedTraingingRepository {
       });
     }
 
+    createdGroupTraining.members = groupTraining.members;
+
     this.logger.info(
       `created group training with id: ${createdGroupTraining.id}`
     );
@@ -73,15 +87,16 @@ export class GroupedTraingingRepository {
     groupTraining: GroupTraining,
     transaction?: Transaction
   ): Promise<GroupTraining> => {
+    const startTimeMinusOneHour: Date = new Date(
+      AppUtils.removeHoursFromDate(groupTraining.startTime, 1)
+    );
+
     let groupTrainingInDB = await GroupTraining.findOne({
       where: {
         [Op.and]: [
           {
             startTime: {
-              [Op.gte]: new Date(groupTraining.startTime),
-              [Op.lt]: new Date(
-                AppUtils.addHoursToDate(groupTraining.startTime, 1)
-              ),
+              [Op.between]: [startTimeMinusOneHour, groupTraining.startTime],
             },
             gymId: groupTraining.gymId,
           },

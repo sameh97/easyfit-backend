@@ -64,6 +64,40 @@ export class GroupTrainingService {
     return groupTrainings;
   }
 
+  public getById = async (
+    gymId: number,
+    id: number
+  ): Promise<GroupTraining> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const groupTraining: GroupTraining =
+        await this.groupedTraingingRepository.getById(id, gymId, transaction);
+
+      const membersFromDB: Member[] = await this.getMembersByTrainingId(
+        groupTraining.id
+      );
+
+      groupTraining.members = membersFromDB;
+
+      await transaction.commit();
+
+      this.logger.info(`Returning group training with id ${groupTraining.id}`);
+
+      return groupTraining;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Cannot get group training: error: ${AppUtils.getFullException(error)}`,
+        error
+      );
+      throw error;
+    }
+  };
+
   private getMembersByTrainingId = async (
     groupTrainingID: number
   ): Promise<Member[]> => {

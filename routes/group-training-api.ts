@@ -24,9 +24,15 @@ export class GroupTrainingApi implements AppRoute {
     this.router = Router();
 
     this.router.get(
-      "/api/group-training",
+      "/api/group-trainings",
       verifyToken,
       this.groupTrainingController.getAll
+    );
+
+    this.router.get(
+      "/api/group-training",
+      verifyToken,
+      this.groupTrainingController.getById
     );
 
     this.router.post(

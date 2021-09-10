@@ -57,6 +57,12 @@ export class AppUtils {
     return result;
   };
 
+  public static removeHoursFromDate = (date: Date, hours: number): Date => {
+    let result = new Date(date);
+    result.setHours(result.getHours() - hours);
+    return result;
+  };
+
   public static validteScheduledJobEndDate = async (
     scheduleJob: MachineScheduledJob
   ): Promise<void> => {

@@ -31,7 +31,7 @@ export class GroupTraining extends Model<GroupTraining> {
   public startTime: Date;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(3000))
   public description: string;
 
   @AllowNull(false)

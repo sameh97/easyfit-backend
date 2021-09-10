@@ -31,6 +31,24 @@ export class GroupTrainingController {
     }
   };
 
+  public getById = async (req: any, res: any, next: any) => {
+    try {
+      const groupTraining: GroupTraining =
+        await this.groupTrainingService.getById(req.query.gymId, req.query.id);
+
+      const groupTrainingDto: GroupTrainingDto =
+        this.groupTrainingDtoMapper.asDto(groupTraining);
+
+      next(groupTrainingDto);
+    } catch (err) {
+      this.logger.error(
+        `Cannot get group training with id: ${req.query.id}`,
+        err
+      );
+      next(err);
+    }
+  };
+
   public create = async (req: any, res: any, next: any) => {
     let groupTrainingToCreate: GroupTraining = null;
     try {
