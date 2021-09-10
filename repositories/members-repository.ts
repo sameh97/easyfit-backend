@@ -15,11 +15,20 @@ export class MembersRepository {
     return await Member.findAll({ where: { gymId: gymId } });
   }
 
+  public async getByID(idsArray: number[]): Promise<Member[]> {
+    return await Member.findAll({
+      where: {
+        id: idsArray,
+        //TODO: add transaction
+      },
+    });
+  }
+
   public async save(
     member: Member,
     transaction?: Transaction
   ): Promise<Member> {
-    // check if exists 
+    // check if exists
     const memberInDB = await Member.findOne({
       where: { email: member.email },
       transaction: transaction,
@@ -97,21 +106,25 @@ export class MembersRepository {
     });
   };
 
-  public async getAllMales(gymId : number,transaction?:Transaction):Promise<number> {
+  public async getAllMales(
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<number> {
     return await Member.count({
-      where : {gymId : gymId, gender : 1},
-      transaction : transaction
+      where: { gymId: gymId, gender: 1 },
+      transaction: transaction,
     });
   }
 
-
-  public async getAllFemales(gymId : number, transaction?:Transaction):Promise<number> {
+  public async getAllFemales(
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<number> {
     return await Member.count({
-      where : {gymId : gymId, gender : 2},
-      transaction : transaction
+      where: { gymId: gymId, gender: 2 },
+      transaction: transaction,
     });
   }
-
 
   public getAddedMembersByMonth = async (
     gymId: number,
@@ -120,7 +133,7 @@ export class MembersRepository {
     const currentTime = new Date();
     let year = currentTime.getFullYear();
     let result: number[] = [];
-    // for each month get the count of added members 
+    // for each month get the count of added members
     for (let month = 1; month <= 12; month++) {
       let nextMonth: number = month + 1;
       let nextYear: number = year;
@@ -149,4 +162,3 @@ export class MembersRepository {
     return result;
   };
 }
-
