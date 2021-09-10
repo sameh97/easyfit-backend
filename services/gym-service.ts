@@ -17,8 +17,10 @@ export class GymService {
   public async create(gym: Gym): Promise<Gym> {
     let transaction: Transaction = null;
     try {
+      // create new transaction
       transaction = await this.appDBConnection.createTransaction();
 
+      // create gym 
       const createdGym = await this.gymRepo.save(gym, transaction);
 
       await transaction.commit();
@@ -40,6 +42,7 @@ export class GymService {
   }
 
   public getAll = async (): Promise<Gym[]> => {
+    // get all gyms
     const gyms = await this.gymRepo.getAll();
     this.logger.info(`Returning ${gyms.length} gyms`);
     return gyms;
@@ -48,8 +51,10 @@ export class GymService {
   public update = async (gym: Gym): Promise<Gym> => {
     let transaction: Transaction = null;
     try {
+      // create new transaction
       transaction = await this.appDBConnection.createTransaction();
 
+      //update gym
       const updatedGym = await this.gymRepo.update(gym, transaction);
 
       await transaction.commit();
@@ -74,9 +79,10 @@ export class GymService {
     let transaction: Transaction = null;
     try {
       this.logger.info(`Deleting gym with id: ${id}`);
-
+      // create new transaction
       transaction = await this.appDBConnection.createTransaction();
 
+      // delete gym
       await this.gymRepo.delete(id, transaction);
 
       //  TODO: remove the related user to this gym

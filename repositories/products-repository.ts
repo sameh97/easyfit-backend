@@ -20,6 +20,7 @@ export class ProductsRepository {
   };
 
   public getByIDs = async (idsArray: number[]): Promise<Product[]> => {
+    // get all the products by ids array
     return await Product.findAll({ where: { id: idsArray } });
   };
 
@@ -50,6 +51,7 @@ export class ProductsRepository {
     bill: Bill,
     transaction?: Transaction
   ): Promise<Bill> => {
+    // create receipt
     const productInDB = await Product.findOne({
       where: { id: bill.productID },
       transaction: transaction,

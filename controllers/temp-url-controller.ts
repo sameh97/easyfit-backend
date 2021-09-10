@@ -33,11 +33,12 @@ export class TempUrlController {
 
   public getByUUID = async (req: any, res: any, next: any) => {
     try {
+      // get catalog by uuid 
       const catalogUrlProducts: Product[] = await this.tempUrlService.getByUUID(
         req.params.uuid
       );
 
-      const htmlContent: string = await this.tempUrlService.buildHtml(
+      const htmlContent: string = await this.tempUrlService.buildCatalogHtml(
         catalogUrlProducts
       );
 
@@ -45,11 +46,13 @@ export class TempUrlController {
       res.send(htmlContent);
     } catch (err) {
       if (err instanceof NotFound) {
+        // if the catalog is not found, display not found html template
         const htmlContent: string =
           await this.tempUrlService.buildCatalogNotFoundHtml();
         res.type(".html");
         res.send(htmlContent);
       } else if (err instanceof OutOfDateError) {
+          // if the catalog is out of date display out of date html template
         const htmlContent: string =
           await this.tempUrlService.buildCatalogOutOfDateHtml();
         res.type(".html");
@@ -59,8 +62,6 @@ export class TempUrlController {
       next(err);
     }
   };
-
-
 
   public create = async (req: any, res: any, next: any) => {
     let tempUrlToCreate: TempUrl = null;
@@ -108,7 +109,7 @@ export class TempUrlController {
     let uuid: string;
     try {
       uuid = req.query.uuid;
-
+    // delete by uuid
       await this.tempUrlService.delete(uuid);
 
       next(`Temporary URL with uuid ${uuid} has been deleted succesfuly`);
@@ -118,25 +119,10 @@ export class TempUrlController {
     }
   };
 
-  public sendMail = async (req: any, res: any, next: any) => {
-    let mail: any;
-    try {
-      mail = req.body;
-
-      const sentMail = await this.tempUrlService.sendMail(mail);
-
-      next(sentMail);
-
-      res.status(200);
-    } catch (error) {
-      this.logger.error(`Cannot Send Mail: ${JSON.stringify(mail)}`, error);
-      next(error);
-    }
-  };
-
   public sendWhatsApp = async (req: any, res: any, next: any) => {
     let whatsAppMessageContent: any = req.body;
     try {
+      // send whatsApp message
       const sentMessage: any = await this.tempUrlService.sendWhatsApp(
         whatsAppMessageContent
       );
@@ -153,3 +139,6 @@ export class TempUrlController {
     }
   };
 }
+
+
+

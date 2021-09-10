@@ -15,9 +15,12 @@ import {
 import { AssociationOptions } from "sequelize/types";
 import { Gym } from "./gym";
 import { Role } from "./role";
+
 @Table({
   tableName: "users",
 })
+
+// this class represents the user table in the database
 export class User extends Model<User> {
   @PrimaryKey
   @AutoIncrement
@@ -65,10 +68,4 @@ export class User extends Model<User> {
   @ForeignKey(() => Gym)
   public gymId: number;
 
-  // @HasOne(() => Role, {
-  //   foreignKey: "id",
-  //   as: "roleUser",
-  //   onDelete: "CASCADE",
-  // } as AssociationOptions)
-  // public role: Role;
 }

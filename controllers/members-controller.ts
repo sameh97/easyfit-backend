@@ -16,6 +16,7 @@ export class MemebrsController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
+      // get all members using service
       const members: Member[] = await this.membersService.getAll(
         req.query.gymId
       );
@@ -73,8 +74,25 @@ export class MemebrsController {
     }
   };
 
+  public getGendersNumber = async (req: any, res: any, next: any) => {
+    let genders: number[] = [];
+    // get genders number 
+    // store then in number array, the first elemnt in the array will be
+    // the number of males, and the second elem will be the number of females
+    try {
+      genders = await this.membersService.getGendersNumber(req.query.gymId);
+
+      res.status(200);
+      next(genders);
+    } catch (err) {
+      this.logger.error(`Cannot return number of genders}`, err);
+      next(err);
+    }
+  };
+
   public getAllPhones = async (req: any, res: any, next: any) => {
     try {
+      // get members phone numbers
       const phones: string[] = await this.membersService.getAllPhones(
         req.query.gymId
       );
@@ -82,6 +100,22 @@ export class MemebrsController {
       next(phones);
     } catch (error) {
       this.logger.error(`cannot get all members phones`, error);
+      next(error);
+    }
+  };
+
+  public getAddedMembersByMonth = async (req: any, res: any, next: any) => {
+    try {
+      // get added members number in all months
+      // this func will return number array with size 12
+      // each element in the array represents added members count in month
+      // array at position 0 will be january
+      const addedMembersByMonth: number[] =
+        await this.membersService.getAddedMembersByMonth(req.query.gymId);
+
+      next(addedMembersByMonth);
+    } catch (error) {
+      this.logger.error(`cannot get members count by month`, error);
       next(error);
     }
   };

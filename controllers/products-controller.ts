@@ -19,7 +19,7 @@ export class ProductsController {
       const products: Product[] = await this.productsService.getAll(
         req.query.gymId
       );
-
+  
       const productDto: ProductDto[] = products.map((product) =>
         this.productDtoMapper.asDto(product)
       );

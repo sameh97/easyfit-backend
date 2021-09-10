@@ -24,13 +24,8 @@ import { NotificationsApi } from "../routes/notification";
 import { TempUrlApi } from "../routes/temp-url-api";
 import { Role } from "../models/role";
 import { UploadFilesApi } from "../routes/upload-file";
-
-const verifyToken = require("../middlewares/jwt-functions");
-const secret = "secretKey";
-const bodyParser = require("body-parser");
 const path = require("path");
 
-// TODO: arrange the imports and make them cleaner
 export class EasyFitApp {
   private app: express.Express;
 
@@ -60,6 +55,7 @@ export class EasyFitApp {
   ) {
     this.app = express();
     this.app.use(express.json());
+    // this tells the browser to allow requesting code from the origin
     this.app.use(function (req, res, next) {
       res.header("Access-Control-Allow-Origin", "*");
       res.header(
@@ -70,11 +66,12 @@ export class EasyFitApp {
       res.header("Access-Control-Expose-Headers", "*");
       next();
     });
+
     this.app.use(cors());
   }
 
   public async start(): Promise<void> {
-    //TODO: make a user
+    // this function starts the server
     this.initRoutes();
     this.handleAllResponses();
     this.initDB();
@@ -119,7 +116,7 @@ export class EasyFitApp {
     }
   };
 
-  //TODO: remove:
+  
   private addStaticJob = async (): Promise<void> => {
     const job1: Job = {
       id: 1,
@@ -167,9 +164,11 @@ export class EasyFitApp {
     // job tracker that looks for expired jobs and delete them, it will run every day.
     setInterval(async () => {
       try {
+        // retreve all scheduled jobs from the database
         const allSchedules: MachineScheduledJob[] =
           await this.machineSchedulerRepository.getAllWithoutGymId();
 
+          // for each job, check if the end time of the job is allready passed
         allSchedules.forEach(async (scheduledJob) => {
           const now: number = new Date().getTime();
 
@@ -194,6 +193,7 @@ export class EasyFitApp {
   }
 
   private initRoutes(): void {
+    // init all the routes, use the routes middlewares,
     this.app.use(this.usersApi.getRouter());
     this.app.use(this.membersApi.getRouter());
     this.app.use(this.gymApi.getRouter());
@@ -217,6 +217,7 @@ export class EasyFitApp {
   }
 
   public async initDB(): Promise<void> {
+    // connect the server to the database
     this.dBconnection
       .connect()
       .then((r) => {
@@ -233,6 +234,7 @@ export class EasyFitApp {
   }
 
   private handleAllResponses(): void {
+    // use the error handling middleware
     this.app.use(appResponseHandler);
   }
 

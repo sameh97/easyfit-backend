@@ -28,6 +28,7 @@ export class MachineSchedulerRepository {
   };
 
   public getAllWithoutGymId = async (): Promise<MachineScheduledJob[]> => {
+    // get all jobs in the database
     return await MachineScheduledJob.findAll({});
   };
 

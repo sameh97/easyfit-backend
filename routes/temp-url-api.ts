@@ -32,7 +32,7 @@ export class TempUrlApi implements AppRoute {
       verifyToken,
       this.tempUrlController.create
     );
-    // this.router.post("/api/send-catalog", this.tempUrlController.sendMail);
+
     this.router.post(
       "/api/send-catalog-whatsapp",
       verifyToken,

@@ -18,14 +18,15 @@ export class UserController {
   public login = async (req: any, res: any, next: any) => {
     let userFromBody: User = null;
     try {
+      // get user from body
       userFromBody = req.body;
 
-      // const result = await logInSchema.validateAsync(userFromBody);
-
+      
       const token: string = await this.userService.login(
         userFromBody.email,
         userFromBody.password
       );
+      // set the token as a header 
       res.setHeader("Authorization", token);
       res.send({});
     } catch (e) {
@@ -38,6 +39,7 @@ export class UserController {
   public createUser = async (req: any, res: any, next: any) => {
     let userToCreate: User = null;
     try {
+      // map the user as entity
       userToCreate = this.dtoMapper.asEntity(req.body);
 
       const createdUser: User = await this.userService.create(userToCreate);
@@ -55,8 +57,10 @@ export class UserController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
+      // retreve all users from database
       const users: User[] = await this.userService.getAll();
 
+    // map all the users as dto to send to client
       const usersDto: UserDto[] = users.map((user) =>
         this.dtoMapper.asDto(user)
       );
@@ -71,8 +75,10 @@ export class UserController {
   public update = async (req: any, res: any, next: any) => {
     let userToUpdate: User = null;
     try {
+      // get user from body
       userToUpdate = this.dtoMapper.asEntity(req.body);
 
+     // update user
       const updatedUser: User = await this.userService.update(userToUpdate);
 
       res.status(201);
@@ -87,8 +93,10 @@ export class UserController {
   public delete = async (req: any, res: any, next: any) => {
     let userId: number;
     try {
+      // get the id from query params
       userId = Number(req.query.id);
 
+  // delete
       await this.userService.delete(userId);
 
       next(`user with id ${userId} has been deleted succesfuly`);

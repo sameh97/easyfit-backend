@@ -21,9 +21,11 @@ export class AppNotificationsController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
+      // get all notifications
       const notifications: AppNotification[] =
         await this.appNotificationService.getAll(req.query.gymId);
 
+      // map to dto
       const notificationsDto: AppNotificationDto[] = notifications.map(
         (notification) => this.notificationsDtoMapper.asDto(notification)
       );
@@ -37,6 +39,7 @@ export class AppNotificationsController {
 
   public getAllGrouped = async (req: any, res: any, next: any) => {
     try {
+      // get all notifications, group by target object id
       const notifications: any[] =
         await this.appNotificationService.getAllGrouped(req.query.gymId);
 
@@ -49,6 +52,7 @@ export class AppNotificationsController {
 
   public getByMachineSerialNumber = async (req: any, res: any, next: any) => {
     try {
+
       const notifications: AppNotification[] =
         await this.appNotificationService.getByMachineSerialNumber(
           req.query.gymId,
@@ -124,6 +128,8 @@ export class AppNotificationsController {
   public deleteAllByTargetObjectId = async (req: any, res: any, next: any) => {
     let notificationGymId: number;
     let targetObjectId: string;
+    // this function used when we need to delete all notifications for specific machine
+    // targetObjectId = machineSerialNumber
     try {
       notificationGymId = Number(req.query.gymId);
       targetObjectId = req.query.machineSerialNumber;

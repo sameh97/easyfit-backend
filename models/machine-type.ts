@@ -16,16 +16,7 @@ import { Machine } from './machines';
 @Table({
   tableName: "categorys",
 })
-/* 
-types example:
-crossfit
-streetworkout
-bodybuilding
-cardio
-gymnastics
-stretching
 
- */
 export class MachineType extends Model<MachineType> {
   @PrimaryKey
   @AutoIncrement

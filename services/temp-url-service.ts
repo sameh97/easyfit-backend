@@ -15,10 +15,8 @@ import { parse } from "node-html-parser";
 import { catalogTemplate } from "./easyfit-catalog-template";
 import { catalogNotFoundTemplate } from "../templates/catalog-not-found-template";
 import { catalogOutOfDateTemplate } from "../templates/catalog-out-of-date";
-const nodemailer = require("nodemailer");
 const wbm = require("wbm");
 
-require("dotenv").config(); // TODO : remove
 
 @injectable()
 export class TempUrlService {
@@ -34,6 +32,7 @@ export class TempUrlService {
     try {
       transaction = await this.appDBConnection.createTransaction();
 
+      // generate a uniqe uuid for the catalog url
       tempUrl.uuid = uuidv4();
 
       const createdTempUrl = await this.tempUrlRepository.save(
@@ -89,12 +88,12 @@ export class TempUrlService {
         tempUrl.createdAt,
         tempUrl.durationDays
       );
-
+      // if the catalog duration expired, throw error 
       if (dateNow.getTime() > endDate.getTime()) {
         throw new OutOfDateError(`Catalog is no longer available`);
       }
       const products: Product[] = await this.getCatalogProductsByUUID(uuid);
-
+      // return all the products of the catalog
       this.logger.info(`Returning Temporary URL ${tempUrl.uuid}`);
       return products;
     } catch (err) {
@@ -111,6 +110,7 @@ export class TempUrlService {
   private getCatalogProductsByUUID = async (
     uuid: string
   ): Promise<Product[]> => {
+     // get all the products for specfic catalog, by its url uuid 
     const catalog: Catalog[] = await Catalog.findAll({
       where: { tempUrlID: uuid },
     });
@@ -120,7 +120,7 @@ export class TempUrlService {
     for (let item of catalog) {
       productIDS.push(item.productID);
     }
-
+ 
     const products: Product[] = await this.productsRepository.getByIDs(
       productIDS
     );
@@ -140,9 +140,9 @@ export class TempUrlService {
     return root.toString();
   };
 
-  public buildHtml = async (products: Product[]): Promise<string> => {
+  public buildCatalogHtml = async (products: Product[]): Promise<string> => {
     const root = parse(catalogTemplate);
-
+  // append products to html div
     for (let product of products) {
       const pro = parse(`<div class="card">
       <div class="item-flex-container">
@@ -213,39 +213,14 @@ export class TempUrlService {
     }
   };
 
-  public sendMail = async (mail: any): Promise<any> => {
-    const transporter = nodemailer.createTransport({
-      service: "hotmail",
-      auth: {
-        user: mail.userEmail,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
-    // "samehhhh66@outlook.com, khalilmahmod788@gmail.com"
-    const mailOptions = {
-      from: mail.userEmail,
-      to: mail.emails,
-      subject: "Invoices due",
-      text: `Dudes, we really need your money. ${mail.link}`,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-        return info.response;
-      }
-    });
-  };
 
   public sendWhatsApp = async (details: any): Promise<any> => {
+    // send whatsApp message:
     wbm
       .start({ showBrowser: true, qrCodeData: true, session: false })
       .then(async (qrCodeData) => {
         const phones = details.phones;
         const message = details.message;
-        // `Check out the Sales on ${details.gymName}: ${details.link}`
         await wbm.waitQRCode();
         const send = await wbm.send(phones, message);
         await wbm.end();

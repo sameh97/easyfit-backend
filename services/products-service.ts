@@ -48,6 +48,7 @@ export class ProductsService {
   };
 
   public getAllBills = async (gymId: number): Promise<Bill[]> => {
+    // get all receipts for gym 
     const bills: Bill[] = await this.productRepo.getAllBills(gymId);
     this.logger.info(`Returning ${bills.length} bills`);
     return bills;

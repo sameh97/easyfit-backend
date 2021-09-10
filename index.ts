@@ -18,6 +18,7 @@ import { NotificationsApi } from "./routes/notification";
 import { TempUrlApi } from "./routes/temp-url-api";
 import { UploadFilesApi } from "./routes/upload-file";
 
+// make a new instance of EasyFitApp (the server) and call start function
 const app = new EasyFitApp(
   container.get(UsersApi),
   container.get(AppDBConnection),

@@ -18,7 +18,6 @@ export class DtoMapper {
       roleId: user.roleId,
       birthDay: user.birthDay,
       address: user.address,
-      //TODO: remove gymId
       gymId: user.gymId,
     } as UserDto;
   }

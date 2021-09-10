@@ -53,7 +53,6 @@ export class Member extends Model<Member> {
   @Column(DataType.BOOLEAN)
   public isActive: boolean;
 
-  // TODO: check time duration
   @IsDate
   @AllowNull(false)
   @Column(DataType.DATE)

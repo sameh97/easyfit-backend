@@ -54,4 +54,5 @@ export class AppDBConnection {
   public async createTransaction(): Promise<Transaction> {
     return await this.db.transaction();
   }
+  
 }

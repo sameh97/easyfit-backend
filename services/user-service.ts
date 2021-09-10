@@ -11,8 +11,7 @@ import { Logger } from "../common/logger";
 
 @injectable()
 export class UserService {
-  public static TOKEN_SECRET = "asfwsgvwregwegfrgfwg"; // TODO: use env. variable
-
+ 
   private static readonly TOKEN_EXPIRATION_HOURS = 240;
   constructor(
     @inject(UsersRepository) private usersRepository: UsersRepository,
@@ -23,8 +22,10 @@ export class UserService {
   ) {}
 
   public async login(email: string, password: string): Promise<string> {
+    // get user from database by email
     const userInDB = await this.usersRepository.getByEmail(email);
 
+    // check if the givin password is right 
     const isPasswordOk = await this.passwordManager.isEqual(
       password,
       userInDB.password
@@ -33,11 +34,12 @@ export class UserService {
       throw new AuthenticationError(`User with ${email} not authenticated`);
     }
 
+    // if the password is ok, make a new token 
     const token = jwt.sign(
       {
         sub: userInDB,
       },
-      UserService.TOKEN_SECRET,
+      process.env.TOKEN_SECRET,
       { expiresIn: `${UserService.TOKEN_EXPIRATION_HOURS}h` }
     );
 
@@ -47,6 +49,7 @@ export class UserService {
   public async create(user: User): Promise<User> {
     let transaction: Transaction = null;
     try {
+      // hash the password
       const hashedPassword = await this.passwordManager.hashAndSalt(
         user.password
       );
@@ -55,6 +58,7 @@ export class UserService {
 
       transaction = await this.appDBconnection.createTransaction();
 
+      // create new user
       const createdUser = await this.usersRepository.save(user, transaction);
 
       await transaction.commit();
@@ -72,6 +76,7 @@ export class UserService {
   }
 
   public getAll = async (): Promise<User[]> => {
+    // get all users
     const users = await this.usersRepository.getAll();
     this.logger.info(`Returning ${users.length} users`);
     return users;
@@ -80,6 +85,7 @@ export class UserService {
   public update = async (user: User): Promise<User> => {
     let transaction: Transaction = null;
     try {
+       // hash the password
       const hashedPassword = await this.passwordManager.hashAndSalt(
         user.password
       );

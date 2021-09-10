@@ -5,7 +5,8 @@ import { Logger } from "../common/logger";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { NotFoundErr } from "../exeptions/not-found-error";
 import { Member } from "../models/member";
-
+import sequelize = require("sequelize");
+const { Op } = require("sequelize");
 @injectable()
 export class MembersRepository {
   constructor(@inject(Logger) private logger: Logger) {}
@@ -18,6 +19,7 @@ export class MembersRepository {
     member: Member,
     transaction?: Transaction
   ): Promise<Member> {
+    // check if exists 
     const memberInDB = await Member.findOne({
       where: { email: member.email },
       transaction: transaction,
@@ -55,7 +57,6 @@ export class MembersRepository {
 
     this.logger.info(`Updating member with email '${member.email}'`);
 
-    // TODO: check if this is a good practice:
     const updatedMember = await memberInDB.update(member);
 
     this.logger.info(`Updated member '${JSON.stringify(updatedMember)}'`);
@@ -88,10 +89,64 @@ export class MembersRepository {
     gymId: number,
     transaction?: Transaction
   ): Promise<any[]> => {
+    // retern only the phone column
     return await Member.findAll({
       attributes: ["phone"],
       where: { gymId: gymId },
       transaction: transaction,
     });
   };
+
+  public async getAllMales(gymId : number,transaction?:Transaction):Promise<number> {
+    return await Member.count({
+      where : {gymId : gymId, gender : 1},
+      transaction : transaction
+    });
+  }
+
+
+  public async getAllFemales(gymId : number, transaction?:Transaction):Promise<number> {
+    return await Member.count({
+      where : {gymId : gymId, gender : 2},
+      transaction : transaction
+    });
+  }
+
+
+  public getAddedMembersByMonth = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<number[]> => {
+    const currentTime = new Date();
+    let year = currentTime.getFullYear();
+    let result: number[] = [];
+    // for each month get the count of added members 
+    for (let month = 1; month <= 12; month++) {
+      let nextMonth: number = month + 1;
+      let nextYear: number = year;
+
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = nextYear + 1;
+      }
+
+      const currentMonthAddedMembers = await Member.count({
+        where: {
+          [Op.and]: [
+            {
+              joinDate: {
+                [Op.gte]: new Date(`${year}-${month}-01`),
+                [Op.lt]: new Date(`${nextYear}-${nextMonth}-01`),
+              },
+              gymId: gymId,
+            },
+          ],
+        },
+        transaction: transaction,
+      });
+      result.push(currentMonthAddedMembers);
+    }
+    return result;
+  };
 }
+

@@ -32,20 +32,20 @@ export class FileUploadService {
     return this.s3.upload(uploadParams).promise();
   };
 
-  public deleteFromS3(file: any) {
-    return this.s3
-      .deleteObject({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: file,
-      })
-      .promise();
-  }
+  // public deleteFromS3(file: any) {
+  //   return this.s3
+  //     .deleteObject({
+  //       Bucket: process.env.AWS_BUCKET_NAME,
+  //       Key: file,
+  //     })
+  //     .promise();
+  // }
 
-  public delete = async (fileKey: string): Promise<any> => {
-    var params = { Bucket: process.env.AWS_BUCKET_NAME, Key: fileKey };
+  // public delete = async (fileKey: string): Promise<any> => {
+  //   var params = { Bucket: process.env.AWS_BUCKET_NAME, Key: fileKey };
 
-    return this.s3.deleteObject(params).promise();
-  };
+  //   return this.s3.deleteObject(params).promise();
+  // };
 
   public getFileStream = async (fileKey: any): Promise<any> => {
     const downloadParams = {
