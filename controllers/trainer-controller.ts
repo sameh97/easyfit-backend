@@ -19,14 +19,30 @@ export class TrainerController {
         req.query.gymId
       );
 
-      const trainerDto: TrainerDto[] = trainers.map((trainer) =>
+      const trainersDto: TrainerDto[] = trainers.map((trainer) =>
         this.trainerDtoMapper.asDto(trainer)
       );
 
-      next(trainerDto);
+      next(trainersDto);
     } catch (err) {
       this.logger.error(`cannot get all trainers`, err);
       next(err);
+    }
+  };
+
+  public getById = async (req: any, res: any, next: any) => {
+    try {
+      const trainer: Trainer = await this.trainerService.getById(
+        req.query.gymId,
+        req.query.id
+      );
+
+      const trainerDto: TrainerDto = this.trainerDtoMapper.asDto(trainer);
+
+      next(trainerDto);
+    } catch (error) {
+      this.logger.error(`cannot get trainer with id: ${req.query.id}`, error);
+      next(error);
     }
   };
 

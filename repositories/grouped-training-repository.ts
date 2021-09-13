@@ -40,7 +40,8 @@ export class GroupedTraingingRepository {
         [Op.and]: [
           {
             startTime: {
-              [Op.between]: [startTimeMinusOneHour, groupTraining.startTime],
+              [Op.gt]: new Date(startTimeMinusOneHour),
+              [Op.lte]: new Date(groupTraining.startTime),
             },
             gymId: groupTraining.gymId,
           },
@@ -96,7 +97,8 @@ export class GroupedTraingingRepository {
         [Op.and]: [
           {
             startTime: {
-              [Op.between]: [startTimeMinusOneHour, groupTraining.startTime],
+              [Op.gt]: new Date(startTimeMinusOneHour),
+              [Op.lte]: new Date(groupTraining.startTime),
             },
             gymId: groupTraining.gymId,
           },

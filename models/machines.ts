@@ -28,7 +28,7 @@ export class Machine extends Model<Machine> {
   public name: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING(1000))
+  @Column(DataType.STRING(3000))
   public description: string;
 
   @AllowNull(false)

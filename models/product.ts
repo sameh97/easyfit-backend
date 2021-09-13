@@ -33,7 +33,7 @@ export class Product extends Model<Product> {
   public name: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING(1500))
+  @Column(DataType.STRING(3500))
   public description: string;
 
   @Unique
