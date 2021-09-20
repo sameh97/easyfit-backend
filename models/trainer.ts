@@ -61,7 +61,7 @@ export class Trainer extends Model<Trainer> {
   public joinDate: Date;
 
   @AllowNull(true)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(3000))
   public imageURL?: string;
 
   @AllowNull(false)

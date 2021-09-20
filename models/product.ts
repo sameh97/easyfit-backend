@@ -50,7 +50,7 @@ export class Product extends Model<Product> {
   public price: number;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(3000))
   public imgUrl: string;
 
   @AllowNull(false)

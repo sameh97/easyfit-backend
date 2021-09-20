@@ -71,7 +71,7 @@ export class Member extends Model<Member> {
   public gender: number;
 
   @AllowNull(true)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(3000))
   public imageURL?: string;
 
   @AllowNull(false)

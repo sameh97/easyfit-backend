@@ -53,6 +53,10 @@ export class User extends Model<User> {
   @Column(DataType.STRING)
   public address: string;
 
+  @AllowNull(true)
+  @Column(DataType.STRING(3000))
+  public imageURL?: string;
+
   @AllowNull(false)
   @Column(DataType.INTEGER)
   @ForeignKey(() => Role)
@@ -67,5 +71,4 @@ export class User extends Model<User> {
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;
-
 }

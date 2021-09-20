@@ -44,6 +44,7 @@ export class GroupedTraingingRepository {
               [Op.lte]: new Date(groupTraining.startTime),
             },
             gymId: groupTraining.gymId,
+            trainerId: groupTraining.trainerId,
           },
         ],
       },
@@ -96,11 +97,9 @@ export class GroupedTraingingRepository {
       where: {
         [Op.and]: [
           {
-            startTime: {
-              [Op.gt]: new Date(startTimeMinusOneHour),
-              [Op.lte]: new Date(groupTraining.startTime),
-            },
+            id: groupTraining.id,
             gymId: groupTraining.gymId,
+            trainerId: groupTraining.trainerId,
           },
         ],
       },
@@ -110,6 +109,30 @@ export class GroupedTraingingRepository {
     if (!AppUtils.hasValue(groupTrainingInDB)) {
       throw new NotFoundErr(
         `Group Training with ${JSON.stringify(groupTraining)} was not fount`
+      );
+    }
+
+    let groupTrainingAtTheSameTimeInDB = await GroupTraining.findOne({
+      where: {
+        [Op.and]: [
+          {
+            startTime: {
+              [Op.gt]: new Date(startTimeMinusOneHour),
+              [Op.lte]: new Date(groupTraining.startTime),
+            },
+            gymId: groupTraining.gymId,
+            trainerId: groupTraining.trainerId,
+          },
+        ],
+      },
+      transaction: transaction,
+    });
+
+    if (AppUtils.hasValue(groupTrainingAtTheSameTimeInDB)) {
+      throw new NotFoundErr(
+        `Group Training with ${JSON.stringify(
+          groupTraining
+        )} cannot be updated because start time not available`
       );
     }
 
