@@ -5,6 +5,7 @@ import { Logger } from "../common/logger";
 import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { NotFound } from "../exeptions/notFound-exeption";
 import { Trainer } from "../models/trainer";
+const { Op } = require("sequelize");
 
 @injectable()
 export class TrainerRepository {
@@ -12,7 +13,18 @@ export class TrainerRepository {
   public async getAll(gymId: number): Promise<Trainer[]> {
     return await Trainer.findAll({ where: { gymId: gymId } });
   }
-  
+
+  public async getById(
+    gymId: number,
+    trainerId: number,
+    transaction?: Transaction
+  ): Promise<Trainer> {
+    return await Trainer.findOne({
+      where: { [Op.and]: [{ gymId: gymId, id: trainerId }] },
+      transaction: transaction,
+    });
+  }
+
   public async save(
     trainer: Trainer,
     transaction?: Transaction

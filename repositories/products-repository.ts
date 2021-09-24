@@ -7,7 +7,8 @@ import { AlreadyExistError } from "../exeptions/already-exist-error";
 import { NotFoundErr } from "../exeptions/not-found-error";
 import { Bill } from "../models/bill";
 import { Product } from "../models/product";
-
+import sequelize = require("sequelize");
+const { Op } = require("sequelize");
 @injectable()
 export class ProductsRepository {
   constructor(
@@ -112,5 +113,47 @@ export class ProductsRepository {
     }
 
     await Product.destroy({ where: { id: id }, transaction: transaction });
+  };
+
+  public soldProductsPeerMonth = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<number[]> => {
+    const currentTime = new Date();
+    let year = currentTime.getFullYear();
+    let result: number[] = [];
+
+    for (let month = 1; month <= 12; month++) {
+      let nextMonth: number = month + 1;
+      let nextYear: number = year;
+
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = nextYear + 1;
+      }
+
+      const sumOfSoldProductsInMonth = await Bill.findAll({
+        attributes: [[sequelize.fn("sum", sequelize.col("quantity")), "total"]],
+        where: {
+          [Op.and]: [
+            {
+              createdAt: {
+                [Op.gte]: new Date(`${year}-${month}-01`),
+                [Op.lt]: new Date(`${nextYear}-${nextMonth}-01`),
+              },
+              gymId: gymId,
+            },
+          ],
+        },
+        transaction: transaction,
+      });
+
+      const bill: any = sumOfSoldProductsInMonth[0];
+      const totalSalesInMonth: number = Number(bill.dataValues.total);
+
+      result.push(totalSalesInMonth);
+    }
+
+    return result;
   };
 }

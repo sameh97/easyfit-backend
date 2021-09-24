@@ -17,6 +17,7 @@ import { MachineSchedulerRepository } from "./repositories/scheduler-repository"
 import { NotificationsApi } from "./routes/notification";
 import { TempUrlApi } from "./routes/temp-url-api";
 import { UploadFilesApi } from "./routes/upload-file";
+import { GroupTrainingApi } from "./routes/group-training-api";
 
 // make a new instance of EasyFitApp (the server) and call start function
 const app = new EasyFitApp(
@@ -35,7 +36,8 @@ const app = new EasyFitApp(
   container.get(MachineSchedulerRepository),
   container.get(NotificationsApi),
   container.get(TempUrlApi),
-  container.get(UploadFilesApi)
+  container.get(UploadFilesApi),
+  container.get(GroupTrainingApi)
 );
 
 app.start();

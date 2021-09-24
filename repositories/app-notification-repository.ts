@@ -131,9 +131,6 @@ export class AppNotificationRepository {
     });
 
     if (!AppUtils.hasValue(toDelete)) {
-      // throw new NotFoundErr(
-      //   `Cannot delete notification: ${targetObjectId} because it is not found`
-      // );
       return;
     }
 

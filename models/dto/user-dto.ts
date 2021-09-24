@@ -5,6 +5,7 @@ export class UserDto {
   public email: string;
   public password?: string;
   public roleId: number;
+  public imageURL?: string;
   public phone: string;
   public birthDay: Date;
   public address: string;

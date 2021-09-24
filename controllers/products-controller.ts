@@ -19,7 +19,7 @@ export class ProductsController {
       const products: Product[] = await this.productsService.getAll(
         req.query.gymId
       );
-  
+
       const productDto: ProductDto[] = products.map((product) =>
         this.productDtoMapper.asDto(product)
       );
@@ -28,6 +28,21 @@ export class ProductsController {
     } catch (err) {
       this.logger.error(`cannot get all products`, err);
       next(err);
+    }
+  };
+
+  public soldProductsPeerMonth = async (req: any, res: any, next: any) => {
+    try {
+      const productsSalesPeerMonth: number[] =
+        await this.productsService.soldProductsPeerMonth(req.query.gymId);
+
+      next(productsSalesPeerMonth);
+    } catch (error) {
+      this.logger.error(
+        `Cannot retrive sold products peer month ${JSON.stringify(req.body)}`,
+        error
+      );
+      next(error);
     }
   };
 

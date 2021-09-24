@@ -16,6 +16,7 @@ export class DtoMapper {
       email: user.email,
       phone: user.phone,
       roleId: user.roleId,
+      imageURL: user.imageURL,
       birthDay: user.birthDay,
       address: user.address,
       gymId: user.gymId,
@@ -33,6 +34,7 @@ export class DtoMapper {
       email: userDto.email,
       phone: userDto.phone,
       roleId: userDto.roleId,
+      imageURL: userDto.imageURL,
       birthDay: userDto.birthDay,
       address: userDto.address,
       password: userDto.password,
@@ -40,3 +42,4 @@ export class DtoMapper {
     } as User;
   }
 }
+

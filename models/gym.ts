@@ -14,6 +14,7 @@ import { Member } from "./member";
 import { Trainer } from "./trainer";
 import { Product } from "./product";
 import { User } from "./user";
+import { GroupTraining } from "./group-training";
 
 @Table({
   tableName: "gym",
@@ -50,11 +51,10 @@ export class Gym extends Model<Gym> {
   } as AssociationOptions)
   public members: Member[];
 
-
   @HasMany(() => Trainer, {
-    foreignKey : "gymId",
-    as : " trainersGym",
-    onDelete: "CASCADE"
+    foreignKey: "gymId",
+    as: " trainersGym",
+    onDelete: "CASCADE",
   } as AssociationOptions)
   public trainer: Trainer[];
 
@@ -65,4 +65,10 @@ export class Gym extends Model<Gym> {
   } as AssociationOptions)
   public products: Product[];
 
+  @HasMany(() => Trainer, {
+    foreignKey: "gymId",
+    as: "groupTrainingsGym",
+    onDelete: "CASCADE",
+  } as AssociationOptions)
+  public groupTrainings: GroupTraining[];
 }

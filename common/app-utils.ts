@@ -6,19 +6,19 @@ import { Consts } from "./consts";
 import { SocketTopics } from "./socket-util";
 
 export class AppUtils {
-  // checks if the givin object has value 
+  // checks if the givin object has value
   public static hasValue(obj: any): boolean {
     if (typeof obj === "undefined" || obj === null) {
       return false;
     }
     return true;
   }
- // gets the full stack trace of exception:
+  // gets the full stack trace of exception:
   public static getFullException(err: Error): string {
     if (!err) return "";
     return `${err.message}, stack: ${err.stack}`;
   }
- // checks if the givin obj is number
+  // checks if the givin obj is number
   public static isInteger(obj: any): boolean {
     if (!AppUtils.hasValue(obj)) {
       return false;
@@ -44,13 +44,25 @@ export class AppUtils {
     return cronExp;
   };
 
-// add days to a givin date
+  // add days to a givin date
   public static addDays = (date: Date, days: number): Date => {
     var result = new Date(date);
     result.setDate(result.getDate() + days);
     return result;
   };
- 
+
+  public static addHoursToDate = (date: Date, hours: number): Date => {
+    let result = new Date(date);
+    result.setHours(result.getHours() + hours);
+    return result;
+  };
+
+  public static removeHoursFromDate = (date: Date, hours: number): Date => {
+    let result = new Date(date);
+    result.setHours(result.getHours() - hours);
+    return result;
+  };
+
   public static validteScheduledJobEndDate = async (
     scheduleJob: MachineScheduledJob
   ): Promise<void> => {
@@ -73,7 +85,7 @@ export class AppUtils {
     }
   };
 
- // create notification for scheduled job
+  // create notification for scheduled job
   public static createNotificationToStoreInDB = (
     scheduledJob: MachineScheduledJob
   ): AppNotification => {

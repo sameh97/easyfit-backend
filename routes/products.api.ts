@@ -23,6 +23,11 @@ export class ProductsApi implements AppRoute {
     this.router = Router();
 
     this.router.get(
+      "/api/sold-products",
+      verifyToken,
+      this.productsController.soldProductsPeerMonth
+    );
+    this.router.get(
       "/api/products",
       verifyToken,
       this.productsController.getAll

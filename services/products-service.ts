@@ -48,10 +48,36 @@ export class ProductsService {
   };
 
   public getAllBills = async (gymId: number): Promise<Bill[]> => {
-    // get all receipts for gym 
+    // get all receipts for gym
     const bills: Bill[] = await this.productRepo.getAllBills(gymId);
     this.logger.info(`Returning ${bills.length} bills`);
     return bills;
+  };
+
+  public soldProductsPeerMonth = async (gymId: number): Promise<any> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const productsSalesPeerMonth: number[] =
+        await this.productRepo.soldProductsPeerMonth(gymId, transaction);
+        
+      await transaction.commit();
+
+      this.logger.info(`Returning products sales peer month`);
+
+      return productsSalesPeerMonth;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Error occurred while creating retreving products sales peer month: error: ${AppUtils.getFullException(
+          error
+        )}`
+      );
+      throw error;
+    }
   };
 
   public createBill = async (bill: Bill): Promise<Bill> => {

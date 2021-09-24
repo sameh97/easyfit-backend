@@ -25,6 +25,11 @@ export class TrainersApi implements AppRoute {
       verifyToken,
       this.trainerController.getAll
     );
+    this.router.get(
+      "/api/trainer",
+      verifyToken,
+      this.trainerController.getById
+    );
     this.router.post(
       "/api/add-trainer",
       verifyToken,

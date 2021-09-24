@@ -24,6 +24,7 @@ import { NotificationsApi } from "../routes/notification";
 import { TempUrlApi } from "../routes/temp-url-api";
 import { Role } from "../models/role";
 import { UploadFilesApi } from "../routes/upload-file";
+import { GroupTrainingApi } from "../routes/group-training-api";
 const path = require("path");
 
 export class EasyFitApp {
@@ -51,7 +52,9 @@ export class EasyFitApp {
     @inject(TempUrlApi)
     private tempUrlApi: TempUrlApi,
     @inject(UploadFilesApi)
-    private uploadFilesApi: UploadFilesApi
+    private uploadFilesApi: UploadFilesApi,
+    @inject(GroupTrainingApi)
+    private groupTrainingApi: GroupTrainingApi
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -116,7 +119,6 @@ export class EasyFitApp {
     }
   };
 
-  
   private addStaticJob = async (): Promise<void> => {
     const job1: Job = {
       id: 1,
@@ -168,7 +170,7 @@ export class EasyFitApp {
         const allSchedules: MachineScheduledJob[] =
           await this.machineSchedulerRepository.getAllWithoutGymId();
 
-          // for each job, check if the end time of the job is allready passed
+        // for each job, check if the end time of the job is allready passed
         allSchedules.forEach(async (scheduledJob) => {
           const now: number = new Date().getTime();
 
@@ -204,7 +206,7 @@ export class EasyFitApp {
     this.app.use(this.notificationsApi.getRouter());
     this.app.use(this.tempUrlApi.getRouter());
     this.app.use(this.uploadFilesApi.getRouter());
-
+    this.app.use(this.groupTrainingApi.getRouter());
     // Catch all other get requests
     const publicPath = express.static(path.join(__dirname, "./../"), {
       redirect: false,
