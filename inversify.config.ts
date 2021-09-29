@@ -52,6 +52,14 @@ import { TempUrlService } from "./services/temp-url-service";
 import { TempUrlDtoMapper } from "./common/dto-mapper/temp-url-dto-mapper";
 import { TempUrlController } from "./controllers/temp-url-controller";
 import { TempUrlApi } from "./routes/temp-url-api";
+import { UploadFileController } from "./controllers/upload-file-controller";
+import { FileUploadService } from "./services/file-upload-service";
+import { UploadFilesApi } from "./routes/upload-file";
+import { GroupTrainingService } from "./services/group-training-service";
+import { GroupTrainingDtoMapper } from "./common/dto-mapper/group-training-dto-mapper";
+import { GroupTrainingController } from "./controllers/group-training-controller";
+import { GroupTrainingApi } from "./routes/group-training-api";
+import { GroupedTraingingRepository } from "./repositories/grouped-training-repository";
 // TODO: improve the container, it should use types
 
 const container = new Container({ defaultScope: "Singleton" });
@@ -113,5 +121,14 @@ container.bind<TempUrlService>(TempUrlService).toSelf();
 container.bind<TempUrlController>(TempUrlController).toSelf();
 container.bind<TempUrlDtoMapper>(TempUrlDtoMapper).toSelf();
 container.bind<TempUrlApi>(TempUrlApi).toSelf();
+container.bind<UploadFileController>(UploadFileController).toSelf();
+container.bind<FileUploadService>(FileUploadService).toSelf();
+container.bind<UploadFilesApi>(UploadFilesApi).toSelf();
+
+container.bind<GroupedTraingingRepository>(GroupedTraingingRepository).toSelf();
+container.bind<GroupTrainingService>(GroupTrainingService).toSelf();
+container.bind<GroupTrainingDtoMapper>(GroupTrainingDtoMapper).toSelf();
+container.bind<GroupTrainingController>(GroupTrainingController).toSelf();
+container.bind<GroupTrainingApi>(GroupTrainingApi).toSelf();
 
 export default container;

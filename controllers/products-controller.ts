@@ -1,6 +1,7 @@
 import { inject, injectable } from "inversify";
 import { ProductDtoMapper } from "../common/dto-mapper/products-dto-mapper";
 import { Logger } from "../common/logger";
+import { Bill } from "../models/bill";
 import { ProductDto } from "../models/dto/product-dto";
 import { Product } from "../models/product";
 import { ProductsService } from "../services/products-service";
@@ -30,6 +31,36 @@ export class ProductsController {
     }
   };
 
+  public soldProductsPeerMonth = async (req: any, res: any, next: any) => {
+    try {
+      const productsSalesPeerMonth: number[] =
+        await this.productsService.soldProductsPeerMonth(req.query.gymId);
+
+      next(productsSalesPeerMonth);
+    } catch (error) {
+      this.logger.error(
+        `Cannot retrive sold products peer month ${JSON.stringify(req.body)}`,
+        error
+      );
+      next(error);
+    }
+  };
+
+  public getMonthlyIncome = async (req: any, res: any, next: any) => {
+    try {
+      const monthlyIncomeArray: number[] =
+        await this.productsService.getMonthlyIncome(req.query.gymId);
+
+      next(monthlyIncomeArray);
+    } catch (error) {
+      this.logger.error(
+        `Cannot get monthly income ${JSON.stringify(req.body)}`,
+        error
+      );
+      next(error);
+    }
+  };
+
   public createProduct = async (req: any, res: any, next: any) => {
     let productToCreate: Product = null;
     try {
@@ -47,6 +78,41 @@ export class ProductsController {
         `Cannot create product ${JSON.stringify(req.body)}`,
         err
       );
+      next(err);
+    }
+  };
+
+  public createBill = async (req: any, res: any, next: any) => {
+    let billToCreate: Bill = null;
+    try {
+      billToCreate = req.body; //TODO: make dto
+
+      const createdBill: Bill = await this.productsService.createBill(
+        billToCreate
+      );
+
+      res.status(201);
+      next(createdBill);
+    } catch (error) {
+      this.logger.error(
+        `Cannot create bill ${JSON.stringify(req.body)}`,
+        error
+      );
+      next(error);
+    }
+  };
+
+  public getAllBills = async (req: any, res: any, next: any) => {
+    try {
+      const bills: Bill[] = await this.productsService.getAllBills(
+        req.query.gymId
+      );
+
+      // TODO: make dto mapper and map all the array elements to dto
+
+      next(bills);
+    } catch (err) {
+      this.logger.error(`cannot get all bills`, err);
       next(err);
     }
   };
@@ -82,6 +148,20 @@ export class ProductsController {
       next(`product with id ${productId} has been deleted successfully`);
     } catch (err) {
       this.logger.error(`Cannot delete product: ${productId}`, err);
+      next(err);
+    }
+  };
+
+  public deleteBill = async (req: any, res: any, next: any) => {
+    let billId: number = null;
+    try {
+      billId = Number(req.query.id);
+
+      await this.productsService.deleteBill(billId);
+
+      next(`bill with id ${billId} has been deleted successfully`);
+    } catch (err) {
+      this.logger.error(`Cannot delete bill: ${billId}`, err);
       next(err);
     }
   };

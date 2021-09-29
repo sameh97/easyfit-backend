@@ -48,6 +48,36 @@ export class TrainerService {
     return trainers;
   }
 
+  public getById = async (
+    gymId: number,
+    trainerId: number
+  ): Promise<Trainer> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const trainerFromDB: Trainer = await this.trainerRepository.getById(
+        gymId,
+        trainerId,
+        transaction
+      );
+
+      await transaction.commit();
+
+      return trainerFromDB;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Error occurred while retrieving trainer: error: ${AppUtils.getFullException(
+          error
+        )}`
+      );
+      throw error;
+    }
+  };
+
   public update = async (trainer: Trainer): Promise<Trainer> => {
     let transaction: Transaction = null;
     try {

@@ -17,6 +17,7 @@ export class MachineSchedulerController {
 
   public getAll = async (req: any, res: any, next: any) => {
     try {
+      // get all jobs 
       const machineSchedules: MachineScheduledJob[] =
         await this.machineSchedulerService.getAll(req.query.gymId);
 
@@ -41,7 +42,7 @@ export class MachineSchedulerController {
         await this.machineSchedulerService.create(scheduleToCreate);
 
       res.status(201);
-
+      
       next(this.machineScheduleDtoMapper.asDto(createdSchedule));
     } catch (error) {
       this.logger.error(

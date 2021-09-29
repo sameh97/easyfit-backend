@@ -10,8 +10,11 @@ import {
   PrimaryKey,
   Table,
   Unique,
+  BelongsToMany,
 } from "sequelize-typescript";
+import { GroupTraining } from "./group-training";
 import { Gym } from "./gym";
+import { MemberParticipate } from "./member-participate";
 
 @Table({
   tableName: "members",
@@ -53,7 +56,6 @@ export class Member extends Model<Member> {
   @Column(DataType.BOOLEAN)
   public isActive: boolean;
 
-  // TODO: check time duration
   @IsDate
   @AllowNull(false)
   @Column(DataType.DATE)
@@ -69,11 +71,14 @@ export class Member extends Model<Member> {
   public gender: number;
 
   @AllowNull(true)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(3000))
   public imageURL?: string;
 
   @AllowNull(false)
   @Column(DataType.INTEGER)
   @ForeignKey(() => Gym)
   public gymId: number;
+
+  @BelongsToMany(() => GroupTraining, () => MemberParticipate)
+  public groupTrainings: GroupTraining[];
 }

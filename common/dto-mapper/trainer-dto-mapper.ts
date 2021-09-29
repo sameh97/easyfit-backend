@@ -17,7 +17,7 @@ export class TrainerDtoMapper{
             phone : trainer.phone,
             birthDay : trainer.birthDay,
             email : trainer.email,
-            address : trainer.email,
+            address : trainer.address,
             isActive : trainer.isActive,
             joinDate : trainer.joinDate,
             imageURL: trainer.imageURL,

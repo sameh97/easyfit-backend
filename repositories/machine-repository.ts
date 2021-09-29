@@ -11,12 +11,14 @@ export class MachinesRepository {
   constructor(@inject(Logger) private logger: Logger) {}
 
   public getAll = async (gymId: number): Promise<Machine[]> => {
+    // get all from DB
     return await Machine.findAll({ where: { gymId: gymId } });
   };
 
   public getBySerialNumber = async (
     machineSerialNumber: number
   ): Promise<Machine> => {
+    // find machien in DB by machineSerialNumber
     return await Machine.findOne({
       where: { serialNumber: machineSerialNumber },
     });
@@ -26,6 +28,7 @@ export class MachinesRepository {
     machine: Machine,
     transaction?: Transaction
   ): Promise<Machine> => {
+    // check if exist 
     const machineInDB = await Machine.findOne({
       where: { serialNumber: machine.serialNumber },
       transaction: transaction,
@@ -39,6 +42,7 @@ export class MachinesRepository {
 
     this.logger.info(`creating machine with name ${machine.name}`);
 
+    // create
     const createdMachine = await Machine.create(machine, {
       transaction: transaction,
     });

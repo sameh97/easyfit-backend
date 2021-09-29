@@ -16,7 +16,11 @@ import { WebSocketService } from "./services/socket.io-service";
 import { MachineSchedulerRepository } from "./repositories/scheduler-repository";
 import { NotificationsApi } from "./routes/notification";
 import { TempUrlApi } from "./routes/temp-url-api";
+import { UploadFilesApi } from "./routes/upload-file";
+import { GroupTrainingApi } from "./routes/group-training-api";
+import { PasswordManagerService } from "./services/password-manager-service";
 
+// make a new instance of EasyFitApp (the server) and call start function
 const app = new EasyFitApp(
   container.get(UsersApi),
   container.get(AppDBConnection),
@@ -32,7 +36,10 @@ const app = new EasyFitApp(
   container.get(WebSocketService),
   container.get(MachineSchedulerRepository),
   container.get(NotificationsApi),
-  container.get(TempUrlApi)
+  container.get(TempUrlApi),
+  container.get(UploadFilesApi),
+  container.get(GroupTrainingApi),
+  container.get(PasswordManagerService)
 );
 
 app.start();

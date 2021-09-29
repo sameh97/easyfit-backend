@@ -22,13 +22,15 @@ import { MachineSchedulerRepository } from "../repositories/scheduler-repository
 import { AppUtils } from "../common/app-utils";
 import { NotificationsApi } from "../routes/notification";
 import { TempUrlApi } from "../routes/temp-url-api";
-
-const verifyToken = require("../middlewares/jwt-functions");
-const secret = "secretKey";
-const bodyParser = require("body-parser");
+import { Role } from "../models/role";
+import { UploadFilesApi } from "../routes/upload-file";
+import { GroupTrainingApi } from "../routes/group-training-api";
+import { User } from "../models/user";
+import { Gym } from "../models/gym";
+import { PasswordManagerService } from "../services/password-manager-service";
 const path = require("path");
+require("dotenv").config();
 
-// TODO: arrange the imports and make them cleaner
 export class EasyFitApp {
   private app: express.Express;
 
@@ -52,10 +54,17 @@ export class EasyFitApp {
     @inject(NotificationsApi)
     private notificationsApi: NotificationsApi,
     @inject(TempUrlApi)
-    private tempUrlApi: TempUrlApi
+    private tempUrlApi: TempUrlApi,
+    @inject(UploadFilesApi)
+    private uploadFilesApi: UploadFilesApi,
+    @inject(GroupTrainingApi)
+    private groupTrainingApi: GroupTrainingApi,
+    @inject(PasswordManagerService)
+    private passwordManager: PasswordManagerService
   ) {
     this.app = express();
     this.app.use(express.json());
+    // this tells the browser to allow requesting code from the origin
     this.app.use(function (req, res, next) {
       res.header("Access-Control-Allow-Origin", "*");
       res.header(
@@ -66,55 +75,153 @@ export class EasyFitApp {
       res.header("Access-Control-Expose-Headers", "*");
       next();
     });
+
     this.app.use(cors());
   }
 
   public async start(): Promise<void> {
-    //TODO: make a user
+    // this function starts the server
     this.initRoutes();
     this.handleAllResponses();
     this.initDB();
   }
 
-  //TODO: remove:
+  private addStaticAdmin = async (): Promise<void> => {
+    const admin: User = {
+      firstName: "Admin",
+      lastName: "admin",
+      email: "Admin@easyfit.com",
+      password: process.env.ADMIN_PASSWORD,
+      phone: "0542491699",
+      imageURL: null,
+      roleId: 2,
+      birthDay: new Date("1997-04-29"),
+      address: "shefamr",
+      gymId: -1,
+    } as User;
+
+    const hashedPassword = await this.passwordManager.hashAndSalt(
+      admin.password
+    );
+
+    admin.password = hashedPassword;
+
+    const gym: Gym = {
+      id: -1,
+      name: "AdminGym",
+      address: "shefamr",
+      phone: "0542491698",
+    } as Gym;
+
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.dBconnection.createTransaction();
+
+      const createdAdminGym = await Gym.findOrCreate({
+        where: { id: gym.id },
+        defaults: gym,
+        transaction: transaction,
+      });
+
+      const createdAdminUser = await User.findOrCreate({
+        where: { gymId: admin.gymId },
+        defaults: admin,
+        transaction: transaction,
+      });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      this.logger.error(
+        `error while creating static admin user ${AppUtils.getFullException(
+          error
+        )}`
+      );
+      throw error;
+    }
+  };
+
+  private addStaticRoles = async (): Promise<void> => {
+    const regularRole: Role = {
+      id: 1,
+      name: "regular user",
+    } as Role;
+
+    const AdminRole: Role = {
+      id: 2,
+      name: "Admin",
+    } as Role;
+
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.dBconnection.createTransaction();
+
+      const createdRegRole = await Role.findOrCreate({
+        where: { id: regularRole.id },
+        defaults: regularRole,
+        transaction: transaction,
+      });
+
+      const createdAdminRole = await Role.findOrCreate({
+        where: { id: AdminRole.id },
+        defaults: AdminRole,
+        transaction: transaction,
+      });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      this.logger.error(
+        `error while creating static role ${AppUtils.getFullException(error)}`
+      );
+      throw error;
+    }
+  };
+
   private addStaticJob = async (): Promise<void> => {
     const job1: Job = {
-      id: null,
+      id: 1,
       title: "clean",
-      description: "clean!!!!!!",
+      description: "clean mahine",
     } as Job;
 
     const job2: Job = {
-      id: null,
+      id: 2,
       title: "service",
-      description: "service!!!!!!",
+      description: "mahine service",
     } as Job;
 
     let transaction: Transaction = null;
     try {
       transaction = await this.dBconnection.createTransaction();
 
-      const createdJob = await Job.create(job1, { transaction: transaction });
+      const createdJob = await Job.findOrCreate({
+        where: { id: job1.id },
+        defaults: job1,
+        transaction: transaction,
+      });
+
+      const createdJob2 = await Job.findOrCreate({
+        where: { id: job2.id },
+        defaults: job2,
+        transaction: transaction,
+      });
 
       transaction.commit();
     } catch (error) {
       if (transaction) {
         transaction.rollback();
       }
-      console.log(error);
-    }
-    /////////////////////////////////////////////////////////////////////////////////////
-    try {
-      transaction = await this.dBconnection.createTransaction();
 
-      const createdJob = await Job.create(job2, { transaction: transaction });
-
-      transaction.commit();
-    } catch (error) {
-      if (transaction) {
-        transaction.rollback();
-      }
-      console.log(error);
+      this.logger.error(
+        `error while creating static job ${AppUtils.getFullException(error)}`,
+        error
+      );
+      throw error;
     }
   };
 
@@ -122,9 +229,11 @@ export class EasyFitApp {
     // job tracker that looks for expired jobs and delete them, it will run every day.
     setInterval(async () => {
       try {
+        // retreve all scheduled jobs from the database
         const allSchedules: MachineScheduledJob[] =
           await this.machineSchedulerRepository.getAllWithoutGymId();
 
+        // for each job, check if the end time of the job is allready passed
         allSchedules.forEach(async (scheduledJob) => {
           const now: number = new Date().getTime();
 
@@ -149,6 +258,7 @@ export class EasyFitApp {
   }
 
   private initRoutes(): void {
+    // init all the routes, use the routes middlewares,
     this.app.use(this.usersApi.getRouter());
     this.app.use(this.membersApi.getRouter());
     this.app.use(this.gymApi.getRouter());
@@ -158,8 +268,10 @@ export class EasyFitApp {
     this.app.use(this.machineSchedulerApi.getRouter());
     this.app.use(this.notificationsApi.getRouter());
     this.app.use(this.tempUrlApi.getRouter());
+    this.app.use(this.uploadFilesApi.getRouter());
+    this.app.use(this.groupTrainingApi.getRouter());
     // Catch all other get requests
-    const publicPath = express.static(path.join(__dirname, "./../"), {
+    const publicPath = express.static(path.join(__dirname, "./../easyfit"), {
       redirect: false,
     });
 
@@ -170,12 +282,15 @@ export class EasyFitApp {
   }
 
   public async initDB(): Promise<void> {
+    // connect the server to the database
     this.dBconnection
       .connect()
       .then((r) => {
         console.log("success: " + JSON.stringify(r));
         this.listenToRequests();
         this.addStaticJob();
+        this.addStaticRoles();
+        this.addStaticAdmin();
         this.jobScheduleManager.runAllScheduledJobs();
         this.setScheduledJobExpirationTracker();
       })
@@ -185,6 +300,7 @@ export class EasyFitApp {
   }
 
   private handleAllResponses(): void {
+    // use the error handling middleware
     this.app.use(appResponseHandler);
   }
 

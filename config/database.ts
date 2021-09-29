@@ -13,6 +13,10 @@ import { AppNotification } from "../models/app-notification";
 import { Category } from "../models/category";
 import { Catalog } from "../models/catalog";
 import { TempUrl } from "../models/temp-url";
+import { Bill } from "../models/bill";
+import { Role } from "../models/role";
+import { GroupTraining } from "../models/group-training";
+import { MemberParticipate } from "../models/member-participate";
 
 @injectable()
 export class AppDBConnection {
@@ -42,6 +46,10 @@ export class AppDBConnection {
       Category,
       TempUrl,
       Catalog,
+      Bill,
+      Role,
+      GroupTraining,
+      MemberParticipate,
     ]);
     await this.db.authenticate();
     await this.db.sync(); // TODO: remove in production

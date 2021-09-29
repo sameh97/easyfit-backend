@@ -23,7 +23,10 @@ export class JobService {
     private cacheService: CacheService
   ) {}
 
-  public send = async (schedueledJob: MachineScheduledJob , createdNotification: AppNotificationDto ): Promise<void> => {
+  public send = async (
+    schedueledJob: MachineScheduledJob,
+    createdNotification: AppNotificationDto
+  ): Promise<void> => {
     if (!AppUtils.hasValue(schedueledJob)) {
       throw new NotFound(
         `cannot send job because scheduled job object is not found`
@@ -38,7 +41,11 @@ export class JobService {
       schedueledJob.gymId.toString()
     );
 
-    this.webSocketService.socketIO.to(socketID).emit(topic, createdNotification);
+    this.webSocketService.emitNotificationToSpecificClient(
+      socketID,
+      topic,
+      createdNotification as any // TODO: make only one notifications model
+    );
   };
 
   private createNotification(

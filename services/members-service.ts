@@ -21,7 +21,7 @@ export class MembersService {
     try {
       transaction = await this.appDBConnection.createTransaction();
 
-      member.isActive = false;
+      member.isActive = true;
 
       const createdMember = await this.memberRepository.save(
         member,
@@ -51,6 +51,17 @@ export class MembersService {
     this.logger.info(`Returning ${members.length} members`);
     return members;
   }
+
+  public async getGendersNumber (gymId: number): Promise<number[]> {
+    let genders : number [] = []
+    const males : number = await this.memberRepository.getAllMales(gymId);
+    const Females : number = await this.memberRepository.getAllFemales(gymId);
+    genders = [males , Females];
+    console.log('hello');
+    this.logger.info(`Returning ${genders} genders`);
+    return genders;
+  } 
+
 
   public update = async (member: Member): Promise<Member> => {
     let transaction: Transaction = null;
@@ -104,6 +115,35 @@ export class MembersService {
       if (transaction) {
         await transaction.rollback();
       }
+      throw error;
+    }
+  };
+
+  public getAddedMembersByMonth = async (gymId: number): Promise<number[]> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const addedMembersCountByMonth: number[] =
+        await this.memberRepository.getAddedMembersByMonth(gymId);
+
+      await transaction.commit();
+
+      this.logger.info(
+        `Returning members count by month:  ${addedMembersCountByMonth.length}`
+      );
+
+      return addedMembersCountByMonth;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Error occurred while getting members count by month: error: ${AppUtils.getFullException(
+          error
+        )}`,
+        error
+      );
       throw error;
     }
   };

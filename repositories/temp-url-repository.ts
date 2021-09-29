@@ -48,7 +48,7 @@ export class TempUrlRepository {
         productID: product.id,
         tempUrlID: tempUrl.uuid,
       } as Catalog;
-
+      // save in the many to many relation table (many products to many catalogs)
       await Catalog.create(catlog, { transaction: transaction });
     }
 
@@ -80,7 +80,7 @@ export class TempUrlRepository {
       where: { tempUrlID: tempUrl.uuid },
       transaction: transaction,
     });
-
+    // also update the relationship table (the forign keys)
     for (let product of tempUrl.products) {
       let catlog: Catalog = {
         productID: product.id,
@@ -89,6 +89,8 @@ export class TempUrlRepository {
 
       await Catalog.create(catlog, { transaction: transaction });
     }
+
+    updatedTempUrl.products = tempUrl.products;
 
     this.logger.info(
       `Updated Temporary URL '${JSON.stringify(updatedTempUrl)}'`

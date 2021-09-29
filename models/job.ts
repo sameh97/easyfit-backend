@@ -16,7 +16,6 @@ import { MachineScheduledJob } from "./machine-scheduled-job";
 })
 export class Job extends Model<Job> {
   @PrimaryKey
-  @AutoIncrement
   @Column(DataType.INTEGER)
   public id: number;
 
@@ -25,7 +24,7 @@ export class Job extends Model<Job> {
   public title: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
+  @Column(DataType.STRING(1500))
   public description: string;
 
   @HasMany(() => MachineScheduledJob, {
