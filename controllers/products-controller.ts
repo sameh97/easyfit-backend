@@ -46,6 +46,21 @@ export class ProductsController {
     }
   };
 
+  public getMonthlyIncome = async (req: any, res: any, next: any) => {
+    try {
+      const monthlyIncomeArray: number[] =
+        await this.productsService.getMonthlyIncome(req.query.gymId);
+
+      next(monthlyIncomeArray);
+    } catch (error) {
+      this.logger.error(
+        `Cannot get monthly income ${JSON.stringify(req.body)}`,
+        error
+      );
+      next(error);
+    }
+  };
+
   public createProduct = async (req: any, res: any, next: any) => {
     let productToCreate: Product = null;
     try {
@@ -133,6 +148,20 @@ export class ProductsController {
       next(`product with id ${productId} has been deleted successfully`);
     } catch (err) {
       this.logger.error(`Cannot delete product: ${productId}`, err);
+      next(err);
+    }
+  };
+
+  public deleteBill = async (req: any, res: any, next: any) => {
+    let billId: number = null;
+    try {
+      billId = Number(req.query.id);
+
+      await this.productsService.deleteBill(billId);
+
+      next(`bill with id ${billId} has been deleted successfully`);
+    } catch (err) {
+      this.logger.error(`Cannot delete bill: ${billId}`, err);
       next(err);
     }
   };

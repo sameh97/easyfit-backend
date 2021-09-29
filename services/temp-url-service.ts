@@ -17,7 +17,6 @@ import { catalogNotFoundTemplate } from "../templates/catalog-not-found-template
 import { catalogOutOfDateTemplate } from "../templates/catalog-out-of-date";
 const wbm = require("wbm");
 
-
 @injectable()
 export class TempUrlService {
   constructor(
@@ -88,7 +87,7 @@ export class TempUrlService {
         tempUrl.createdAt,
         tempUrl.durationDays
       );
-      // if the catalog duration expired, throw error 
+      // if the catalog duration expired, throw error
       if (dateNow.getTime() > endDate.getTime()) {
         throw new OutOfDateError(`Catalog is no longer available`);
       }
@@ -110,7 +109,7 @@ export class TempUrlService {
   private getCatalogProductsByUUID = async (
     uuid: string
   ): Promise<Product[]> => {
-     // get all the products for specfic catalog, by its url uuid 
+    // get all the products for specfic catalog, by its url uuid
     const catalog: Catalog[] = await Catalog.findAll({
       where: { tempUrlID: uuid },
     });
@@ -120,7 +119,7 @@ export class TempUrlService {
     for (let item of catalog) {
       productIDS.push(item.productID);
     }
- 
+
     const products: Product[] = await this.productsRepository.getByIDs(
       productIDS
     );
@@ -142,15 +141,17 @@ export class TempUrlService {
 
   public buildCatalogHtml = async (products: Product[]): Promise<string> => {
     const root = parse(catalogTemplate);
-  // append products to html div
+    // append products to html div
     for (let product of products) {
       const pro = parse(`<div class="card">
       <div class="item-flex-container">
       <div><img style="width:100px;hight:100px" src="${product.imgUrl}"></div>
-      <div>
-      <h3>${product.name}</h3>
-      <p>price: ${product.price}</p>
-      <p> ${product.description}</p>
+      <div class="dd">
+      <h2>${product.name}</h2>
+      <p><b>price:</b> ${product.price}</p>
+      <p><b>description:</b> ${AppUtils.addBreakLinesToString(
+        product.description
+      )}</p>
      
       </div>
       </div>
@@ -212,7 +213,6 @@ export class TempUrlService {
       throw err;
     }
   };
-
 
   public sendWhatsApp = async (details: any): Promise<any> => {
     // send whatsApp message:

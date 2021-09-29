@@ -22,8 +22,9 @@ export class UsersApi implements AppRoute {
     this.router = Router();
 
     this.router.post("/api/login", this.usersController.login);
-    this.router.post("/api/register" , this.usersController.createUser); // TODO: add verifyToken and verifyAdmin
+    this.router.post("/api/register" ,verifyToken , verifyAdmin , this.usersController.createUser); // TODO: add verifyToken and verifyAdmin
     this.router.get("/api/users",verifyToken , verifyAdmin , this.usersController.getAll);
+    this.router.get("/api/get-user",verifyToken  , this.usersController.getByEmail);
     this.router.put("/api/user" , verifyToken ,  this.usersController.update);
     this.router.delete("/api/user", verifyToken ,verifyAdmin ,  this.usersController.delete);
   }

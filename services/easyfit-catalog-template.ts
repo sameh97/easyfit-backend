@@ -57,7 +57,6 @@ body {
 }
 
 .cards {
-    max-width: 1200px;
     margin: 0 auto;
     display: grid;
     grid-gap: 1rem;
@@ -66,9 +65,8 @@ body {
 
 .item-flex-container {
     display: flex;
-    gap: 1rem;
+    gap: 5px;
     justify-content: space-between;
-    flex-wrap: wrap;
     flex: 0 0 100%;
     flex-direction: row;
 }
@@ -78,6 +76,9 @@ body {
     font-size: 12px;
     padding: 5px 0;
     font-family: 'Trebuchet MS', sans-serif;
+}
+.dd {
+    word-wrap: break-word;
 }
 </style>
 

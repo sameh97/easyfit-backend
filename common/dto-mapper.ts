@@ -16,6 +16,7 @@ export class DtoMapper {
       email: user.email,
       phone: user.phone,
       roleId: user.roleId,
+      createdAt: user.createdAt,
       imageURL: user.imageURL,
       birthDay: user.birthDay,
       address: user.address,

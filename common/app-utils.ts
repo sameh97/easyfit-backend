@@ -57,6 +57,26 @@ export class AppUtils {
     return result;
   };
 
+  public static addBreakLinesToString = (str: string): string => {
+    let cnt = 0;
+
+    for (let i = 0; i < str.length; i++) {
+      cnt++;
+      if (cnt >= 34 && str.charAt(i) === " ") {
+        str = AppUtils.addToStr(str, i, "\n");
+        cnt = 0;
+      }
+    }
+
+    return str;
+  };
+
+  public static addToStr(str, index, stringToAdd) {
+    return (
+      str.substring(0, index) + stringToAdd + str.substring(index, str.length)
+    );
+  }
+
   public static removeHoursFromDate = (date: Date, hours: number): Date => {
     let result = new Date(date);
     result.setHours(result.getHours() - hours);
