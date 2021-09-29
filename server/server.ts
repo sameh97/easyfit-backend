@@ -25,7 +25,11 @@ import { TempUrlApi } from "../routes/temp-url-api";
 import { Role } from "../models/role";
 import { UploadFilesApi } from "../routes/upload-file";
 import { GroupTrainingApi } from "../routes/group-training-api";
+import { User } from "../models/user";
+import { Gym } from "../models/gym";
+import { PasswordManagerService } from "../services/password-manager-service";
 const path = require("path");
+require("dotenv").config();
 
 export class EasyFitApp {
   private app: express.Express;
@@ -54,7 +58,9 @@ export class EasyFitApp {
     @inject(UploadFilesApi)
     private uploadFilesApi: UploadFilesApi,
     @inject(GroupTrainingApi)
-    private groupTrainingApi: GroupTrainingApi
+    private groupTrainingApi: GroupTrainingApi,
+    @inject(PasswordManagerService)
+    private passwordManager: PasswordManagerService
   ) {
     this.app = express();
     this.app.use(express.json());
@@ -79,6 +85,63 @@ export class EasyFitApp {
     this.handleAllResponses();
     this.initDB();
   }
+
+  private addStaticAdmin = async (): Promise<void> => {
+    const admin: User = {
+      firstName: "Admin",
+      lastName: "admin",
+      email: "Admin@easyfit.com",
+      password: process.env.ADMIN_PASSWORD,
+      phone: "0542491699",
+      imageURL: null,
+      roleId: 2,
+      birthDay: new Date("1997-04-29"),
+      address: "shefamr",
+      gymId: -1,
+    } as User;
+
+    const hashedPassword = await this.passwordManager.hashAndSalt(
+      admin.password
+    );
+
+    admin.password = hashedPassword;
+
+    const gym: Gym = {
+      id: -1,
+      name: "AdminGym",
+      address: "shefamr",
+      phone: "0542491698",
+    } as Gym;
+
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.dBconnection.createTransaction();
+
+      const createdAdminGym = await Gym.findOrCreate({
+        where: { id: gym.id },
+        defaults: gym,
+        transaction: transaction,
+      });
+
+      const createdAdminUser = await User.findOrCreate({
+        where: { gymId: admin.gymId },
+        defaults: admin,
+        transaction: transaction,
+      });
+
+      transaction.commit();
+    } catch (error) {
+      if (transaction) {
+        transaction.rollback();
+      }
+      this.logger.error(
+        `error while creating static admin user ${AppUtils.getFullException(
+          error
+        )}`
+      );
+      throw error;
+    }
+  };
 
   private addStaticRoles = async (): Promise<void> => {
     const regularRole: Role = {
@@ -208,7 +271,7 @@ export class EasyFitApp {
     this.app.use(this.uploadFilesApi.getRouter());
     this.app.use(this.groupTrainingApi.getRouter());
     // Catch all other get requests
-    const publicPath = express.static(path.join(__dirname, "./../"), {
+    const publicPath = express.static(path.join(__dirname, "./../easyfit"), {
       redirect: false,
     });
 
@@ -227,6 +290,7 @@ export class EasyFitApp {
         this.listenToRequests();
         this.addStaticJob();
         this.addStaticRoles();
+        this.addStaticAdmin();
         this.jobScheduleManager.runAllScheduledJobs();
         this.setScheduledJobExpirationTracker();
       })

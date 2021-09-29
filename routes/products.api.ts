@@ -23,6 +23,11 @@ export class ProductsApi implements AppRoute {
     this.router = Router();
 
     this.router.get(
+      "/api/monthly-income",
+      verifyToken,
+      this.productsController.getMonthlyIncome
+    );
+    this.router.get(
       "/api/sold-products",
       verifyToken,
       this.productsController.soldProductsPeerMonth
@@ -56,6 +61,12 @@ export class ProductsApi implements AppRoute {
       "/api/delete-product",
       verifyToken,
       this.productsController.delete
+    );
+
+    this.router.delete(
+      "/api/delete-bill",
+      verifyToken,
+      this.productsController.deleteBill
     );
   }
 }

@@ -67,6 +67,10 @@ export class ProductsRepository {
     const productToUpdate: Product =
       this.productDtoMapper.asEntity(productInDB);
 
+    if (productToUpdate.quantity - bill.quantity < 0) {
+      throw new NotFoundErr(`Required quantity is not available`);
+    }
+    
     productToUpdate.quantity -= bill.quantity;
 
     const updatedProduct = await this.update(productToUpdate, transaction);
@@ -115,6 +119,18 @@ export class ProductsRepository {
     await Product.destroy({ where: { id: id }, transaction: transaction });
   };
 
+  public deleteBill = async (id: number, transaction?: Transaction) => {
+    const toDelete = await Bill.findOne({ where: { id: id } });
+
+    if (!AppUtils.hasValue(toDelete)) {
+      throw new NotFoundErr(
+        `Cannot delete bill with id ${id} because its not found`
+      );
+    }
+
+    await Bill.destroy({ where: { id: id }, transaction: transaction });
+  };
+
   public soldProductsPeerMonth = async (
     gymId: number,
     transaction?: Transaction
@@ -152,6 +168,50 @@ export class ProductsRepository {
       const totalSalesInMonth: number = Number(bill.dataValues.total);
 
       result.push(totalSalesInMonth);
+    }
+
+    return result;
+  };
+
+  public getMonthlyIncome = async (
+    gymId: number,
+    transaction?: Transaction
+  ): Promise<number[]> => {
+    const currentTime = new Date();
+    let year = currentTime.getFullYear();
+    let result: number[] = [];
+
+    for (let month = 1; month <= 12; month++) {
+      let nextMonth: number = month + 1;
+      let nextYear: number = year;
+
+      if (nextMonth > 12) {
+        nextMonth = 1;
+        nextYear = nextYear + 1;
+      }
+
+      const monthlyIncome = await Bill.findAll({
+        attributes: [
+          [sequelize.fn("sum", sequelize.col("totalCost")), "totalIncome"],
+        ],
+        where: {
+          [Op.and]: [
+            {
+              createdAt: {
+                [Op.gte]: new Date(`${year}-${month}-01`),
+                [Op.lt]: new Date(`${nextYear}-${nextMonth}-01`),
+              },
+              gymId: gymId,
+            },
+          ],
+        },
+        transaction: transaction,
+      });
+
+      const income: any = monthlyIncome[0];
+      const incomeToStore: number = Number(income.dataValues.totalIncome);
+
+      result.push(incomeToStore);
     }
 
     return result;

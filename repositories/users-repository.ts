@@ -24,7 +24,7 @@ export class UsersRepository {
       );
     }
 
-  // create user 
+    // create user
     const createdUser = await User.create(user, { transaction: transaction });
 
     return createdUser;
@@ -60,8 +60,14 @@ export class UsersRepository {
       throw new NotFoundErr(`User with id ${user.id} was not fount`);
     }
 
+  
+
     this.logger.info(`Updating user with id '${user.id}'`);
 
+    if (!AppUtils.hasValue(user.password) || user.password === "") {
+      user.password = userInDB.password;
+    }
+    
     const updatedUser = await userInDB.update(user);
 
     this.logger.info(`Updated user '${JSON.stringify(updatedUser)}'`);

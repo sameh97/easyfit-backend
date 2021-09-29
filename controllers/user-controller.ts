@@ -6,6 +6,7 @@ import { Logger } from "./../common/logger";
 import { AppUtils } from "../common/app-utils";
 import { UserDto } from "../models/dto/user-dto";
 const { logInSchema } = require("./../common/validation");
+import * as jwt from "jsonwebtoken";
 
 @injectable()
 export class UserController {
@@ -21,12 +22,11 @@ export class UserController {
       // get user from body
       userFromBody = req.body;
 
-      
       const token: string = await this.userService.login(
         userFromBody.email,
         userFromBody.password
       );
-      // set the token as a header 
+      // set the token as a header
       res.setHeader("Authorization", token);
       res.send({});
     } catch (e) {
@@ -55,12 +55,25 @@ export class UserController {
     }
   };
 
+  public getByEmail = async (req: any, res: any, next: any) => {
+    try {
+      const user: User = await this.userService.getByEmail(req.query.email);
+
+      const userDto: UserDto = this.dtoMapper.asDto(user);
+
+      next(userDto);
+    } catch (error) {
+      this.logger.error(`cannot get user`, error);
+      next(error);
+    }
+  };
+
   public getAll = async (req: any, res: any, next: any) => {
     try {
       // retreve all users from database
       const users: User[] = await this.userService.getAll();
 
-    // map all the users as dto to send to client
+      // map all the users as dto to send to client
       const usersDto: UserDto[] = users.map((user) =>
         this.dtoMapper.asDto(user)
       );
@@ -78,9 +91,18 @@ export class UserController {
       // get user from body
       userToUpdate = this.dtoMapper.asEntity(req.body);
 
-     // update user
+      // update user
       const updatedUser: User = await this.userService.update(userToUpdate);
 
+      const token = jwt.sign(
+        {
+          sub: updatedUser,
+        },
+        process.env.TOKEN_SECRET,
+        { expiresIn: `${UserService.TOKEN_EXPIRATION_HOURS}h` }
+      );
+
+      res.setHeader("Authorization", token);
       res.status(201);
 
       next(this.dtoMapper.asDto(updatedUser));
@@ -96,7 +118,7 @@ export class UserController {
       // get the id from query params
       userId = Number(req.query.id);
 
-  // delete
+      // delete
       await this.userService.delete(userId);
 
       next(`user with id ${userId} has been deleted succesfuly`);

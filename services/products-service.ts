@@ -61,7 +61,7 @@ export class ProductsService {
 
       const productsSalesPeerMonth: number[] =
         await this.productRepo.soldProductsPeerMonth(gymId, transaction);
-        
+
       await transaction.commit();
 
       this.logger.info(`Returning products sales peer month`);
@@ -72,7 +72,35 @@ export class ProductsService {
         await transaction.rollback();
       }
       this.logger.error(
-        `Error occurred while creating retreving products sales peer month: error: ${AppUtils.getFullException(
+        `Error occurred while retrieving products sales peer month: error: ${AppUtils.getFullException(
+          error
+        )}`
+      );
+      throw error;
+    }
+  };
+
+  public getMonthlyIncome = async (gymId: number): Promise<any> => {
+    let transaction: Transaction = null;
+    try {
+      transaction = await this.appDBConnection.createTransaction();
+
+      const monthlyIncome: number[] = await this.productRepo.getMonthlyIncome(
+        gymId,
+        transaction
+      );
+
+      await transaction.commit();
+
+      this.logger.info(`Returning monthly income`);
+
+      return monthlyIncome;
+    } catch (error) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      this.logger.error(
+        `Error occurred while retrieving monthly income: error: ${AppUtils.getFullException(
           error
         )}`
       );
@@ -156,4 +184,32 @@ export class ProductsService {
       throw err;
     }
   };
+
+  public deleteBill = async (id: number): Promise<void> => {
+    if (!AppUtils.isInteger(id)) {
+      throw new InputError(`Cannot delete bill, the id must be an integer`);
+    }
+
+    let transaction: Transaction = null;
+    try {
+      this.logger.info(`Deleting bill with id: ${id}`);
+
+      transaction = await this.appDBConnection.createTransaction();
+
+      await this.productRepo.deleteBill(id, transaction);
+
+      await transaction.commit();
+
+      this.logger.info(`Bill with id ${id} has been deleted.`);
+    } catch (err) {
+      if (transaction) {
+        await transaction.rollback();
+      }
+      throw err;
+    }
+  };
+
+
+
+  
 }

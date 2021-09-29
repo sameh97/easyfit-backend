@@ -11,8 +11,7 @@ import { Logger } from "../common/logger";
 
 @injectable()
 export class UserService {
- 
-  private static readonly TOKEN_EXPIRATION_HOURS = 240;
+  public static readonly TOKEN_EXPIRATION_HOURS = 240;
   constructor(
     @inject(UsersRepository) private usersRepository: UsersRepository,
     @inject(PasswordManagerService)
@@ -25,7 +24,7 @@ export class UserService {
     // get user from database by email
     const userInDB = await this.usersRepository.getByEmail(email);
 
-    // check if the givin password is right 
+    // check if the givin password is right
     const isPasswordOk = await this.passwordManager.isEqual(
       password,
       userInDB.password
@@ -34,7 +33,7 @@ export class UserService {
       throw new AuthenticationError(`User with ${email} not authenticated`);
     }
 
-    // if the password is ok, make a new token 
+    // if the password is ok, make a new token
     const token = jwt.sign(
       {
         sub: userInDB,
@@ -75,6 +74,22 @@ export class UserService {
     }
   }
 
+  public getByEmail = async (email: string): Promise<User> => {
+    try {
+      const userInDB = await this.usersRepository.getByEmail(email);
+
+      this.logger.info(`Returning user with email ${userInDB.email}`);
+
+      return userInDB;
+    } catch (error) {
+      this.logger.error(
+        `cannot get user, error ${AppUtils.getFullException(error)}`,
+        error
+      );
+      throw error;
+    }
+  };
+
   public getAll = async (): Promise<User[]> => {
     // get all users
     const users = await this.usersRepository.getAll();
@@ -85,14 +100,15 @@ export class UserService {
   public update = async (user: User): Promise<User> => {
     let transaction: Transaction = null;
     try {
-       // hash the password
-      const hashedPassword = await this.passwordManager.hashAndSalt(
-        user.password
-      );
+      // hash the password
+      if (AppUtils.hasValue(user.password) && user.password !== "") {
+        const hashedPassword = await this.passwordManager.hashAndSalt(
+          user.password
+        );
 
-      user.password = hashedPassword;
+        user.password = hashedPassword;
+      }
 
-      
       transaction = await this.appDBconnection.createTransaction();
 
       const updatedUser = await this.usersRepository.update(user, transaction);
