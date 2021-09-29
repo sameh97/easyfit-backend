@@ -307,13 +307,15 @@ export class EasyFitApp {
   private listenToRequests(): void {
     const http = require("http");
 
+    const LOCAL_ADDRESS = "0.0.0.0";
+
     const PORT = process.env.APP_PORT || 3000;
 
     const server = http.createServer(this.app);
 
     this.webSocketService.connect(server);
 
-    server.listen(PORT, () => {
+    server.listen(PORT, LOCAL_ADDRESS, () => {
       console.log(`Server started on port ${PORT}`);
     });
   }
