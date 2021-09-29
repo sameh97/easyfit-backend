@@ -24,12 +24,13 @@ export class AppDBConnection {
 
   async connect(): Promise<void> {
     this.db = new Sequelize({
-      database: "easy_fit",
+      database: "da7gm7p7a39g69",
       dialect: "postgres",
-      username: "postgres",
-      password: "postgres",
-      host: "localhost",
+      username: "kjroflheztorzs",
+      password: "ae22f8ccd1ec96392d8f99275d87d58eff44f5c8c8de0f7fe15bf026bcf7a2ec",
+      host: "ec2-54-224-120-186.compute-1.amazonaws.com",
       port: 5432,
+      ssl: true
     });
 
     this.db.addModels([
