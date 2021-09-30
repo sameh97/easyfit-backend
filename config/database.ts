@@ -33,6 +33,7 @@ export class AppDBConnection {
       port: Number(process.env.DB_PORT),
       dialectOptions: {
         ssl: {
+          
           require: true,
           rejectUnauthorized: false,
         },
