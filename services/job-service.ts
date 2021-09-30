@@ -34,8 +34,7 @@ export class JobService {
     }
 
     const topic = this.getTopicByJobId(schedueledJob.jobID);
-    const notificationToSend = this.createNotification(schedueledJob, topic);
-
+ 
     // get the connection of specific client that need to recive the notification:
     const socketID: string = this.cacheService.get(
       schedueledJob.gymId.toString()
