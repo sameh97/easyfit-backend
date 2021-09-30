@@ -34,7 +34,11 @@ export class JobService {
     }
 
     const topic = this.getTopicByJobId(schedueledJob.jobID);
+<<<<<<< HEAD
  
+=======
+  
+>>>>>>> 501f6b44c2f6f177eca67d1eabd1eb2e35251eb6
     // get the connection of specific client that need to recive the notification:
     const socketID: string = this.cacheService.get(
       schedueledJob.gymId.toString()
