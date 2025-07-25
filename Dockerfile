@@ -2,18 +2,14 @@ FROM node:18
 
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install
-
-# Copy source code
+# ✅ Copy everything first
 COPY . .
 
-# Build TypeScript and assets
+# ✅ Install deps (now tsconfig.json is available)
+RUN npm install
+
+# Build the project
 RUN npm run build
 
-# Expose API port
 EXPOSE 3000
-
-# Run server
 CMD ["node", "dist/index.js"]

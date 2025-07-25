@@ -32,10 +32,8 @@ export class AppDBConnection {
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       dialectOptions: {
-        ssl: {
-          
-          require: true,
-          rejectUnauthorized: false,
+        dialectOptions: {
+          ssl: false, // Disable SSL
         },
       },
     });
